@@ -3,6 +3,36 @@
 
 **Created:** 2025-11-12
 **Purpose:** Comprehensive analysis of features in the old system vs new implementation
+**Status:** Master Document - Single Source of Truth
+
+---
+
+## 📚 Related Documentation
+
+This is the **master analysis document**. For detailed implementation plans, see:
+
+1. **MULTILINGUAL_IMPLEMENTATION_PLAN.md**
+   - Complete i18n strategy for backend, PDFs, and emails
+   - Language table design and user preference structure
+   - SetLocale middleware and translation files
+   - Effort: 6-7 days
+
+2. **MULTILINGUAL_PDF_TEMPLATES_APPROACH.md**
+   - Simplified approach using separate template directories per language
+   - Template structure: `resources/views/pdfs/{locale}/`
+   - Complete base layout and examples
+   - Effort: 2.5 days (simpler than translation-based approach)
+
+3. **DEVELOPMENT_PLAN.md**
+   - Original full development plan (26 weeks)
+   - Database schema design
+   - API development plan
+   - Frontend component roadmap
+
+4. **IMPLEMENTATION_STATUS.md**
+   - Current implementation status (100% core features)
+   - What's been completed (backend + frontend)
+   - Code statistics and session summaries
 
 ---
 
@@ -738,11 +768,27 @@ $user->preferences = [
 2. Per-document override (optional)
 3. User's document language preference
 4. User's UI language preference
-5. System default (German)
+5. System default (English)
 
-**See:** `MULTILINGUAL_IMPLEMENTATION_PLAN.md` for complete implementation details
+**Supported Languages:**
+- 🇬🇧 **English (en)** - Default/fallback
+- 🇩🇪 German (de)
+- 🇪🇸 Spanish (es)
+- 🇫🇷 French (fr)
+- 🇸🇮 Slovenian (si)
 
-**Estimated Effort:** 6-7 days
+**Implementation Approach:**
+- **Backend:** Language table + SetLocale middleware + lang files
+  - See: `MULTILINGUAL_IMPLEMENTATION_PLAN.md`
+- **PDFs:** Separate template directories per language (simpler!)
+  - See: `MULTILINGUAL_PDF_TEMPLATES_APPROACH.md`
+- **Emails:** Use Laravel's translation system with locale support
+
+**Estimated Effort:** 6-7 days total
+- Backend infrastructure: 2 days
+- PDF templates: 2.5 days (using template directory approach)
+- Email localization: 1 day
+- Frontend integration: 0.5 day
 
 ---
 

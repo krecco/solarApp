@@ -25,13 +25,13 @@ resources/views/pdfs/
 ├── layouts/
 │   └── contract-base.blade.php          # Shared layout & styles
 │
-├── de/                                    # German templates
+├── en/                                    # English templates
 │   ├── investment-contract.blade.php
 │   ├── repayment-schedule.blade.php
 │   ├── offer-calculation.blade.php
 │   └── plant-contract.blade.php
 │
-├── en/                                    # English templates
+├── de/                                    # German templates
 │   ├── investment-contract.blade.php
 │   ├── repayment-schedule.blade.php
 │   ├── offer-calculation.blade.php
@@ -43,7 +43,13 @@ resources/views/pdfs/
 │   ├── offer-calculation.blade.php
 │   └── plant-contract.blade.php
 │
-└── fr/                                    # French templates
+├── fr/                                    # French templates
+│   ├── investment-contract.blade.php
+│   ├── repayment-schedule.blade.php
+│   ├── offer-calculation.blade.php
+│   └── plant-contract.blade.php
+│
+└── si/                                    # Slovenian templates
     ├── investment-contract.blade.php
     ├── repayment-schedule.blade.php
     ├── offer-calculation.blade.php
@@ -693,7 +699,7 @@ class ContractGeneratorService
         // 2. Investment document_language field
         // 3. User's document language preference
         // 4. User's general language preference
-        // 5. System default (German)
+        // 5. System default (English)
 
         if (isset($options['language'])) {
             return $this->validateLanguage($options['language']);
@@ -708,7 +714,7 @@ class ContractGeneratorService
             return $this->validateLanguage($userLang);
         }
 
-        return 'de'; // Default to German
+        return 'en'; // Default to English
     }
 
     /**
@@ -716,8 +722,8 @@ class ContractGeneratorService
      */
     protected function validateLanguage(string $code): string
     {
-        $supported = ['de', 'en', 'es', 'fr'];
-        return in_array($code, $supported) ? $code : 'de';
+        $supported = ['en', 'de', 'es', 'fr', 'si'];
+        return in_array($code, $supported) ? $code : 'en';
     }
 
     /**
@@ -828,12 +834,13 @@ foreach (['de', 'en', 'es', 'fr'] as $lang) {
 
 ## Template Creation Checklist
 
-For each new PDF document type, create 4 language versions:
+For each new PDF document type, create 5 language versions:
 
-- [ ] `resources/views/pdfs/de/{template-name}.blade.php`
 - [ ] `resources/views/pdfs/en/{template-name}.blade.php`
+- [ ] `resources/views/pdfs/de/{template-name}.blade.php`
 - [ ] `resources/views/pdfs/es/{template-name}.blade.php`
 - [ ] `resources/views/pdfs/fr/{template-name}.blade.php`
+- [ ] `resources/views/pdfs/si/{template-name}.blade.php`
 
 ### Required Templates:
 
@@ -883,6 +890,10 @@ Different languages may require different formatting:
 {{-- French (fr) --}}
 {{ number_format($amount, 2, ',', ' ') }} €      // 1 234,56 €
 {{ $date->format('d/m/Y') }}                     // 12/11/2025
+
+{{-- Slovenian (si) --}}
+{{ number_format($amount, 2, ',', '.') }} €      // 1.234,56 €
+{{ $date->format('d. m. Y') }}                   // 12. 11. 2025
 ```
 
 ---
@@ -890,10 +901,10 @@ Different languages may require different formatting:
 ## Maintenance Tips
 
 ### When Adding New Content:
-1. Update the German template first (primary language)
-2. Copy to other language folders
+1. Update the English template first (primary/default language)
+2. Copy to other language folders (de, es, fr, si)
 3. Translate text content only (keep HTML structure identical)
-4. Test PDF generation in all 4 languages
+4. Test PDF generation in all 5 languages
 
 ### When Changing Layout:
 1. Update `contract-base.blade.php` for shared changes
@@ -923,12 +934,13 @@ Different languages may require different formatting:
 | Task | Time |
 |------|------|
 | Create base layout template | 2 hours |
-| Create German templates (4 docs) | 4 hours |
-| Create English templates (4 docs) | 3 hours |
+| Create English templates (4 docs) | 4 hours |
+| Create German templates (4 docs) | 3 hours |
 | Create Spanish templates (4 docs) | 3 hours |
 | Create French templates (4 docs) | 3 hours |
+| Create Slovenian templates (4 docs) | 3 hours |
 | Update ContractGeneratorService | 2 hours |
-| Testing all languages | 3 hours |
-| **Total** | **20 hours (2.5 days)** |
+| Testing all languages | 4 hours |
+| **Total** | **24 hours (3 days)** |
 
 This approach is **simpler and faster** than the translation-based approach!

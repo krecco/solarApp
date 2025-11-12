@@ -15,10 +15,11 @@ The Solar App requires full multilingual support across:
 - **Email Notifications** - Multilingual email templates
 
 **Supported Languages:**
-1. 🇩🇪 **German (de)** - Primary language
-2. 🇬🇧 **English (en)** - Default/fallback
+1. 🇬🇧 **English (en)** - Default/fallback
+2. 🇩🇪 **German (de)**
 3. 🇪🇸 **Spanish (es)**
 4. 🇫🇷 **French (fr)**
+5. 🇸🇮 **Slovenian (si)**
 
 ---
 
@@ -170,10 +171,11 @@ Schema::create('languages', function (Blueprint $table) {
 
 // Seed data
 DB::table('languages')->insert([
-    ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch', 'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
-    ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
+    ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
+    ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch', 'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
     ['code' => 'es', 'name' => 'Spanish', 'native_name' => 'Español', 'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
     ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français', 'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
+    ['code' => 'si', 'name' => 'Slovenian', 'native_name' => 'Slovenščina', 'flag_emoji' => '🇸🇮', 'is_active' => true, 'is_default' => false, 'sort_order' => 5],
 ]);
 ```
 
@@ -282,14 +284,16 @@ class Language extends Model
 public function run()
 {
     Language::insert([
-        ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch',
-         'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
         ['code' => 'en', 'name' => 'English', 'native_name' => 'English',
-         'flag_emoji' => '🇬🇧', 'is_active' => true, 'sort_order' => 2],
+         'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
+        ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch',
+         'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
         ['code' => 'es', 'name' => 'Spanish', 'native_name' => 'Español',
-         'flag_emoji' => '🇪🇸', 'is_active' => true, 'sort_order' => 3],
+         'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
         ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français',
-         'flag_emoji' => '🇫🇷', 'is_active' => true, 'sort_order' => 4],
+         'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
+        ['code' => 'si', 'name' => 'Slovenian', 'native_name' => 'Slovenščina',
+         'flag_emoji' => '🇸🇮', 'is_active' => true, 'is_default' => false, 'sort_order' => 5],
     ]);
 }
 ```
@@ -1122,8 +1126,8 @@ const generateContract = async () => {
 ```php
 // config/languages.php
 return [
-    'supported' => ['en', 'de', 'es', 'fr'],
-    'default' => 'de',
+    'supported' => ['en', 'de', 'es', 'fr', 'si'],
+    'default' => 'en',
     'fallback' => 'en',
 
     'names' => [
@@ -1131,6 +1135,7 @@ return [
         'de' => 'Deutsch',
         'es' => 'Español',
         'fr' => 'Français',
+        'si' => 'Slovenščina',
     ],
 
     'flags' => [
@@ -1138,6 +1143,7 @@ return [
         'de' => '🇩🇪',
         'es' => '🇪🇸',
         'fr' => '🇫🇷',
+        'si' => '🇸🇮',
     ],
 ];
 ```
