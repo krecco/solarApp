@@ -1,0 +1,422 @@
+<template>
+  <div class="investment-detail">
+    <PageHeader :title="`Investment #${investment?.id?.substring(0, 8) || 'Details'}`">
+      <template #actions>
+        <Button
+          label="Back to Investments"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          @click="router.push({ name: 'MyInvestments' })"
+        />
+      </template>
+    </PageHeader>
+
+    <div v-if="loading" class="flex justify-content-center py-8">
+      <ProgressSpinner />
+    </div>
+
+    <div v-else-if="investment" class="grid">
+      <!-- Main Content -->
+      <div class="col-12 lg:col-8">
+        <!-- Investment Overview -->
+        <Card class="mb-3">
+          <template #title>
+            <div class="flex justify-content-between align-items-center">
+              <span>Investment Overview</span>
+              <div class="flex gap-2">
+                <Tag :value="investment.status" :severity="getStatusSeverity(investment.status)" />
+                <Tag
+                  v-if="investment.verified"
+                  value="Verified"
+                  severity="success"
+                  icon="pi pi-check-circle"
+                />
+              </div>
+            </div>
+          </template>
+          <template #content>
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Investment Amount</label>
+                  <div class="text-2xl font-bold text-primary">{{ formatCurrency(investment.amount) }}</div>
+                </div>
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Interest Rate</label>
+                  <div class="font-semibold text-lg">{{ investment.interest_rate }}% per year</div>
+                </div>
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Duration</label>
+                  <div class="font-semibold">
+                    {{ investment.duration_months }} months
+                    ({{ Math.floor(investment.duration_months / 12) }} years)
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Total Interest</label>
+                  <div class="text-xl font-bold text-green-600">{{ formatCurrency(investment.total_interest || 0) }}</div>
+                </div>
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Total Return</label>
+                  <div class="text-2xl font-bold text-green-600">{{ formatCurrency(investment.total_repayment || 0) }}</div>
+                </div>
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Repayment Interval</label>
+                  <div class="font-semibold">{{ capitalizeFirst(investment.repayment_interval) }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+
+        <!-- Investment Timeline -->
+        <Card class="mb-3">
+          <template #title>Timeline</template>
+          <template #content>
+            <div class="grid">
+              <div class="col-12 md:col-4">
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Start Date</label>
+                  <div class="font-semibold">
+                    {{ investment.start_date ? formatDate(investment.start_date) : 'Not started' }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-4">
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">End Date</label>
+                  <div class="font-semibold">
+                    {{ investment.end_date ? formatDate(investment.end_date) : 'N/A' }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 md:col-4">
+                <div class="field mb-3">
+                  <label class="text-sm text-gray-500">Created</label>
+                  <div class="font-semibold">{{ formatDate(investment.created_at) }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+
+        <!-- Repayment Progress -->
+        <Card class="mb-3">
+          <template #title>Repayment Progress</template>
+          <template #content>
+            <div class="mb-4">
+              <div class="flex justify-content-between mb-2">
+                <span class="text-sm text-gray-500">Amount Paid</span>
+                <span class="font-semibold">{{ formatCurrency(investment.paid_amount) }} / {{ formatCurrency(investment.total_repayment || 0) }}</span>
+              </div>
+              <ProgressBar :value="completionPercentage" :showValue="false" />
+              <div class="text-sm text-gray-500 mt-1">{{ completionPercentage.toFixed(1) }}% completed</div>
+            </div>
+
+            <div class="grid">
+              <div class="col-12 md:col-4">
+                <div class="text-center p-3 border-round bg-primary-50">
+                  <div class="text-sm text-gray-600 mb-1">Paid</div>
+                  <div class="text-xl font-bold text-primary">{{ formatCurrency(investment.paid_amount) }}</div>
+                </div>
+              </div>
+              <div class="col-12 md:col-4">
+                <div class="text-center p-3 border-round bg-orange-50">
+                  <div class="text-sm text-gray-600 mb-1">Remaining</div>
+                  <div class="text-xl font-bold text-orange-600">{{ formatCurrency(remainingBalance) }}</div>
+                </div>
+              </div>
+              <div class="col-12 md:col-4">
+                <div class="text-center p-3 border-round bg-green-50">
+                  <div class="text-sm text-gray-600 mb-1">Total Return</div>
+                  <div class="text-xl font-bold text-green-600">{{ formatCurrency(investment.total_repayment || 0) }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+
+        <!-- Related Solar Plant -->
+        <Card class="mb-3" v-if="investment.solar_plant">
+          <template #title>Related Solar Plant</template>
+          <template #content>
+            <div class="flex align-items-center justify-content-between">
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-sun text-5xl text-primary-300"></i>
+                <div>
+                  <div class="font-semibold text-lg">{{ investment.solar_plant.title }}</div>
+                  <div class="text-sm text-gray-500">{{ investment.solar_plant.location || 'Location not specified' }}</div>
+                  <div class="text-sm text-gray-600 mt-1">
+                    <i class="pi pi-bolt mr-1"></i>
+                    {{ investment.solar_plant.nominal_power }} kWp
+                  </div>
+                </div>
+              </div>
+              <Button
+                label="View Plant"
+                icon="pi pi-eye"
+                @click="router.push({ name: 'PlantDetail', params: { id: investment.solar_plant_id } })"
+              />
+            </div>
+          </template>
+        </Card>
+
+        <!-- Notes -->
+        <Card v-if="investment.notes" class="mb-3">
+          <template #title>Notes</template>
+          <template #content>
+            <div class="white-space-pre-wrap">{{ investment.notes }}</div>
+          </template>
+        </Card>
+
+        <!-- Repayment Schedule -->
+        <Card v-if="investment.repayments && investment.repayments.length > 0">
+          <template #title>Repayment Schedule</template>
+          <template #content>
+            <DataTable :value="investment.repayments" stripedRows>
+              <Column field="due_date" header="Due Date" sortable>
+                <template #body="{ data }">
+                  {{ formatDate(data.due_date) }}
+                </template>
+              </Column>
+              <Column field="amount" header="Amount">
+                <template #body="{ data }">
+                  {{ formatCurrency(data.amount) }}
+                </template>
+              </Column>
+              <Column field="paid_amount" header="Paid">
+                <template #body="{ data }">
+                  {{ formatCurrency(data.paid_amount || 0) }}
+                </template>
+              </Column>
+              <Column field="status" header="Status">
+                <template #body="{ data }">
+                  <Tag :value="data.status" :severity="getRepaymentStatusSeverity(data.status)" />
+                </template>
+              </Column>
+              <Column field="paid_at" header="Paid Date">
+                <template #body="{ data }">
+                  <span v-if="data.paid_at">{{ formatDate(data.paid_at) }}</span>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+              </Column>
+            </DataTable>
+          </template>
+        </Card>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-12 lg:col-4">
+        <!-- Status Card -->
+        <Card class="mb-3">
+          <template #title>Status</template>
+          <template #content>
+            <div class="flex flex-column gap-3">
+              <div class="flex align-items-center justify-content-between pb-3 border-bottom-1 border-gray-200">
+                <div>
+                  <div class="text-sm text-gray-500">Verification</div>
+                  <div class="font-semibold">{{ investment.verified ? 'Verified' : 'Pending' }}</div>
+                </div>
+                <i
+                  :class="investment.verified ? 'pi pi-check-circle text-green-500' : 'pi pi-clock text-orange-500'"
+                  style="font-size: 2rem"
+                ></i>
+              </div>
+
+              <div class="flex align-items-center justify-content-between pb-3 border-bottom-1 border-gray-200">
+                <div>
+                  <div class="text-sm text-gray-500">Contract</div>
+                  <div class="font-semibold">{{ investment.contract_status || 'Pending' }}</div>
+                </div>
+                <i class="pi pi-file text-2xl text-primary-300"></i>
+              </div>
+
+              <div class="flex align-items-center justify-content-between">
+                <div>
+                  <div class="text-sm text-gray-500">Payment Status</div>
+                  <div class="font-semibold">{{ capitalizeFirst(investment.status) }}</div>
+                </div>
+                <i class="pi pi-wallet text-2xl text-primary-300"></i>
+              </div>
+            </div>
+
+            <Divider />
+
+            <div v-if="investment.verified_at">
+              <div class="text-sm text-gray-500 mb-1">Verified On</div>
+              <div class="font-semibold">{{ formatDate(investment.verified_at) }}</div>
+              <div v-if="investment.verified_by_user" class="text-sm text-gray-500 mt-1">
+                by {{ investment.verified_by_user.name }}
+              </div>
+            </div>
+
+            <Message v-else severity="warn" :closable="false" class="mt-3">
+              <div class="text-sm">
+                Your investment is pending verification. You'll be notified once approved.
+              </div>
+            </Message>
+          </template>
+        </Card>
+
+        <!-- Quick Actions -->
+        <Card class="mb-3">
+          <template #title>Actions</template>
+          <template #content>
+            <div class="flex flex-column gap-2">
+              <Button
+                label="View Solar Plant"
+                icon="pi pi-sun"
+                severity="info"
+                class="w-full"
+                @click="router.push({ name: 'PlantDetail', params: { id: investment.solar_plant_id } })"
+              />
+              <Button
+                label="Download Contract"
+                icon="pi pi-download"
+                severity="secondary"
+                class="w-full"
+                :disabled="!investment.verified"
+              />
+              <Button
+                label="Contact Support"
+                icon="pi pi-envelope"
+                severity="secondary"
+                class="w-full"
+              />
+            </div>
+          </template>
+        </Card>
+
+        <!-- Investment Summary -->
+        <Card>
+          <template #title>Summary</template>
+          <template #content>
+            <div class="flex flex-column gap-3">
+              <div class="flex justify-content-between">
+                <span class="text-gray-600">Principal</span>
+                <span class="font-semibold">{{ formatCurrency(investment.amount) }}</span>
+              </div>
+              <div class="flex justify-content-between">
+                <span class="text-gray-600">Interest</span>
+                <span class="font-semibold text-green-600">{{ formatCurrency(investment.total_interest || 0) }}</span>
+              </div>
+              <Divider />
+              <div class="flex justify-content-between">
+                <span class="text-gray-600 font-semibold">Total Return</span>
+                <span class="font-bold text-xl text-primary">{{ formatCurrency(investment.total_repayment || 0) }}</span>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
+    </div>
+
+    <div v-else class="text-center py-8">
+      <i class="pi pi-exclamation-triangle text-5xl text-orange-400 mb-3"></i>
+      <div class="text-xl text-gray-500">Investment not found</div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useInvestmentStore } from '@/stores/investment'
+import type { Investment } from '@/api/investment.service'
+import PageHeader from '@/components/layout/PageHeader.vue'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Tag from 'primevue/tag'
+import ProgressSpinner from 'primevue/progressspinner'
+import ProgressBar from 'primevue/progressbar'
+import Divider from 'primevue/divider'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Message from 'primevue/message'
+
+const router = useRouter()
+const route = useRoute()
+const investmentStore = useInvestmentStore()
+
+const investment = ref<Investment | null>(null)
+const loading = ref(false)
+
+const completionPercentage = computed(() => {
+  if (!investment.value || !investment.value.total_repayment) return 0
+  return Math.min((investment.value.paid_amount / investment.value.total_repayment) * 100, 100)
+})
+
+const remainingBalance = computed(() => {
+  if (!investment.value) return 0
+  return (investment.value.total_repayment || 0) - investment.value.paid_amount
+})
+
+onMounted(async () => {
+  await fetchInvestment()
+})
+
+async function fetchInvestment() {
+  loading.value = true
+  try {
+    const investmentId = route.params.id as string
+    investment.value = await investmentStore.getInvestment(investmentId)
+  } catch (error) {
+    console.error('Error fetching investment:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+function getStatusSeverity(status: string): string {
+  const severityMap: Record<string, string> = {
+    pending: 'warning',
+    verified: 'info',
+    active: 'success',
+    completed: 'secondary',
+    cancelled: 'danger',
+  }
+  return severityMap[status] || 'info'
+}
+
+function getRepaymentStatusSeverity(status: string): string {
+  const severityMap: Record<string, string> = {
+    pending: 'warning',
+    paid: 'success',
+    overdue: 'danger',
+    cancelled: 'secondary',
+  }
+  return severityMap[status] || 'info'
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(value)
+}
+
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString('de-DE', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+function capitalizeFirst(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+</script>
+
+<style scoped>
+.investment-detail {
+  max-width: 1400px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+</style>
