@@ -693,7 +693,7 @@ class ContractGeneratorService
         // 2. Investment document_language field
         // 3. User's document language preference
         // 4. User's general language preference
-        // 5. System default (German)
+        // 5. System default (English)
 
         if (isset($options['language'])) {
             return $this->validateLanguage($options['language']);
@@ -708,7 +708,7 @@ class ContractGeneratorService
             return $this->validateLanguage($userLang);
         }
 
-        return 'de'; // Default to German
+        return 'en'; // Default to English
     }
 
     /**
@@ -716,8 +716,8 @@ class ContractGeneratorService
      */
     protected function validateLanguage(string $code): string
     {
-        $supported = ['de', 'en', 'es', 'fr'];
-        return in_array($code, $supported) ? $code : 'de';
+        $supported = ['en', 'de', 'es', 'fr'];
+        return in_array($code, $supported) ? $code : 'en';
     }
 
     /**
@@ -890,8 +890,8 @@ Different languages may require different formatting:
 ## Maintenance Tips
 
 ### When Adding New Content:
-1. Update the German template first (primary language)
-2. Copy to other language folders
+1. Update the English template first (primary/default language)
+2. Copy to other language folders (de, es, fr)
 3. Translate text content only (keep HTML structure identical)
 4. Test PDF generation in all 4 languages
 

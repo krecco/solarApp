@@ -170,8 +170,8 @@ Schema::create('languages', function (Blueprint $table) {
 
 // Seed data
 DB::table('languages')->insert([
-    ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch', 'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
-    ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
+    ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
+    ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch', 'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
     ['code' => 'es', 'name' => 'Spanish', 'native_name' => 'Español', 'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
     ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français', 'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
 ]);
@@ -282,14 +282,14 @@ class Language extends Model
 public function run()
 {
     Language::insert([
-        ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch',
-         'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
         ['code' => 'en', 'name' => 'English', 'native_name' => 'English',
-         'flag_emoji' => '🇬🇧', 'is_active' => true, 'sort_order' => 2],
+         'flag_emoji' => '🇬🇧', 'is_active' => true, 'is_default' => true, 'sort_order' => 1],
+        ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch',
+         'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
         ['code' => 'es', 'name' => 'Spanish', 'native_name' => 'Español',
-         'flag_emoji' => '🇪🇸', 'is_active' => true, 'sort_order' => 3],
+         'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
         ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français',
-         'flag_emoji' => '🇫🇷', 'is_active' => true, 'sort_order' => 4],
+         'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
     ]);
 }
 ```
@@ -1123,7 +1123,7 @@ const generateContract = async () => {
 // config/languages.php
 return [
     'supported' => ['en', 'de', 'es', 'fr'],
-    'default' => 'de',
+    'default' => 'en',
     'fallback' => 'en',
 
     'names' => [
