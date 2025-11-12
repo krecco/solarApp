@@ -1,0 +1,477 @@
+// PrimeVue Component Style Overrides and Fixes
+// This file ensures components look good even if theme is not fully loaded
+
+// Tabs Component (PrimeVue 4)
+.p-tabs {
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: white;
+
+  .p-tablist {
+    display: flex;
+    background: var(--surface-50, #f9fafb);
+    border: 0;
+    border-bottom: 2px solid var(--surface-border, #e5e7eb);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    
+    .p-tab {
+      margin: 0;
+      flex: none;
+      
+      button {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--text-color-secondary, #6b7280);
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        width: 100%;
+        
+        &:hover {
+          background: var(--surface-100, #f3f4f6);
+          color: var(--text-color, #111827);
+        }
+        
+        &:focus {
+          outline: none;
+          box-shadow: inset 0 0 0 0.2rem rgba(16, 185, 129, 0.2);
+        }
+      }
+      
+      &.p-tab-active,
+      &[data-p-active="true"] {
+        button {
+          background: white;
+          color: var(--primary-color, #10b981);
+          border-bottom-color: var(--primary-color, #10b981);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+  
+  .p-tabpanels {
+    background: white;
+    padding: 1.5rem;
+    
+    .p-tabpanel {
+      animation: tabFadeIn 0.3s ease;
+    }
+  }
+}
+
+// Accordion Component (PrimeVue 4)
+.p-accordion {
+  .p-accordion-panel {
+    margin-bottom: 0.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .p-accordion-header {
+    button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: var(--surface-50, #f9fafb);
+      border: 1px solid var(--surface-border, #e5e7eb);
+      border-radius: 0.375rem;
+      color: var(--text-color, #111827);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-align: left;
+      
+      &:hover {
+        background: var(--surface-100, #f3f4f6);
+      }
+      
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.2);
+      }
+      
+      .p-accordion-toggle-icon {
+        margin-left: auto;
+      }
+    }
+    
+    &[data-p-active="true"] {
+      button {
+        background: var(--primary-color, #10b981);
+        border-color: var(--primary-color, #10b981);
+        color: white;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+  }
+  
+  .p-accordion-content {
+    padding: 1.25rem;
+    background: white;
+    border: 1px solid var(--surface-border, #e5e7eb);
+    border-top: 0;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    margin-top: -1px;
+  }
+}
+
+// Badge Component
+.p-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 10px;
+  background: var(--primary-color, #10b981);
+  min-width: 1.5rem;
+  height: 1.5rem;
+  
+  &.p-badge-sm {
+    font-size: 0.625rem;
+    min-width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  &.p-badge-lg {
+    font-size: 0.875rem;
+    min-width: 1.75rem;
+    height: 1.75rem;
+  }
+  
+  &.p-badge-xl {
+    font-size: 1rem;
+    min-width: 2rem;
+    height: 2rem;
+  }
+  
+  &.p-badge-circle {
+    padding: 0;
+    border-radius: 50%;
+  }
+  
+  &.p-badge-success {
+    background: var(--green-500, #10b981);
+  }
+  
+  &.p-badge-info {
+    background: var(--blue-500, #3b82f6);
+  }
+  
+  &.p-badge-warning {
+    background: var(--yellow-500, #f59e0b);
+  }
+  
+  &.p-badge-danger {
+    background: var(--red-500, #ef4444);
+  }
+  
+  &.p-badge-secondary {
+    background: var(--surface-500, #71717a);
+  }
+  
+  &.p-badge-contrast {
+    background: var(--surface-900, #18181b);
+  }
+  
+  &:empty {
+    display: none;
+  }
+}
+
+// Tag Component  
+.p-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: white;
+  background: var(--primary-color, #10b981);
+  border-radius: var(--border-radius-sm, 6px);
+  
+  .p-tag-icon {
+    margin-right: 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  &.p-tag-success {
+    background: var(--green-500, #10b981);
+  }
+  
+  &.p-tag-info {
+    background: var(--blue-500, #3b82f6);
+  }
+  
+  &.p-tag-warning {
+    background: var(--yellow-500, #f59e0b);
+  }
+  
+  &.p-tag-danger {
+    background: var(--red-500, #ef4444);
+  }
+  
+  &.p-tag-secondary {
+    background: var(--surface-500, #71717a);
+  }
+  
+  &.p-tag-contrast {
+    background: var(--surface-900, #18181b);
+  }
+  
+  &.p-tag-rounded {
+    border-radius: 1rem;
+  }
+}
+
+// Button Group Component
+.p-buttonset {
+  .p-button {
+    margin: 0;
+    border-radius: 0;
+    
+    &:not(:first-child) {
+      margin-left: -1px;
+    }
+    
+    &:first-child {
+      border-top-left-radius: var(--border-radius-sm, 6px);
+      border-bottom-left-radius: var(--border-radius-sm, 6px);
+    }
+    
+    &:last-child {
+      border-top-right-radius: var(--border-radius-sm, 6px);
+      border-bottom-right-radius: var(--border-radius-sm, 6px);
+    }
+    
+    &:focus {
+      z-index: 1;
+      position: relative;
+    }
+  }
+}
+
+// Fieldset Component
+.p-fieldset {
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 0.5rem;
+  background: white;
+  
+  .p-fieldset-legend {
+    padding: 0.75rem 1rem;
+    background: var(--surface-50, #f9fafb);
+    border: 1px solid var(--surface-border, #e5e7eb);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    color: var(--text-color, #111827);
+  }
+  
+  .p-fieldset-content {
+    padding: 1.25rem;
+  }
+}
+
+// Animation
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Dark mode adjustments
+:root[data-theme="dark"] {
+  .p-tabs {
+    background: var(--surface-900, #1f2937);
+    border-color: var(--surface-700, #374151);
+    
+    .p-tablist {
+      background: var(--surface-800, #1e293b);
+      border-bottom-color: var(--surface-700, #374151);
+      
+      .p-tab {
+        button {
+          color: var(--text-color-secondary, #9ca3af);
+          
+          &:hover {
+            background: var(--surface-700, #374151);
+            color: var(--text-color, #f3f4f6);
+          }
+        }
+        
+        &.p-tab-active button,
+        &[data-p-active="true"] button {
+          background: var(--surface-900, #1f2937);
+          color: var(--primary-color, #10b981);
+        }
+      }
+    }
+    
+    .p-tabpanels {
+      background: var(--surface-900, #1f2937);
+    }
+  }
+  
+  .p-accordion {
+    .p-accordion-header {
+      button {
+        background: var(--surface-800, #1e293b);
+        border-color: var(--surface-700, #374151);
+        color: var(--text-color, #f3f4f6);
+        
+        &:hover {
+          background: var(--surface-700, #374151);
+        }
+      }
+      
+      &[data-p-active="true"] {
+        button {
+          background: var(--primary-color, #10b981);
+          border-color: var(--primary-color, #10b981);
+          color: white;
+        }
+      }
+    }
+    
+    .p-accordion-content {
+      background: var(--surface-900, #1f2937);
+      border-color: var(--surface-700, #374151);
+    }
+  }
+  
+  // Dark mode toggle switch
+  .p-toggleswitch {
+    .p-toggleswitch-slider {
+      background: var(--surface-600, #52525b);
+      border-color: var(--surface-600, #52525b);
+      
+      .p-toggleswitch-handle {
+        background: var(--surface-100, #f4f4f5);
+      }
+    }
+    
+    &[data-p-checked="true"] .p-toggleswitch-slider {
+      background: var(--primary-400, #34d399);
+      border-color: var(--primary-400, #34d399);
+    }
+    
+    &:not([data-p-disabled="true"]):hover {
+      .p-toggleswitch-slider {
+        background: var(--surface-500, #71717a);
+        border-color: var(--surface-500, #71717a);
+      }
+      
+      &[data-p-checked="true"] .p-toggleswitch-slider {
+        background: var(--primary-300, #6ee7b7);
+        border-color: var(--primary-300, #6ee7b7);
+      }
+    }
+  }
+  
+  .p-inputswitch {
+    .p-inputswitch-slider {
+      background: var(--surface-600, #52525b);
+      
+      &:before {
+        background: var(--surface-100, #f4f4f5);
+      }
+    }
+    
+    &.p-inputswitch-checked .p-inputswitch-slider {
+      background: var(--primary-400, #34d399);
+    }
+    
+    &:hover {
+      .p-inputswitch-slider {
+        background: var(--surface-500, #71717a);
+      }
+
+      &.p-inputswitch-checked .p-inputswitch-slider {
+        background: var(--primary-300, #6ee7b7);
+      }
+    }
+  }
+}
+
+// Avatar Component - Force to use primary color
+.p-avatar {
+  &.p-avatar-circle {
+    // For text/label avatars, use primary color background
+    &:not(.p-avatar-image) {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+    }
+  }
+}
+
+// Button Component - Text variant should use primary color
+.p-button {
+  &.p-button-text {
+    color: var(--primary-color) !important;
+
+    &:not(:disabled):hover {
+      background: rgba(var(--primary-color-rgb), 0.04) !important;
+      color: var(--primary-color) !important;
+    }
+
+    &:not(:disabled):active {
+      background: rgba(var(--primary-color-rgb), 0.16) !important;
+      color: var(--primary-color) !important;
+    }
+  }
+
+  &.p-button-icon-only.p-button-text {
+    color: var(--primary-color) !important;
+
+    .p-button-icon {
+      color: var(--primary-color) !important;
+    }
+  }
+}
+
+// Header buttons specifically
+.header-button {
+  &.p-button {
+    color: var(--text-color) !important;
+
+    .p-button-icon,
+    i {
+      color: var(--text-color) !important;
+    }
+
+    &:hover {
+      background: rgba(var(--primary-color-rgb), 0.1) !important;
+
+      .p-button-icon,
+      i {
+        color: var(--primary-color) !important;
+      }
+    }
+  }
+}

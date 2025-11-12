@@ -1,0 +1,189 @@
+// Mixins
+// Reusable SCSS mixins for common patterns
+
+@use 'variables' as *;
+
+// Responsive breakpoints
+@mixin breakpoint($point) {
+  @if $point == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  }
+  @else if $point == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  }
+  @else if $point == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  }
+  @else if $point == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  }
+  @else if $point == 2xl {
+    @media (min-width: $breakpoint-2xl) { @content; }
+  }
+}
+
+// Glassmorphism effect
+@mixin glassmorphism($opacity: $glass-opacity, $blur: $glass-blur) {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, $opacity) 0%,
+    rgba(255, 255, 255, $opacity * 0.5) 100%
+  );
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, $glass-border-opacity);
+  box-shadow: $glass-shadow;
+}
+
+// Dark mode glassmorphism
+@mixin glassmorphism-dark($opacity: 0.2, $blur: $glass-blur) {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, $opacity) 0%,
+    rgba(0, 0, 0, $opacity * 0.5) 100%
+  );
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+// Neumorphism effect
+@mixin neumorphism($bg: $neumorphic-bg, $distance: $neumorphic-distance) {
+  background: $bg;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 
+    $distance $distance $neumorphic-blur $neumorphic-dark,
+    (-$distance) (-$distance) $neumorphic-blur $neumorphic-light;
+}
+
+// Neumorphism pressed state
+@mixin neumorphism-pressed($bg: $neumorphic-bg, $distance: $neumorphic-distance) {
+  background: $bg;
+  box-shadow: 
+    inset $distance $distance $neumorphic-blur $neumorphic-dark,
+    inset (-$distance) (-$distance) $neumorphic-blur $neumorphic-light;
+}
+
+// Flex center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Absolute center
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Truncate text
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Custom scrollbar
+@mixin custom-scrollbar($width: 8px, $track-bg: var(--surface-ground), $thumb-bg: var(--surface-border)) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $track-bg;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-bg;
+    border-radius: calc($width / 2);
+    
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
+}
+
+// Transition
+@mixin transition($properties: all, $duration: $animation-duration-base, $timing: ease-in-out) {
+  transition: $properties $duration $timing;
+}
+
+// Card
+@mixin card($padding: var(--spacing-lg)) {
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  padding: $padding;
+  box-shadow: var(--shadow-md);
+}
+
+// Button base
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  @include transition();
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Hover lift effect
+@mixin hover-lift($distance: -2px) {
+  transition: transform $animation-duration-base $ease-out-back;
+  
+  &:hover {
+    transform: translateY($distance);
+  }
+}
+
+// Focus ring
+@mixin focus-ring($color: var(--primary-color), $offset: 2px) {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 $offset rgba($color, 0.25);
+  }
+}
+
+// Grid
+@mixin grid($columns: 1, $gap: var(--spacing-md)) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// Aspect ratio
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  
+  &::before {
+    content: '';
+    display: block;
+    padding-top: percentage(calc($height / $width));
+  }
+  
+  > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

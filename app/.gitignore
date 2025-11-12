@@ -1,0 +1,165 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+dist-ssr
+build
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.staging
+
+# Test coverage
+coverage
+*.lcov
+.nyc_output
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+
+# Cache directories
+.cache
+.parcel-cache
+.turbo
+.nuxt
+.output
+.nitro
+
+# Temporary files
+*.tmp
+*.temp
+.temp
+.tmp
+
+# Testing
+cypress/videos
+cypress/screenshots
+playwright-report
+test-results
+e2e/results
+
+# Build analysis
+stats.html
+report.html
+bundle-stats.html
+
+# Package manager files
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Storybook
+storybook-static
+
+# Documentation
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+tsconfig.node.tsbuildinfo
+
+# Vite
+vite.config.*.timestamp-*
+
+# Lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Mac files
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows files
+$RECYCLE.BIN/
+
+# Linux files
+*~
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Jetbrains
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Local environment
+.local.env

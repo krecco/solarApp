@@ -1,0 +1,83 @@
+// Functions
+// SCSS functions for calculations and utilities
+
+// Convert px to rem
+@function rem($pixels, $base: 16) {
+  @return #{$pixels / $base}rem;
+}
+
+// Convert px to em
+@function em($pixels, $base: 16) {
+  @return #{$pixels / $base}em;
+}
+
+// Strip units from a value
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+// Calculate percentage
+@function percentage($value, $total) {
+  @return #{($value / $total) * 100}%;
+}
+
+// Lighten a color
+@function tint($color, $percentage) {
+  @return mix(white, $color, $percentage);
+}
+
+// Darken a color
+@function shade($color, $percentage) {
+  @return mix(black, $color, $percentage);
+}
+
+// Get a value from a map
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+  @return $map;
+}
+
+// Z-index management
+$z-indexes: (
+  'dropdown': 1000,
+  'sticky': 1020,
+  'fixed': 1030,
+  'modal-backdrop': 1040,
+  'modal': 1050,
+  'popover': 1060,
+  'tooltip': 1070,
+  'notification': 1080,
+);
+
+@function z($layer) {
+  @if not map-has-key($z-indexes, $layer) {
+    @warn "No z-index found for layer `#{$layer}`.";
+  }
+  @return map-get($z-indexes, $layer);
+}
+
+// Color contrast
+@function color-contrast($color) {
+  $r: red($color);
+  $g: green($color);
+  $b: blue($color);
+  
+  $yiq: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+  
+  @if ($yiq >= 150) {
+    @return #000;
+  } @else {
+    @return #fff;
+  }
+}
+
+// Get CSS variable value
+@function var-get($property, $fallback: null) {
+  @if $fallback {
+    @return var(--#{$property}, #{$fallback});
+  } @else {
+    @return var(--#{$property});
+  }
+}

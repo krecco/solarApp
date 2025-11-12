@@ -1,0 +1,110 @@
+# Laravel specific
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+auth.json
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# Environment files
+.env
+.env.backup
+.env.production
+.env.local
+.env.testing.local
+
+# IDE files
+.phpactor.json
+.php_cs.cache
+.php-cs-fixer.cache
+*.sublime-project
+*.sublime-workspace
+
+# Test & coverage
+.phpunit.result.cache
+/coverage
+/.coverage
+*.lcov
+
+# Logs
+*.log
+storage/logs/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Composer
+composer.phar
+composer.lock.bak
+
+# Build artifacts
+/public/css
+/public/js
+/public/mix-manifest.json
+
+# Laravel Nova (if used)
+/nova
+
+# Laravel Telescope (if used)
+/telescope
+
+# Deployment
+.deployer
+deploy.php
+
+# Documentation
+docs/_build/
+
+# Cache
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+storage/framework/cache/*
+!storage/framework/cache/.gitkeep
+storage/framework/sessions/*
+!storage/framework/sessions/.gitkeep
+storage/framework/testing/*
+!storage/framework/testing/.gitkeep
+storage/framework/views/*
+!storage/framework/views/.gitkeep
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+database.sqlite
+
+# NPM/Yarn
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# PHPStorm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Backup files
+*.bak
+*.swp
+*~

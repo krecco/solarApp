@@ -1,0 +1,514 @@
+// Status Indicators & Badges Utilities
+// Reusable styles for status indicators, badges, and state displays
+
+// Base status badge
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &.small {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+  }
+  
+  &.large {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+// Status dots
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  
+  &.pulse {
+    animation: pulse 2s infinite;
+  }
+}
+
+// Status indicator (positioned)
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .dark & {
+    border-color: var(--surface-800);
+  }
+}
+
+// Status colors
+.status-active,
+.indicator-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  
+  &.subtle {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+}
+
+.status-inactive,
+.indicator-inactive {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
+  color: white;
+  
+  &.subtle {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+  }
+}
+
+.status-suspended,
+.indicator-suspended {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: white;
+  
+  &.subtle {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+}
+
+.status-pending,
+.indicator-pending {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  
+  &.subtle {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+}
+
+.status-online,
+.indicator-online {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  color: white;
+  
+  &.subtle {
+    background: rgba(52, 211, 153, 0.1);
+    color: #10b981;
+  }
+}
+
+.status-offline,
+.indicator-offline {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  color: white;
+  
+  &.subtle {
+    background: rgba(148, 163, 184, 0.1);
+    color: #64748b;
+  }
+}
+
+.status-away,
+.indicator-away {
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: white;
+  
+  &.subtle {
+    background: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+  }
+}
+
+.status-busy,
+.indicator-busy {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
+  
+  &.subtle {
+    background: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+  }
+}
+
+// Role badges
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  
+  i {
+    font-size: 0.875rem;
+  }
+  
+  &.small {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    
+    i {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// Role colors
+.role-admin {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.role-manager {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.role-user {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.role-guest {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+// Verification badge
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+// Priority indicators
+.priority-high {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.priority-medium {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.priority-low {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+// Progress indicators
+.progress-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    transform: rotate(-90deg);
+  }
+  
+  circle {
+    fill: none;
+    stroke-width: 3;
+    
+    &.background {
+      stroke: var(--surface-200);
+    }
+    
+    &.progress {
+      stroke: var(--primary-500);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.5s ease;
+    }
+  }
+  
+  .percentage {
+    position: absolute;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+}
+
+// Activity indicators
+.activity-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: blink 1.4s infinite both;
+    
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes blink {
+  0%, 60%, 100% {
+    opacity: 0.3;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  70% {
+    box-shadow: 0 0 0 4px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+// Connection status
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  
+  &.connected {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    
+    .status-dot {
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  &.disconnected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    
+    .status-dot {
+      background: #ef4444;
+    }
+  }
+  
+  &.connecting {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    
+    .status-dot {
+      background: #fbbf24;
+      animation: blink 1s infinite;
+    }
+  }
+}
+
+// Notification badges
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-radius: 9px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &.pulse {
+    animation: pulse-scale 2s infinite;
+  }
+}
+
+@keyframes pulse-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Label styles
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  background: var(--surface-100);
+  color: var(--text-color-secondary);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  
+  .dark & {
+    background: var(--surface-700);
+  }
+  
+  &.label-primary {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    
+    .dark & {
+      background: rgba(var(--primary-500), 0.2);
+      color: var(--primary-300);
+    }
+  }
+  
+  &.label-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+  }
+  
+  &.label-warning {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+  }
+  
+  &.label-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+}
+
+// Additional role colors
+.role-customer {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+// Subscription-specific statuses for status-badge
+.status-badge {
+  .status-icon {
+    font-size: 0.875rem;
+    line-height: 1;
+  }
+
+  .status-text {
+    line-height: 1;
+  }
+
+  // Subscription statuses
+  &.status-trialing {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  &.status-canceled,
+  &.status-past_due {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  &.status-none {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+  }
+
+  // Plan-specific statuses
+  &.status-hidden {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  &.status-deprecated {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  // Tenant-specific statuses
+  &.status-provisioning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  // API Key specific statuses
+  &.status-expired {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  &.status-revoked {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  // Provisioning Job statuses
+  &.status-completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  &.status-failed {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  &.status-processing,
+  &.status-running {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+
+  // Subscription Event statuses
+  &.status-successful {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  // Add focus-visible state for keyboard navigation
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+// Add focus-visible state to role badges
+.role-badge:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}

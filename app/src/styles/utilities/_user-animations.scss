@@ -1,0 +1,568 @@
+// ========================================
+// User Animation Utility Classes
+// ========================================
+// Specialized animations for user interface components
+// Provides entrance, exit, and interaction animations
+
+// ========================================
+// Entrance Animations
+// ========================================
+
+// Fade in animation for user components
+.user-appear {
+  animation: userFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+// Slide up animation for user cards
+.user-slide-in {
+  animation: userSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+// Slide from right for user panels
+.user-slide-right {
+  animation: userSlideRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+// Scale in animation for user modals
+.user-scale-in {
+  animation: userScaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+// Blur in effect for user profiles
+.user-blur-in {
+  animation: userBlurIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+// ========================================
+// Stagger Animations for Lists
+// ========================================
+
+// Apply staggered animation to user list items
+.user-list-stagger {
+  @for $i from 1 through 30 {
+    &:nth-child(#{$i}) {
+      --stagger-delay: #{$i * 40}ms;
+    }
+  }
+}
+
+// Table row stagger animation
+.user-table-stagger {
+  tbody tr {
+    @for $i from 1 through 50 {
+      &:nth-child(#{$i}) {
+        --stagger-delay: #{$i * 30}ms;
+        animation: userTableRowIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+        animation-delay: var(--stagger-delay);
+      }
+    }
+  }
+}
+
+// Grid stagger animation for user cards
+.user-grid-stagger {
+  > * {
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        --stagger-delay: #{$i * 50}ms;
+        animation: userGridItemIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+        animation-delay: var(--stagger-delay);
+      }
+    }
+  }
+}
+
+// ========================================
+// Interactive Animations
+// ========================================
+
+// Pulse animation for active users
+.user-pulse {
+  animation: userPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --pulse-color: var(--primary-500);
+}
+
+// Glow animation for highlighted users
+.user-glow {
+  animation: userGlow 2s ease-in-out infinite alternate;
+}
+
+// Shake animation for error states
+.user-shake {
+  animation: userShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+// Bounce animation for notifications
+.user-bounce {
+  animation: userBounce 1s ease-in-out;
+}
+
+// Spin animation for loading states
+.user-spin {
+  animation: userSpin 1s linear infinite;
+}
+
+// ========================================
+// Hover Animations
+// ========================================
+
+// Lift on hover
+.user-hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Scale on hover
+.user-hover-scale {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Rotate on hover
+.user-hover-rotate {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+// Glow on hover
+.user-hover-glow {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba(var(--primary-500-rgb), 0.4);
+  }
+}
+
+// ========================================
+// Status Indicator Animations
+// ========================================
+
+// Online status pulse
+.user-status-online {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    background: var(--green-500);
+  }
+}
+
+// Typing indicator
+.user-typing {
+  display: inline-flex;
+  gap: 3px;
+  
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-500);
+    animation: typing 1.4s infinite ease-in-out;
+    
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+  }
+}
+
+// ========================================
+// Loading Animations
+// ========================================
+
+// Skeleton loading for user cards
+.user-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-100);
+  
+  :global(.dark) & {
+    background: var(--surface-800);
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: skeleton 1.5s ease-in-out infinite;
+    
+    :global(.dark) & {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+      );
+    }
+  }
+}
+
+// Progress bar animation
+.user-progress {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: progress 2s linear infinite;
+  }
+}
+
+// ========================================
+// Transition Classes
+// ========================================
+
+// Smooth all transitions
+.user-transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Fast transitions
+.user-transition-fast {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Slow transitions
+.user-transition-slow {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Spring transitions
+.user-transition-spring {
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+// ========================================
+// Keyframe Definitions
+// ========================================
+
+@keyframes userFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes userSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes userSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes userScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes userBlurIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes userTableRowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes userGridItemIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes userPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(var(--primary-500-rgb), 0.4);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 0 8px rgba(var(--primary-500-rgb), 0);
+  }
+}
+
+@keyframes userGlow {
+  from {
+    box-shadow: 0 0 10px rgba(var(--primary-500-rgb), 0.2);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(var(--primary-500-rgb), 0.4),
+                0 0 30px rgba(var(--primary-500-rgb), 0.2);
+  }
+}
+
+@keyframes userShake {
+  10%, 90% {
+    transform: translateX(-1px);
+  }
+  20%, 80% {
+    transform: translateX(2px);
+  }
+  30%, 50%, 70% {
+    transform: translateX(-4px);
+  }
+  40%, 60% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes userBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes userSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+@keyframes skeleton {
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes progress {
+  to {
+    left: 100%;
+  }
+}
+
+// ========================================
+// Performance Optimizations
+// ========================================
+
+// GPU acceleration for animated elements
+.user-gpu-accelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+// Reduce motion for accessibility
+@media (prefers-reduced-motion: reduce) {
+  .user-appear,
+  .user-slide-in,
+  .user-slide-right,
+  .user-scale-in,
+  .user-blur-in,
+  .user-pulse,
+  .user-glow,
+  .user-shake,
+  .user-bounce,
+  .user-spin,
+  .user-hover-lift,
+  .user-hover-scale,
+  .user-hover-rotate,
+  .user-hover-glow,
+  .user-transition-all,
+  .user-transition-fast,
+  .user-transition-slow,
+  .user-transition-spring {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .user-skeleton::after,
+  .user-progress::after {
+    animation: none !important;
+  }
+}
+
+// ========================================
+// Utility Mixins
+// ========================================
+
+@mixin user-animation($name, $duration: 0.3s, $easing: ease-out, $delay: 0s) {
+  animation: $name $duration $easing $delay both;
+}
+
+@mixin user-transition($properties: all, $duration: 0.3s, $easing: ease-out) {
+  transition: $properties $duration $easing;
+}
+
+// ========================================
+// Special Effects
+// ========================================
+
+// Ripple effect for user interactions
+.user-ripple {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+// Morphing effect for user avatars
+.user-morph {
+  transition: border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    border-radius: 20%;
+  }
+}
+
+// Gradient animation for premium users
+.user-gradient-animated {
+  background: linear-gradient(
+    -45deg,
+    var(--primary-400),
+    var(--primary-500),
+    var(--primary-600),
+    var(--primary-700)
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

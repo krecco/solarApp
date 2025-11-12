@@ -1,0 +1,506 @@
+// Premium Card Styles
+// Reusable card designs for different purposes
+
+// Base premium card
+.premium-card {
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  
+  &:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+}
+
+// Stats card with gradient accent
+.stats-card {
+  position: relative;
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
+  }
+  
+  &:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    
+    &::before {
+      height: 6px;
+    }
+  }
+  
+  .stats-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .stats-label {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .stats-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    
+    &.positive {
+      color: #10b981;
+    }
+    
+    &.negative {
+      color: #ef4444;
+    }
+  }
+}
+
+// Metric card with icon
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--surface-border);
+  transition: all 0.3s ease;
+  
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+    color: white;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .metric-content {
+    flex: 1;
+    
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
+    
+    .metric-label {
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+      margin-top: 0.25rem;
+    }
+  }
+  
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    
+    .metric-icon {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Payment card (credit card style)
+.payment-card {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 16px;
+  min-height: 200px;
+  color: white;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  // Default gradient
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  &.card-visa {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  }
+  
+  &.card-mastercard {
+    background: linear-gradient(135deg, #eb001b 0%, #ff5f00 100%);
+  }
+  
+  &.card-amex {
+    background: linear-gradient(135deg, #006fcf 0%, #00a6e0 100%);
+  }
+  
+  &.card-discover {
+    background: linear-gradient(135deg, #ff6000 0%, #ff8c00 100%);
+  }
+  
+  // Card chip
+  &::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: 1.5rem;
+    width: 50px;
+    height: 40px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 8px;
+    opacity: 0.9;
+  }
+  
+  // Card pattern overlay
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    transform: rotate(30deg);
+    opacity: 0.3;
+  }
+  
+  .card-number {
+    position: relative;
+    z-index: 1;
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .card-holder {
+    position: relative;
+    z-index: 1;
+    
+    .label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .value {
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+  }
+  
+  .card-expiry {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1;
+    
+    .label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .value {
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+  }
+  
+  .card-brand {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  
+  &:hover {
+    transform: translateY(-4px) rotateY(5deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Pricing card
+.pricing-card {
+  position: relative;
+  padding: 2rem;
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--surface-border);
+  text-align: center;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  &.featured {
+    border-color: var(--primary-500);
+    transform: scale(1.05);
+    
+    &::before {
+      content: 'Popular';
+      position: absolute;
+      top: 1rem;
+      right: -2rem;
+      background: var(--primary-500);
+      color: white;
+      padding: 0.25rem 3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transform: rotate(45deg);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .pricing-header {
+    margin-bottom: 1.5rem;
+    
+    .plan-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .plan-description {
+      color: var(--text-color-secondary);
+      font-size: 0.875rem;
+    }
+  }
+  
+  .pricing-price {
+    margin-bottom: 1.5rem;
+    
+    .currency {
+      font-size: 1.25rem;
+      color: var(--text-color-secondary);
+      vertical-align: top;
+    }
+    
+    .amount {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .period {
+      color: var(--text-color-secondary);
+      font-size: 1rem;
+    }
+  }
+  
+  .pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    
+    li {
+      padding: 0.5rem 0;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      
+      i {
+        color: var(--primary-500);
+      }
+    }
+  }
+  
+  &:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    
+    &.featured {
+      transform: scale(1.05) translateY(-4px);
+    }
+  }
+}
+
+// Feature card
+.feature-card {
+  padding: 1.5rem;
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--surface-border);
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  .feature-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+    color: white;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-description {
+    color: var(--text-color-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  
+  &:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    
+    .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+}
+
+// Activity card (for timelines/feeds)
+.activity-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface-card);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--surface-border);
+  transition: all 0.3s ease;
+  
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--surface-100);
+    color: var(--primary-500);
+    flex-shrink: 0;
+  }
+  
+  .activity-content {
+    flex: 1;
+    
+    .activity-title {
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-description {
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-color-secondary);
+      opacity: 0.7;
+    }
+  }
+  
+  &:hover {
+    background: var(--surface-50);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Dashboard card
+.dashboard-card {
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+  
+  .card-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--surface-border);
+    
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin: 0;
+    }
+    
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+      margin-top: 0.25rem;
+    }
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .card-footer {
+    padding: 1rem 1.25rem;
+    background: var(--surface-50);
+    border-top: 1px solid var(--surface-border);
+  }
+}
+
+// Dark mode adjustments
+.dark {
+  .stats-card,
+  .metric-card,
+  .premium-card,
+  .pricing-card,
+  .feature-card,
+  .activity-card,
+  .dashboard-card {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+  }
+  
+  .payment-card {
+    // Slightly adjust gradients for dark mode
+    filter: brightness(0.9);
+  }
+  
+  .activity-card:hover {
+    background: var(--surface-100);
+  }
+  
+  .dashboard-card .card-footer {
+    background: var(--surface-100);
+  }
+}

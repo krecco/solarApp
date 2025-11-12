@@ -1,0 +1,373 @@
+// Data Table Utilities
+// Reusable styles for data tables and grids
+
+// Modern table wrapper
+.modern-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--surface-border);
+  
+  .dark & {
+    background: var(--surface-800);
+    border-color: var(--surface-700);
+  }
+}
+
+// Table header styles
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--surface-border);
+  
+  .dark & {
+    border-bottom-color: var(--surface-700);
+  }
+}
+
+.table-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+// Cell styles
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar-wrapper {
+  position: relative;
+}
+
+.avatar-cell {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  
+  .user-name {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .user-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+// Action cell buttons
+.action-buttons-cell {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  
+  .action-btn {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &.view-btn:hover {
+      background: rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    &.edit-btn:hover {
+      background: rgba(245, 158, 11, 0.1) !important;
+    }
+    
+    &.delete-btn:hover {
+      background: rgba(239, 68, 68, 0.1) !important;
+    }
+  }
+}
+
+// Date/time cell
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  
+  .date-icon {
+    font-size: 0.875rem;
+    color: var(--primary-500);
+  }
+}
+
+// Email cell
+.email-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .email-text {
+    color: var(--text-color);
+  }
+}
+
+// Department cell
+.department-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .department-icon {
+    color: var(--primary-500);
+    font-size: 0.875rem;
+  }
+}
+
+// Empty state
+.table-empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--surface-300);
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .empty-subtitle {
+    color: var(--text-color-secondary);
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-action {
+    margin-top: 1rem;
+  }
+}
+
+// Loading state
+.table-loading-state {
+  padding: 4rem 2rem;
+  text-align: center;
+  
+  .loading-text {
+    margin-top: 1.5rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+// Paginator custom styles
+.custom-paginator {
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid var(--surface-border) !important;
+  padding: 1rem 1.5rem !important;
+  
+  .dark & {
+    border-top-color: var(--surface-700) !important;
+  }
+}
+
+.paginator-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .paginator-text {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+  }
+}
+
+.paginator-summary {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  
+  .summary-text {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    
+    strong {
+      color: var(--primary-500);
+      font-weight: 600;
+    }
+  }
+}
+
+// Responsive table
+.table-responsive {
+  overflow-x: auto;
+  
+  @media (max-width: 768px) {
+    .table-hide-mobile {
+      display: none;
+    }
+  }
+}
+
+// Row hover effects
+.table-hover-row {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--surface-50) !important;
+    
+    .dark & {
+      background: var(--surface-700) !important;
+    }
+  }
+}
+
+// Striped table
+.table-striped {
+  tbody tr:nth-child(odd) {
+    background: var(--surface-50);
+    
+    .dark & {
+      background: var(--surface-900);
+    }
+  }
+}
+
+// Bordered table cells
+.table-bordered {
+  td, th {
+    border: 1px solid var(--surface-border) !important;
+    
+    .dark & {
+      border-color: var(--surface-700) !important;
+    }
+  }
+}
+
+// Compact table
+.table-compact {
+  td, th {
+    padding: 0.5rem !important;
+  }
+}
+
+// Table with fixed header
+.table-fixed-header {
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    
+    .dark & {
+      background: var(--surface-800);
+    }
+  }
+}
+
+// Sortable column header
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: var(--primary-500);
+  }
+  
+  .sort-icon {
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+  }
+  
+  &.sorted .sort-icon {
+    opacity: 1;
+    color: var(--primary-500);
+  }
+}
+
+// Expandable row
+.expandable-row {
+  cursor: pointer;
+  
+  .expand-icon {
+    transition: transform 0.2s ease;
+  }
+  
+  &.expanded .expand-icon {
+    transform: rotate(90deg);
+  }
+}
+
+// Table filters row
+.table-filters-row {
+  padding: 1rem;
+  background: var(--surface-50);
+  border-bottom: 1px solid var(--surface-border);
+  
+  .dark & {
+    background: var(--surface-900);
+    border-bottom-color: var(--surface-700);
+  }
+}
+
+// Bulk actions bar
+.bulk-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: var(--primary-50);
+  border-bottom: 2px solid var(--primary-200);
+  
+  .dark & {
+    background: rgba(var(--primary-500), 0.1);
+    border-bottom-color: var(--primary-700);
+  }
+  
+  .selected-count {
+    font-weight: 600;
+    color: var(--primary-700);
+    
+    .dark & {
+      color: var(--primary-300);
+    }
+  }
+  
+  .bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,32 @@
+// Color RGB Variables Extension for Admin Users
+// These extend PrimeVue's CSS variables with RGB versions for use in rgba() functions
+
+:root {
+  // Primary color RGB values
+  --primary-color-rgb: 59, 130, 246; // Default blue, will be overridden by theme
+  --primary-600: #2563eb; // Darker primary
+  --primary-700: #1d4ed8; // Even darker primary
+  
+  // Surface RGB values for glassmorphism
+  --surface-card-rgb: 255, 255, 255;
+  --surface-ground-rgb: 248, 250, 252;
+  --surface-border-rgb: 226, 232, 240;
+  --surface-200-rgb: 229, 231, 235;
+  --surface-300-rgb: 209, 213, 219;
+  
+  // Text RGB values
+  --text-color-rgb: 51, 65, 85;
+  --text-color-secondary-rgb: 100, 116, 139;
+}
+
+// Dark theme RGB overrides
+.p-dark {
+  --primary-color-rgb: 96, 165, 250; // Lighter blue for dark mode
+  --surface-card-rgb: 30, 41, 59;
+  --surface-ground-rgb: 15, 23, 42;
+  --surface-border-rgb: 51, 65, 85;
+  --surface-200-rgb: 51, 65, 85;
+  --surface-300-rgb: 71, 85, 105;
+  --text-color-rgb: 241, 245, 249;
+  --text-color-secondary-rgb: 203, 213, 225;
+}

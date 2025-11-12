@@ -1,0 +1,140 @@
+// Form Section Cards - Card Layout Only
+// Focused only on card styling without any form element modifications
+
+// ===========================
+// FORM SECTION CARD STYLING
+// ===========================
+
+// Optimized form section mixin - lighter effects for better performance
+@mixin form-section-card() {
+  background: linear-gradient(
+    135deg,
+    rgba(249, 250, 251, 0.85) 0%,
+    rgba(249, 250, 251, 0.75) 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(229, 231, 235, 0.7);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.85);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  // Subtle hover effect - more performant
+  &:hover {
+    border-color: rgba(var(--primary-color-rgb), 0.25);
+    box-shadow: 
+      0 6px 10px -3px rgba(0, 0, 0, 0.08),
+      0 3px 5px -2px rgba(0, 0, 0, 0.04),
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+  }
+}
+
+// Apply to modal forms - scoped to avoid global impact
+.app-modal,
+.p-dialog,
+.modal-form-content,
+.user-edit-form,
+.user-create-form {
+  
+  // Form section styling
+  .form-section {
+    @include form-section-card();
+    margin-bottom: 1.25rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    // Section header with icon - cleaner styling
+    h4 {
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      color: var(--text-color) !important;
+      margin: 0 0 1.125rem 0 !important;
+      padding-bottom: 0.625rem !important;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.6) !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.625rem !important;
+      
+      i {
+        font-size: 1rem;
+        color: var(--primary-color);
+        background: rgba(var(--primary-color-rgb), 0.08);
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+  
+  // Form group spacing only - no form element styling
+  .form-group {
+    margin-bottom: 1.25rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Dark mode support for form sections
+.p-dark {
+  .app-modal,
+  .p-dialog,
+  .modal-form-content,
+  .user-edit-form,
+  .user-create-form {
+    
+    .form-section {
+      background: linear-gradient(
+        135deg,
+        rgba(51, 65, 85, 0.5) 0%,
+        rgba(51, 65, 85, 0.3) 100%
+      );
+      border-color: rgba(71, 85, 105, 0.5);
+      
+      &:hover {
+        border-color: rgba(var(--primary-color-rgb), 0.3);
+      }
+      
+      h4 {
+        border-bottom-color: rgba(71, 85, 105, 0.5) !important;
+      }
+    }
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 640px) {
+  .app-modal,
+  .p-dialog,
+  .modal-form-content,
+  .user-edit-form,
+  .user-create-form {
+    
+    .form-section {
+      padding: 1.125rem !important;
+      backdrop-filter: blur(6px) !important;
+      -webkit-backdrop-filter: blur(6px) !important;
+    }
+  }
+}
+
+// Accessibility - reduce motion
+@media (prefers-reduced-motion: reduce) {
+  .form-section {
+    transition-duration: 0.01ms !important;
+  }
+}

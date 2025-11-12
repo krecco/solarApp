@@ -1,0 +1,6 @@
+// This file forwards all abstracts so they can be imported with a single @use statement
+// Usage: @use "@styles/abstracts" as *;
+
+@forward 'variables';
+@forward 'mixins';
+@forward 'functions';

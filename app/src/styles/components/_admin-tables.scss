@@ -1,0 +1,391 @@
+/* Admin Table Styles - Reusable across all tabular admin views */
+
+/* Modern Page Header */
+.page-header-modern {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-text {
+    color: white;
+  }
+
+  .header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.75rem;
+    }
+  }
+
+  .header-subtitle {
+    margin-top: 0.5rem;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .stat-card-modern {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 0.25rem;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .action-button {
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+
+    &.primary-action {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: white !important;
+      color: white !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}
+
+/* Filters Section */
+.filters-card {
+  margin-bottom: 1.5rem;
+  
+  .filters-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Filter value styling for MultiSelect */
+  .filter-placeholder,
+  .filter-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    i {
+      font-size: 0.875rem;
+      color: var(--primary-500);
+    }
+  }
+
+  .filter-placeholder {
+    color: var(--text-color-secondary);
+    opacity: 0.8;
+  }
+
+  .filter-value {
+    color: var(--text-color);
+  }
+}
+
+/* Active Filter Pills */
+.active-filter-pills {
+  display: flex;
+  gap: 0.625rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-200);
+  flex-wrap: wrap;
+  animation: slideDown 0.3s ease;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.filter-pill {
+  :deep(.p-chip) {
+    height: 32px !important;
+    padding: 0.375rem 1rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-50)) !important;
+    color: var(--primary-700) !important;
+    border: 1px solid var(--primary-200) !important;
+    border-radius: 16px !important;
+    transition: all 0.2s ease !important;
+    animation: fadeIn 0.2s ease;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.375rem !important;
+
+    &:hover {
+      background: linear-gradient(135deg, var(--primary-200), var(--primary-100)) !important;
+      border-color: var(--primary-300) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(var(--primary-500-rgb), 0.2) !important;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+.pill-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.pill-icon {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Table Cell Styles - Reusable across admin tables */
+.table-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar-cell {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+
+  .primary-text {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .secondary-text {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+.email-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  .email-text {
+    color: var(--text-color);
+  }
+}
+
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+
+  .date-icon {
+    font-size: 0.875rem;
+    color: var(--primary-500);
+  }
+}
+
+.action-buttons-cell {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.action-btn {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.view-btn:hover {
+    background: rgba(59, 130, 246, 0.1) !important;
+  }
+
+  &.edit-btn:hover {
+    background: rgba(245, 158, 11, 0.1) !important;
+  }
+
+  &.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+  }
+}
+
+/* Table Empty State */
+.table-empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--surface-300);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 0.5rem 0;
+  }
+}
+
+/* Modern table wrapper */
+.modern-table-wrapper {
+  :deep(.p-datatable) {
+    .p-datatable-thead > tr > th {
+      background: var(--surface-50);
+      font-weight: 600;
+    }
+    
+    .p-datatable-tbody > tr:hover {
+      background: var(--surface-50);
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .page-header-modern {
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .header-stats {
+      width: 100%;
+    }
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header-modern {
+    padding: 1.5rem;
+
+    .header-title {
+      font-size: 1.5rem;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+
+      .action-button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+/* Sidebar styling */
+:deep(.admin-sidebar) {
+  .p-sidebar {
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    border-left: 1px solid var(--surface-border);
+  }
+  
+  .p-sidebar-header {
+    background: var(--surface-50);
+    border-bottom: 1px solid var(--surface-border);
+  }
+}
+
+/* Responsive utilities */
+.table-hide-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* Header button styling fixes */
+.header-actions .action-button {
+  &:not(.primary-action) {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      color: white !important;
+    }
+  }
+}

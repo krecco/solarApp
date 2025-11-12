@@ -1,0 +1,350 @@
+// Admin-specific utilities
+// Only minimal styles that can't be achieved with PrimeVue and PrimeFlex
+
+// Admin metric cards (extends the existing stat-card)
+.admin-metric-card {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--surface-border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  .dark & {
+    background: var(--surface-800);
+    border-color: var(--surface-700);
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  
+  // Gradient background effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, var(--primary-color-alpha) 0%, transparent 70%);
+    transform: translate(30px, -30px);
+    opacity: 0.3;
+  }
+  
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    
+    &.metric-primary {
+      background: rgba(var(--primary-500), 0.1);
+      color: var(--primary-500);
+    }
+    
+    &.metric-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+    
+    &.metric-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    &.metric-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+    
+    &.metric-info {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+  }
+  
+  .metric-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .metric-label {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+  }
+  
+  .metric-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    
+    &.trend-up {
+      color: #10b981;
+    }
+    
+    &.trend-down {
+      color: #ef4444;
+    }
+    
+    &.trend-neutral {
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// Admin chart containers - minimal styling for chart wrappers
+.admin-chart-container {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--surface-border);
+  height: 100%;
+  
+  .dark & {
+    background: var(--surface-800);
+    border-color: var(--surface-700);
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    .chart-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .chart-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+  
+  .chart-content {
+    position: relative;
+    height: 300px; // Default height for charts
+    
+    &.chart-small {
+      height: 200px;
+    }
+    
+    &.chart-large {
+      height: 400px;
+    }
+  }
+}
+
+// Activity timeline styles
+.admin-activity-timeline {
+  .timeline-item {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+    
+    &:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 0;
+      width: 2px;
+      background: var(--surface-border);
+      
+      .dark & {
+        background: var(--surface-700);
+      }
+    }
+    
+    .timeline-marker {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+      
+      &.marker-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+      
+      &.marker-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      
+      &.marker-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+      
+      &.marker-info {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+    }
+    
+    .timeline-content {
+      flex: 1;
+      
+      .timeline-title {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+      }
+      
+      .timeline-description {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+        margin-bottom: 0.25rem;
+      }
+      
+      .timeline-time {
+        font-size: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
+
+// Quick stats badges
+.admin-quick-stats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  
+  .stat-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+    }
+    
+    .stat-label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+// System status indicators
+.admin-system-status {
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .status-card {
+    background: var(--surface-50);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    text-align: center;
+    
+    .dark & {
+      background: var(--surface-900);
+    }
+    
+    .status-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      
+      &.status-healthy {
+        color: #10b981;
+      }
+      
+      &.status-warning {
+        color: #f59e0b;
+      }
+      
+      &.status-critical {
+        color: #ef4444;
+      }
+    }
+    
+    .status-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .status-value {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+}
+
+// Admin-specific responsive utilities
+@media (max-width: 1024px) {
+  .admin-hide-lg {
+    display: none !important;
+  }
+  
+  .admin-quick-stats {
+    .stat-badge {
+      min-width: 100px;
+      padding: 0.5rem 1rem;
+      
+      .stat-value {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-hide-md {
+    display: none !important;
+  }
+  
+  .admin-metric-card {
+    padding: 1rem;
+    
+    .metric-value {
+      font-size: 1.5rem;
+    }
+  }
+}
