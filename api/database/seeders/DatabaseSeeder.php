@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     * Creates roles and test users with different roles
+     * Creates roles, settings, and test users with different roles
      */
     public function run(): void
     {
@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
 
         // Create system admin
         $this->call(SystemAdminSeeder::class);
+
+        // Seed default settings
+        $this->call(SettingSeeder::class);
 
         // Create test users in development
         if (app()->environment(['local', 'development'])) {
@@ -56,6 +59,12 @@ class DatabaseSeeder extends Seeder
             $this->command->info('MANAGER: manager@example.com / password');
             $this->command->info('USER:    user@example.com / password');
             $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            $this->command->info('');
+
+            // Optionally seed demo data
+            if ($this->command->confirm('Would you like to create demo data (solar plants, investments)?', true)) {
+                $this->call(DemoDataSeeder::class);
+            }
         }
     }
 }
