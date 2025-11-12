@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Setting extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes, LogsActivity;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'group',
@@ -29,17 +27,6 @@ class Setting extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-
-    /**
-     * Activity log options
-     */
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['group', 'key', 'value', 'type', 'is_public'])
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
-    }
 
     /**
      * Get the setting value with proper type casting
