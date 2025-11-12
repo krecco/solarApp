@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PreferenceController;
+use App\Http\Controllers\Api\RepaymentController;
 use App\Http\Controllers\Api\SolarPlantController;
 use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
@@ -112,6 +113,22 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::put('/{investment}', [InvestmentController::class, 'update']);
             Route::delete('/{investment}', [InvestmentController::class, 'destroy']);
             Route::post('/{investment}/verify', [InvestmentController::class, 'verify']);
+        });
+
+        // Repayment routes
+        Route::get('/{investment}/repayments', [RepaymentController::class, 'index']);
+        Route::middleware('role:admin')->post('/{investment}/repayments/regenerate', [RepaymentController::class, 'regenerate']);
+    });
+
+    // Repayments (All authenticated users can view, admin/manager can manage)
+    Route::prefix('repayments')->group(function () {
+        Route::get('/statistics', [RepaymentController::class, 'statistics']);
+        Route::get('/overdue', [RepaymentController::class, 'overdue']);
+        Route::get('/upcoming', [RepaymentController::class, 'upcoming']);
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/{repayment}/mark-paid', [RepaymentController::class, 'markAsPaid']);
         });
     });
 

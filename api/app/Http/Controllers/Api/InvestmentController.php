@@ -3,14 +3,24 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\InvestmentVerifiedMail;
 use App\Models\Investment;
 use App\Models\SolarPlant;
+use App\Services\RepaymentCalculatorService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class InvestmentController extends Controller
 {
+    protected RepaymentCalculatorService $repaymentCalculator;
+
+    public function __construct(RepaymentCalculatorService $repaymentCalculator)
+    {
+        $this->repaymentCalculator = $repaymentCalculator;
+    }
+
     /**
      * Display a listing of investments.
      */
@@ -227,24 +237,59 @@ class InvestmentController extends Controller
             ], 422);
         }
 
+        // Set start date to today if not set
+        if (!$investment->start_date) {
+            $investment->start_date = now();
+        }
+
+        // Calculate end date
+        $endDate = now()->addMonths($investment->duration_months);
+
         $investment->update([
             'verified' => true,
             'verified_at' => now(),
             'verified_by' => $request->user()->id,
             'status' => 'active',
+            'start_date' => $investment->start_date,
+            'end_date' => $endDate,
         ]);
 
-        // Log activity
-        activity()
-            ->performedOn($investment)
-            ->causedBy($request->user())
-            ->log('verified investment');
+        // Generate repayment schedule
+        try {
+            $repaymentsCreated = $this->repaymentCalculator->createRepaymentSchedule($investment);
 
-        // TODO: Send notification to investor
+            // Log activity
+            activity()
+                ->performedOn($investment)
+                ->causedBy($request->user())
+                ->withProperties([
+                    'repayments_created' => $repaymentsCreated,
+                ])
+                ->log('verified investment and generated repayment schedule');
+        } catch (\Exception $e) {
+            // Log error but don't fail verification
+            activity()
+                ->performedOn($investment)
+                ->causedBy($request->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('verified investment but failed to generate repayment schedule');
+        }
+
+        // Send notification to investor
+        try {
+            Mail::to($investment->user->email)->send(new InvestmentVerifiedMail($investment));
+        } catch (\Exception $e) {
+            // Log error but don't fail verification
+            activity()
+                ->performedOn($investment)
+                ->causedBy($request->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('verified investment but failed to send email notification');
+        }
 
         return response()->json([
             'message' => 'Investment verified successfully',
-            'data' => $investment->load(['user', 'solarPlant', 'verifiedBy']),
+            'data' => $investment->load(['user', 'solarPlant', 'verifiedBy', 'repayments']),
         ]);
     }
 
