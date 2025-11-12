@@ -154,6 +154,18 @@ const menuItems = computed<MenuItem[]>(() => {
         to: '/admin/users',
       },
       {
+        key: 'admin-solar-plants',
+        label: 'Solar Plants',
+        icon: 'pi pi-sun',
+        to: '/admin/solar-plants',
+      },
+      {
+        key: 'admin-investments',
+        label: 'Investments',
+        icon: 'pi pi-wallet',
+        to: '/admin/investments',
+      },
+      {
         key: 'notifications',
         label: 'Notifications',
         icon: 'pi pi-bell',
@@ -170,6 +182,18 @@ const menuItems = computed<MenuItem[]>(() => {
         label: 'Dashboard',
         icon: 'pi pi-briefcase',
         to: '/manager/dashboard',
+      },
+      {
+        key: 'manager-solar-plants',
+        label: 'Solar Plants',
+        icon: 'pi pi-sun',
+        to: '/admin/solar-plants',
+      },
+      {
+        key: 'manager-investments',
+        label: 'Investments',
+        icon: 'pi pi-wallet',
+        to: '/admin/investments',
       },
       {
         key: 'notifications',
