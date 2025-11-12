@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
@@ -129,6 +130,19 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Admin and Manager only routes
         Route::middleware('role:admin|manager')->group(function () {
             Route::post('/{repayment}/mark-paid', [RepaymentController::class, 'markAsPaid']);
+        });
+    });
+
+    // File Management
+    Route::prefix('files')->group(function () {
+        Route::get('/', [FileController::class, 'index']); // List files in container
+        Route::post('/upload', [FileController::class, 'upload']); // Upload file
+        Route::get('/{file}/download', [FileController::class, 'download']); // Download file
+        Route::delete('/{file}', [FileController::class, 'destroy']); // Delete file
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/{file}/verify', [FileController::class, 'verify']); // Verify file
         });
     });
 
