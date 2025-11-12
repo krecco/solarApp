@@ -235,16 +235,15 @@ class DemoDataSeeder extends Seeder
 
         // Calculate totals for verified investments
         if ($status === 'verified') {
-            $totalRepayment = $this->repaymentCalculator->calculateTotalRepayment(
+            $calculations = $this->repaymentCalculator->calculateTotalRepayment(
                 $amount,
                 $interestRate,
-                $durationMonths,
-                $interval
+                $durationMonths
             );
 
             $investment->update([
-                'total_repayment' => $totalRepayment,
-                'total_interest' => $totalRepayment - $amount,
+                'total_repayment' => $calculations['total'],
+                'total_interest' => $calculations['interest'],
             ]);
         }
 
@@ -260,7 +259,7 @@ class DemoDataSeeder extends Seeder
 
         foreach ($investments as $investment) {
             if ($investment->verified && $investment->start_date) {
-                $this->repaymentCalculator->generateRepaymentSchedule($investment);
+                $this->repaymentCalculator->createRepaymentSchedule($investment);
                 $count++;
             }
         }

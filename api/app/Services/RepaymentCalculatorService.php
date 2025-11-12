@@ -88,11 +88,9 @@ class RepaymentCalculatorService
                 'investment_id' => $investment->id,
                 'due_date' => $dueDate->toDateString(),
                 'amount' => $amount,
-                'principal_amount' => $principal,
-                'interest_amount' => $interest,
+                'principal' => $principal,
+                'interest' => $interest,
                 'status' => 'pending',
-                'payment_number' => $i + 1,
-                'total_payments' => $numberOfPayments,
             ];
         }
 
