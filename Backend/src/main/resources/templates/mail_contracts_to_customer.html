@@ -1,0 +1,26 @@
+{#if user.gender == 1}
+Sehr geehrter Herr
+{#else if user.gender == 2}
+Sehr geehrte Frau
+{#else if user.gender == 3}
+Sehr geehrte(r)
+{#else if user.gender == 11}
+Sehr geehrte Famile
+{#else if user.gender == 12}
+Sehr geehrte Damen und Herren vom Vereinsvorstand
+{#else if user.gender == 13}
+Sehr geehrte Damen und Herren vom Gemeindevorstand
+{/if}
+{user.titlePrefix}
+{user.firstName}
+{#if user.titleSuffix != ""}
+{user.lastName}, {user.titleSuffix}
+{#else}
+{user.lastName}
+{/if},
+<br><br>
+die Vertragsunterlagen für Ihre solar.family Photovoltaik-Anlage stehen Ihnen zum Download zur Verfügung.
+<br><br>
+Damit wir ihren Vertrag aktivieren können, bitten wir Sie die Unterlagen über Ihren persönlichen Zugang {loginUrl} an uns zu übermitteln (hochzuladen).
+<br><br>
+Wir freuen uns bis spätestens {deadlineDate} über  Ihre Rückmeldung und wir stehen Ihnen bei etwaigen Fragen jederzeit zur Verfügung.

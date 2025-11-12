@@ -1,0 +1,61 @@
+#quarkus.native.additional-build-args =\
+#    -H:ResourceConfigurationFiles=resource-config.json,\
+#    -H:ReflectionConfigurationFiles=reflection-config.json
+
+#quarkus.native.debug.enabled=true
+#quarkus.log.level=DEBUG
+
+quarkus.http.cors=true
+quarkus.http.host=161.97.146.51
+
+#web info requests allowed from ip
+app.webInfo.allowFrom = 127.0.0.1
+
+#Folder settings
+app.folder.documents=/home/solar/documents/
+app.folder.uploads=/home/solar/documents/uploads/
+app.folder.generated=/home/solar/documents/generated/
+
+#Frontent settings
+app.frontendUrl=http://localhost:8090/
+
+#Postgres
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=postgres
+quarkus.datasource.password=Solar123123
+quarkus.datasource.jdbc.url=jdbc:postgresql://161.97.146.51:5432/solar
+quarkus.datasource.jdbc.max-size=16
+
+#Hibernate
+quarkus.hibernate-orm.log.sql=true
+#quarkus.hibernate-orm.database.generation=drop-and-create
+quarkus.hibernate-orm.database.generation=update
+
+#openid
+#Keycloak settings
+quarkus.oidc.auth-server-url=http://161.97.146.51:9000/auth/realms/appOne
+quarkus.oidc.tls.verification=none
+quarkus.oidc.appone.tls.verification=none
+
+quarkus.oidc.client-id=appone
+app.keycloak.client-secret=7a7b5793-7519-4b2e-b108-23bf495c9c68
+app.keycloak.url=http://161.97.146.51:9000/auth/
+app.keycloak.realm=appOne
+app.keycloak.adminId=realm-admin
+app.keycloak.adminSecret=0c8ef36d-be55-4d62-9f34-e153d0f7e234
+
+#smtp
+quarkus.mailer.from=test@borut.host
+quarkus.mailer.host=smtp-pulse.com
+quarkus.mailer.port=2525
+quarkus.mailer.username=borut.grauf@gmail.com
+quarkus.mailer.password=gg8qHQTffHt
+quarkus.mailer.mock=false
+
+#quarkus.mailer.from=bubbleexplorer@safebook.info
+#quarkus.mailer.host=bsmtp.A1.net
+#quarkus.mailer.port=587
+#quarkus.mailer.ssl=false
+#quarkus.mailer.username=bubbleexplorer@safebook.info
+#quarkus.mailer.password=Lannerweg54
+#quarkus.mailer.mock=false

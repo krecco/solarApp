@@ -1,0 +1,26 @@
+{#if user.gender == 1}
+    Sehr geehrter Herr
+{#else if user.gender == 2}
+    Sehr geehrte Frau
+{#else if user.gender == 3}
+    Sehr geehrte(r)
+{#else if user.gender == 11}
+    Sehr geehrte Famile
+{#else if user.gender == 12}
+    Sehr geehrte Damen und Herren vom Vereinsvorstand
+{#else if user.gender == 13}
+    Sehr geehrte Damen und Herren vom Gemeindevorstand
+{/if}
+{user.titlePrefix}
+{user.firstName}
+{#if user.titleSuffix != ""}
+    {user.lastName}, {user.titleSuffix}
+{#else}
+    {user.lastName}
+{/if},
+<br><br>
+vielen Dank für das persönliche  Gespräch. Der Vor-Ort-Begehungstermin für Ihre solar.family Photovoltaik-Anlage findet am {formattedDateTime} am Standort {plantAddress} statt.
+<br><br>
+Damit wir Sie im Zuge des Begehungstermin effizienter beraten können, haben Sie im Vorfeld die Möglichkeit uns Ihre Stromrechnung und Fotos von Ihrem Dach zu übermitteln. Unter <a href="{passwordResetLink}">{passwordResetLink}</a> ist Ihre passwortgeschützte Registrierung möglich und Sie können die genannten Unterlagen hochladen.
+<br><br>
+Bei etwaigen Fragen stehen wir Ihnen jederzeit gerne zur Verfügung.

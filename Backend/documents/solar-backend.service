@@ -1,0 +1,16 @@
+[Unit]
+Description=Solar Backend Quarkus APP
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Environment="PATH=/root/.nvm/versions/node/v12.22.1/bin:/root/.sdkman/candidates/java/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+Environment="JAVA_HOME=/root/.sdkman/candidates/java/21.0.0.2.r11-grl"
+User=root
+Type=simple
+Restart=always
+RestartSec=3
+User=root
+ExecStart=/home/solar/Solar.Family-Backend/start_backend
+
+[Install]
+WantedBy=multi-user.target

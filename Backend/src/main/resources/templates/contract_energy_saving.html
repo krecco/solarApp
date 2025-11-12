@@ -1,0 +1,246 @@
+<div>
+  <br/>
+  <br/>
+  <div style="text-align:center; font-weight:bold; font-size:1.5em;">
+    VERTRAG
+    <br/>
+    ENERGIEFFIZIENZMASSNAHMEN
+  </div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <div style="text-align:center;">
+    abgeschlossen zwischen
+  </div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <table width="100%" border="1" style="border-collapse: collapse;">
+    <tr>
+      <td style="width:50%; padding:10px; vertical-align:top;">
+        solar.family GmbH
+        <br/>
+        Herrschaftsweg 29
+        <br/>
+        7551 Stegersbach
+        <br/>
+        in Folge kurz „s.f“ genannt
+      </td>
+      <td style="width:50%; padding:10px; vertical-align:top;">
+        {#if user.gender == 1}
+        Herr
+        {#else if user.gender == 2}
+        Frau
+        {#else if user.gender == 11}
+        Familie
+        {#else if user.gender == 12}
+        Verein:
+        {#else if user.gender == 13}
+        Gemeinde:
+        {/if}
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+        {user.lastName}, {user.titleSuffix}
+        {#else}
+        {user.lastName}
+        {/if}
+        <br/>
+        {address.street}
+        <br/>
+        {address.postNr} {address.city}
+        <br/>
+        {#if otherPropertyOwnerNr > 0}
+        <br/>
+          weitere Grundstückseigentümer:
+          {#for owner in otherPropertyOwners}
+            <br/>
+            {owner.person}
+          {/for}
+        {/if}
+        in Folge kurz „Kunde“ genannt
+      </td>
+    </tr>
+  </table>
+  <div style="page-break-before: always;"></div>
+  <div style="text-align:center; font-weight:bold;">
+    1. Vertragsgegenstand
+  </div>
+  <p>
+    Die solar.family GmbH („s.f “) ist ein innovatives Unternehmen mit dem Fokus auf Erneuerbare Energien und Energie- und Umweltconsulting. Dabei bietet die s.f im Bereich Lösungsfindung und Optimierung, im Bereich Energieeinsparung und  Energiemonitoring sowie in der Abwicklung und dem Projektmanagement von geeigneten Maßnahmen, innovative Dienstleistungen an.
+  </p>
+  <p>
+    Gegenständlich beabsichtigt der Kunde durch die Errichtung einer Photovoltaikanlage („PV-Anlage“) vorhandene Energieeinsparungspotentiale zu nutzen. s.f wird den Kunden bei diesem Vorhaben bestmöglich unterstützen.
+  </p>
+  <p>
+    1.1 s.f wird vom Kunden beauftragt, eine PV-Anlage für den Kunden zu errichten, zu überwachen (Monitoring). Weiters wird die s.f beauftragt, während der Vertragslaufzeit, die Wartung und Instandhaltung der Anlage durchführen. Dazu ist es zwingend notwendig, dass der Kunde auf eigene Kosten die Herstellung einer Internetverbindung für die Anlage herstellt, sowie einen funktionierenden Internetzugang für die Dauer der Vertragslaufzeit zur Verfügung stellt.
+  </p>
+  <p>
+    1.2 Der Kunde verpflichtet sich, alle erforderlichen Maßnahmen zu setzen, damit s.f in die Lage versetzt wird, ihre aus diesem Vertrag erwachsenden Verpflichtungen zu erfüllen. Ausdrücklich wird festgehalten, dass sämtliche Kosten (exkl. Internetanbindung gemäß Pkt. 1.1) im Zusammenhang mit dem Betrieb der PV-Anlage von s.f zu tragen sind.
+  </p>
+  <p>
+    1.3 Seitens des Kunden wird sowohl eine geeignete Dachfläche, als auch geeignete Räumlichkeiten kostenlos zur Verfügung gestellt, um den Einbau von notwendigem technischen Equipment zur effizienten Steuerung und dem Betrieb der Anlage zu ermöglichen.
+  </p>
+  <p>
+    1.4 Namens der Eigentümer des Gebäudes bzw. der Nutzungsberechtigten, wird ein Netzzugangsvertrag mit dem zuständigen Netzbetreiber, sowie ein entsprechender Energie-Einspeisevertrag mit dem Energie-Lieferanten abgeschlossen. Die Abwicklung erfolgt über s.f. Für die Abwicklung aller organisatorisch erforderlichen Maßnahmen stellt der Kunde der s.f eine entsprechende Vollmacht aus. Weiters stellt der Kunde der s.f eine Vollmacht für den gleichzeitigen Erhalt der jährlichen Abrechnung des Energielieferanten aus. Etwaige vom Energielieferanten anberaumte Kosten für die Übermittlung von Rechnungsduplikaten werden vom Kunden getragen.
+  </p>
+  <p>
+    1.5 Die Berechnungen zur Energieeffizienz beruhen im Wesentlichen auf der die Tarifmodelle des jeweiligen Stromanbieters. Während der Laufzeit dieses Vertrages bedarf daher der Wechsel des Kunden zu einem anderen Lieferanten der vorherigen Zustimmung der s.f. Sollte es tatsächlich zu einem Lieferantenwechsel kommen, so wird der Kunde der s.f wiederum eine aktuelle Vollmacht für den Erhalt der jährlichen Abrechnung ausstellen.
+  </p>
+  <p>
+    1.6 Der Kunde überträgt die mit der Anlage generierten Energieeinsparungen gemäß Bundes-Energieeffizienzgesetz-EEffG an die s.f.
+  </p>
+  <div style="page-break-before: always;"></div>
+  <div style="text-align:center; font-weight:bold;">
+    2. Leistungsverrechnung
+  </div>
+  <p>
+    2.1 Die Verrechnung zwischen s.f und Kunde wird mittels eigener Vereinbarung im Beiblatt geregelt.
+  </p>
+  <p>
+    2.2 Solange der Kunde nicht sämtliche Forderungen der s.f zur Gänze bezahlt hat, behält die s.f einen Eigentumsvorbehalt an der von ihr an den Kunden gelieferten Sachen.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    3. Vertragsdauer
+  </div>
+  <p>
+    3.1 Der gegenständliche Vertrag wird auf max. 150 Monate abgeschlossen und beginnt mit der Inbetriebnahme der Anlage zu laufen.
+  </p>
+  <p>
+    3.2 Seitens des Kunden wird für die Dauer von 150 Monaten auf die Möglichkeit einer Kündigung verzichtet. Der Vertrag kann jedoch vom Kunden vorzeitig gekündigt werden, wenn die im Beiblatt vereinbarten Kosten seitens des Kunden zur Gänze rückgeführt wurden.
+  </p>
+  <p>
+    3.3 Eine Kündigung ist jeweils zum 31.12. eines Jahres unter Einhaltung einer Kündigungsfrist von 3 Monaten möglich.
+  </p>
+  <p>
+    3.4 Wichtige Gründe für die außerordentliche Kündigung sind insbesondere:
+    <br/>
+    (a) das verschuldete Einstellen oder Unterbleiben von Leistungen der jeweils anderen Vertragspartei aus diesem Vertrag trotz Mahnung über einen Zeitraum von mehr als drei Monaten;
+    <br/>
+    (b) die Verweigerung von Zahlungsverpflichtungen seitens der jeweils anderen Vertragspartei oder das rechtsgrundlose gänzliche Aussetzen von derartigen Zahlungen (gänzlicher Verzug) über einen Zeitraum von mehr als einem Monat seitens der jeweils anderen Vertragspartei.
+  </p>
+  <p>
+    3.5 Im Falle einer Kündigung aus wichtigem Grund ist die s.f berechtigt, die PV-Anlage binnen 3 Monaten nach Ausspruch der Kündigung gegen vorherige Ankündigung zu demontieren, wobei der Kunde auch die Demontagekosten zu tragen hat. Verweigert der Kunde den Abbau der Anlage hat er s.f den Wert der Anlage (Anschaffungswert abzüglich monatlicher Abzug von 0,67% zzgl. Bearbeitungsentgelt von € 300,--) zu ersetzen. Darüber hinaus ist die s.f berechtigt, sämtliche Serviceentgelte, welche bis zum vertraglich vereinbarten Ende (Pkt. 3.2) angelaufen wären, sofort in Rechnung zu stellen.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    4. Baumaßnahmen/Instandhaltung/Wartung/Veränderungen
+  </div>
+  <p>
+    4.1 Der Kunde verpflichtet sich, die für die PV-Anlage notwendigen (Dach-)Flächen auf eigene Kosten so zu unterhalten, dass ein dauerhafter und gefahrloser Betrieb der Anlage gesichert ist.
+  </p>
+  <p>
+    4.2 Der Kunde erklärt sich bereit, alle Maßnahmen der s.f sowie seiner Beauftragten zu gestatten, insoweit sie zur Errichtung zum Anschluss an das Stromnetz, zum Betrieb bzw. zur Aufrechterhaltung des Betriebes, zur Fernüberwachung sowie zur
+    <br/>
+    Wartung, Reparatur und/oder Instandsetzung/-haltung der Photovoltaik-Anlage notwendig sind.
+  </p>
+  <p>
+    4.3 s.f wird alle Maßnahmen so mit dem Kunden abstimmen, dass unbillige Beeinträchtigungen der Interessenten des Kunden vermieden werden. Die Errichtung der Anlage, einschließlich der Kabelverlegungen, erfolgt in einem Zug durch ausführende Fachfirmen. Vor Beginn der Montagearbeiten ist die Dachfläche gemeinsam mit der Fachfirma zur Feststellung eventuell vorhandener Mängel zu begehen und mängelfrei vom Kunden bzw. dessen Vermieter zu übergeben. Die Dachflächen sind für die Montage sorgfältig zu schützen und abzudecken. s.f haftet für Schäden an den Dachflächen aus Montagearbeiten und weitergehenden Wartungsarbeiten für die Anlage.
+  </p>
+  <p>
+    4.4 s.f und seine Beauftragten haben Zugang zur Anlage und zu den anderen Installationen. Der Kunde ist rechtzeitig über notwendige Maßnahmen zu benachrichtigen. Bei dringend erforderlichen Reparaturmaßnahmen ist eine sehr kurzfristige Benachrichtigung ausreichend.
+  </p>
+  <p>
+    4.5 Die Kosten für sämtliche Installations-, Unterhaltungs-, Reparatur- und Ersetzungsmaßnahmen betreffend die Anlage werden ausschließlich von s.f getragen.
+  </p>
+  <p>
+    4.6 Der Kunde hat s.f unverzüglich in Kenntnis zu setzen, wenn er Dachreparaturarbeiten in Auftrag geben möchte, wobei diese nur durchgeführt werden können, wenn sie dringend zur Erhaltung des Gebäudes (Gefahr in Verzug) notwendig sind. Die Arbeiten sind zu vorher fixierten Terminen und schnellstmöglich durchzuführen.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    5. Bewilligungen/Förderunge/REFERENZFREIGABE
+  </div>
+  <p>
+    5.1 Die Planung, die Herstellung von etwaigen erforderlichen Einreichplänen sowie die Erwirkung der erforderlichen behördlichen Errichtungs- und Benützungsbewilligungen für die Anlage werden von s.f durchgeführt und sind in den Anschaffungskosten inkludiert. Die erforderlichen behördlichen Errichtungs- und Benützungsbewilligungen müssen vor Inbetriebnahme der Anlagen vorliegen.
+  </p>
+  <p>
+    5.2 Die s.f übernimmt die Förderabwicklung für den Kunden.
+  </p>
+  <p>
+    5.3 Der Kunde wird allfällige notwendige Unterstützungsleistungen, wie insb. Unterschriftenleistungen, Ausstellung von Vollmachten, usw., kostenlos leisten.
+  </p>
+  <p>
+    5.4 Der Kunde erteilt der s.f die Freigabe, die erbrachten Leistungen als Referenz auf seinen Webseiten (www.solar.family) und als Referenz auf den Webseiten seinen Partnerunternehmen (www.solar.one, www.futuregrid.energy, www.sonnenkraftwerk-burgenland.at und www.energie-kompass.at) unter Angabe der Kunden-Namen, der Anlagenadresse der technischen Anlagendaten sowie der Positionierung eines Anlagenfotos zu verwerten.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    6. Vertragsübernahme
+  </div>
+  <p>
+    6.1 Ist der Haus-Grundeigentümer nicht zugleich Vertragspartner im Sinne dieses Vertrages (z.B. Vermieter) so wird ausdrücklich festgehalten, dass bei Austritt des Kunden aus diesem Vertrag (z.B. Auflösung des Mietverhältnisses) der Hauseigentümer die Rechte und Pflichten aus diesem Vertrag uneingeschränkt übernimmt. Der Haus-/Grundeigentümer stimmt der Vertragsübernahme in diesem Zusammenhang vorweg uneingeschränkt zu. Gleichzeitig stimmt der Vertragspartner der allfälligen Vertragsübernahme seitens s.f auf einen Dritten zu.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    7. Haftung
+  </div>
+  <p>
+    7.1 Der Kunde ist verpflichtet, die Photovoltaik-Anlage in die bestehende Gebäudeversicherung für allfällige Beschädigungen der PV-Anlage aufnehmen zu lassen.
+  </p>
+  <p>
+    7.2 Im Schadensfall verpflichtet sich der Kunde mit der entsprechenden Versicherungsleistung die Anlage wiederherzustellen bzw. zu reparieren.
+  </p>
+  <br/>
+  <div style="text-align:center; font-weight:bold;">
+    8. Sonstiges
+  </div>
+  <p>
+    8.1 Festgehalten wird, dass mündliche Nebenabreden zu dieser Vereinbarung nicht bestehen. Allfällige Änderungen, Ergänzungen oder Mitteilungen dieser Vereinbarung bedürfen zu ihrer Rechtswirksamkeit der Schriftform und Unterfertigung durch beide Vertragsparteien. Dieses Formerfordernis gilt auch für ein allfälliges Abgehen von diesem Schriftformerfordernis.
+  </p>
+  <p>
+    8.2 Sollten einzelne Bestimmungen dieser Vereinbarung ungültig oder rechtsunwirksam sein oder werden, so berührt dies die Gültigkeit und Rechtswirksamkeit der anderen Bestimmungen diese Vereinbarung nicht.
+    <br/>
+    Die Vertragsparteien verpflichten sich, unverzüglich nach Kenntnis der Ungültigkeit oder Rechtsunwirksamkeit die ungültige oder rechtsunwirksame Bestimmung durch eine gültige und rechtswirksame Bestimmung zu ersetzen, die zum selben oder einem möglichst ähnlichen wirtschaftlichen Ziel wie die ungültige oder rechtsunwirksame Bestimmung führt.
+  </p>
+  <p>
+    8.3 Für sämtliche aus oder in Zusammenhang mit diesem Vertrag entstehenden Streitigkeiten vereinbaren die Vertragsparteien gemäß § 104 JN bzw. Art. 23 EuGVVO die ausschließliche Zuständigkeit des sachlich zuständigen Gerichts für Güssing. Für Klage gegen Kunden die Konsument sind, ist die Klage am allgemeinen Gerichtstand des Kunden einzubringen.
+    <br/>
+    Dieser Vertrag unterliegt dem österreichischen Recht. Für sämtliche aus oder in Zusammenhang mit diesem vertraglichen Verhältnis bzw. vorvertraglichen Verhältnis entstehenden Streitigkeiten wird die ausschließliche Anwendbarkeit österreichischen Rechts, unter Ausschluss des Internationalen Privatrechts sowie unter Ausschluss des Übereinkommens der Vereinten Nationen über Verträge betreffend den Internationalen Warenkauf (UN-Kaufrecht), vereinbart.
+  </p>
+  <p>
+    8.4 Die Vertragsparteien sind verpflichtet, diese Vereinbarung auf allfällige Einzel- und Gesamtrechtsnachfolger vollinhaltlich zu überbinden.
+  </p>
+  <p>
+    8.5 Die Rechte und Pflichten des Kunden aus dieser Vereinbarung können nur mit Zustimmung der fg.e abgetreten oder sonst übertragen werden, wobei festgehalten wird, dass kein Rechtsanspruch auf die Erteilung dieser Zustimmung besteht.
+  </p>
+  <p>
+    8.6 Diese Vereinbarung wird in 2 Ausfertigungen errichtet, von denen je eine für die beiden Vertragsteile bestimmt ist.
+  </p>
+  <br/>
+  <br/>
+  <p>
+  ________________, am ________________
+  </p>
+  <br/>
+  <br/>
+  <table width="100%">
+    <tr>
+      <td style="width:50%; padding:0px; vertical-align:top;">
+        ____________________________________
+        <br/>
+        solar.family GmbH
+      </td>
+      <td style="width:50%; padding-left:50px; vertical-align:top;">
+        ____________________________________
+        <br/>
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+        {user.lastName}, {user.titleSuffix}
+        {#else}
+        {user.lastName}
+        {/if}
+        {#if otherPropertyOwners != null}
+          {#for owner in otherPropertyOwners}
+          <br/><br/><br/>
+          ____________________________________
+          <br/>
+          {owner.person}
+          {/for}
+        {/if}
+      </td>
+    </tr>
+  </table>
+</div>

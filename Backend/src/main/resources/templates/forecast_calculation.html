@@ -1,0 +1,653 @@
+<div>
+    <!-- start page counter here -->
+    <div style="-fs-page-sequence: start;"></div>
+    <br/>
+    <br/><br/>
+    <br/>
+    <div style="font-size: 18px !important; text-align:center;">
+        <b>Überblick über Ihre Energiekosten</b><br/><br/>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <img src="../chartImages/{chartFileName1}"/>
+    <div style="margin-top: -77px; padding-left: 472px;">
+        <img src="../../images/logo-inverse.png" style="height:18px;"/>
+    </div>
+    <div style="margin-top: -23px; padding-left: 303px;">
+        <img src="../../images/logo-inverse.png" style="height:18px;"/>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <!-- old 5.9.2022
+    Mit <b>solar.family</b> sparen Sie in Zukunft <b>{saeDiff}</b> Euro pro Jahr an Stromkosten!
+    <br/>
+    Diese Ersparnis tritt nach Übergang der PV-Anlage in Ihr Eigentum ein. In Abhängigkeit von
+    <br/>
+    Ihrer Anzahlung erfolgt dies zwischen <b>{durationMax}</b> und <b>{durationMin}</b> Jahren.
+    Bis dahin betragen
+    <br/>
+    Ihre Stromkosten <b>{sumConsumptionPrice}</b> Euro pro Jahr.
+    <br/>
+    -->
+    Mit <b>solar.family</b> sparen Sie nach erfolgtem Eigentumsübergang ca. <b>{saeDiff}</b> Euro pro Jahr an Stromkosten.
+    <br/>
+    Der prognostizierte Eigentumsübergang erfolgt nach ca. <b>{durationAsString}</b> Jahren.
+    Bis dann betragen Ihre Stromkosten ca. <b>{sumConsumptionPrice}</b> Euro pro Jahr. *
+    <br/>
+    <br/>
+    <i style="font-size:10px;">* Werte basieren auf den bereitgestellten Daten</i>
+    <div style="page-break-before: always;"></div>
+    [[subHeader]]
+    <b style="font-size: 18px !important;">Prognoserechnung</b>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <table style="width:100%">
+        <tr>
+            <td colspan="2"><b style="font-size: 18px !important;">Ausgangssituation aktuelle Energieabrechnung</b><br/><br/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><b>Ihre aktuellen Stromkosten pro Jahr</b></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table class="basicTable">
+                    <tr>
+                        <th>Energielieferant</th>
+                        <th style="width:180px;">Tarifmodel</th>
+                        <th style="width:100px;">Verbrauch (kWh)</th>
+                        <th style="width:80px;">Tarif (EUR)</th>
+                        <th style="width:80px;">Aufwand (EUR)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {powerBill.provider}
+                        </td>
+                        <td>
+                            {powerBill.contract}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionInKwh1}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient1}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionValue1}
+                        </td>
+                    </tr>
+                    {#if nrPowerMeters == 2}
+                    <tr>
+                        <td>
+                            {powerBill.provider}
+                        </td>
+                        <td>
+                            {powerBill.contract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionInKwh2}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionValue2}
+                        </td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <th>
+                            <b>Gesamt</b>
+                        </th>
+                        <th>
+                        </th>
+                        <th style="text-align:right;">
+                            <b>{consumptionInKwh}</b>
+                        </th>
+                        <th style="text-align:right;">
+                        </th>
+                        <th style="text-align:right;">
+                            <b>{consumptionValue}</b>
+                        </th>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                Werte aus ihrer beigestellten Rechnung: {powerBill.billNo}
+            </td>
+        </tr>
+    </table>
+    <br/><br/><br/>
+    <table style="width:100%">
+        <tr>
+            <td colspan="2">
+                <b style="font-size: 18px !important;">Ihre solar.family Photovoltaik-Anlage</b>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:450px;">
+                Vorgesehene Photovoltaik-Anlagenleistung:
+            </td>
+            <td style="text-align:right;">
+                {plantNominalPower} kWp
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Prognose PV-Stromertrag pro Jahr:
+            </td>
+            <td style="text-align:right;">
+                {plantPowerProductionForecast} kWh
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Prognose Eigenverbrauch PV-Strom:
+            </td>
+            <td style="text-align:right;">
+                {plantPowerConsumptionForecast} kWh
+            </td>
+        </tr>
+        {#if ((nrPowerMeters == 2) && ((calculationType == 3) || (calculationType == 4)))}
+        <tr>
+            <td>
+                Prognose Eigenverbrauch PV-Wärme:
+            </td>
+            <td style="text-align:right;">
+                {plantPowerConsumptionForecast2} kWh
+            </td>
+        </tr>
+        {/if}
+        <tr>
+            <td colspan="2">
+                <i>technische Details in der Projektierung</i>
+            </td>
+        </tr>
+    </table>
+    <div style="page-break-before: always;"></div>
+    [[subHeader]]
+    <img src="../chartImages/{chartFileName2}"/>
+    <br/>
+    Ihr prognostizierter Stromverbrauch beträgt <b>{consumptionInKwh}</b> kWh pro Jahr.
+    <br/>
+    <br/>
+    Der Ertrag Ihrer PV-Anlage wird mit <b>{consumptionDiffSum}</b> kWh pro Jahr prognostiziert,
+    <br/>
+    wovon ca. <b>{plantPowerConsumptionForecastSum}</b> kWh pro Jahr selbst genutzt werden können (Eigenverbrauch)
+    <br/>
+    und ca. <b>{surPlusPower}</b> kWh pro Jahr an den Energieversorger abgeführt werden (Überschuss)
+    <br/>
+    Für den Überschuss erhalten Sie eine Rückvergütung von Ihrem Energieversorger!
+    <br/>
+    <div style="page-break-before: always;"></div>
+    [[subHeader]]
+    <table style="width:100%">
+        <tr>
+            <td colspan="2">
+                <b>Ihre prognostizierten Stromkosten mit solar.family bis zum Eigentumsübergang</b>
+                <br/>
+                <table class="basicTable">
+                    <tr>
+                        <!--<th></th>-->
+                        <th style="width:180px;">Abrechnung mit</th>
+                        <th style="width:200px;">Tarifmodel</th>
+                        <th style="width:100px;">Verbrauch (kWh)</th>
+                        <th style="width:80px;">Tarif (EUR)</th>
+                        <th style="width:80px;">Aufwand (EUR)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            {powerBill.contract}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract1}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient1}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract1Value}
+                        </td>
+                    </tr>
+                    {#if ((nrPowerMeters == 2) && (calculationType != 3))}
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            {powerBill.contract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract2Value}
+                        </td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gesamt Aufwand Energielieferant</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionSumExtern}</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionSumValueExtern}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5"></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            solar.family
+                        </td>
+                        <td>
+                            PV-Strom Eigenverbrauch
+                        </td>
+                        <td style="text-align:right;">
+                            {plantPowerConsumptionForecastSum}
+                        </td>
+                        <td style="text-align:right;">
+                            {rateConsumption}
+                        </td>
+                        <td style="text-align:right;">
+                            {PVcostToSolar}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            solar.family
+                        </td>
+                        <td>
+                            PV-Strom Überschuss
+                        </td>
+                        <td style="text-align:right;">
+                            {surPlusPower}
+                        </td>
+                        <td style="text-align:right;">
+                            {rateExcessProduction}
+                        </td>
+                        <td style="text-align:right;">
+                            {PVsurPlusSolar}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gesamt Aufwand solar.family</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{subtotalSolarConsumption}</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{subtotalSolarPrice}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            PV-Strom Überschuss
+                        </td>
+                        <td style="text-align:right;">
+                            {surPlusPower}
+                        </td>
+                        <td style="text-align:right;">
+                            {rateExcessProductionExternal}
+                        </td>
+                        <td style="text-align:right;">
+                            {creditPrediction}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gutschrift PV-Überschuss Energielieferant</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>-{creditPrediction}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <b>Gesamtaufwand</b>
+                        </th>
+                        <th style="text-align:right;">
+                            <!--{sumConsumption}-->
+                        </th>
+                        <th style="text-align:right;">
+                        </th>
+                        <th style="text-align:right;">
+                            <b>{sumConsumptionPrice}</b>
+                        </th>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br/><br/><br/>
+    <table style="width:100%">
+        <tr>
+            <td colspan="2">
+                <b>Ihre prognostizierten Stromkosten mit solar.family ab Eigentumsübergang</b>
+                <br/>
+                <table class="basicTable">
+                    <tr>
+                        <!--<th></th>-->
+                        <th style="width:180px;">Abrechnung mit</th>
+                        <th style="width:200px;">Tarifmodel</th>
+                        <th style="width:100px;">Verbrauch (kWh)</th>
+                        <th style="width:80px;">Tarif (EUR)</th>
+                        <th style="width:80px;">Aufwand (EUR)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            {powerBill.contract}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract1}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient1}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract1Value}
+                        </td>
+                    </tr>
+                    <!-- old 5.9. 2022
+                    {#if ((nrPowerMeters == 2) && (calculationType != 3))}
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            {powerBill.contract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionInKwh2}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionExternTemp}
+                        </td>
+                    </tr>
+                    {/if}
+                    -->
+                    {#if ((nrPowerMeters == 2) && (calculationType != 3))}
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            {powerBill.contract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract2}
+                        </td>
+                        <td style="text-align:right;">
+                            {coefficient2}
+                        </td>
+                        <td style="text-align:right;">
+                            {consumptionSubtract2Value}
+                        </td>
+                    </tr>
+                    {/if}
+                    <!-- old 5.9.2022
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gesamt Aufwand Energielieferant</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionKwExternTemp}</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionExternSumTemp}</b>
+                        </td>
+                    </tr>
+                    -->
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gesamt Aufwand Energielieferant</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionSumExtern}</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>{consumptionSumValueExtern}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Energielieferant
+                        </td>
+                        <td>
+                            PV-Strom Überschuss
+                        </td>
+                        <td style="text-align:right;">
+                            {surPlusPower}
+                        </td>
+                        <td style="text-align:right;">
+                            {rateExcessProductionExternal}
+                        </td>
+                        <td style="text-align:right;">
+                            {creditPrediction}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid black;">
+                            <b>Gutschrift PV-Überschuss Energielieferant</b>
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                        </td>
+                        <td style="text-align:right; border-top: 1px solid black;">
+                            <b>-{creditPrediction}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <b>Gesamtaufwand</b>
+                        </th>
+                        <th style="text-align:right;">
+                            <!--{sumConsumption}-->
+                        </th>
+                        <th style="text-align:right;">
+                        </th>
+                        <th style="text-align:right;">
+                            <b>{consumptionExternTotalSumTemp}</b>
+                        </th>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div style="page-break-before: always;"></div>
+    [[subHeader]]
+    <table style="width:100%">
+        <tr>
+            <td colspan="2">
+                <!--<b>Ihr prognostizierter Eigentumsübergang</b>
+                <br/>
+                -->
+                <table class="basicTable">
+                    <!--
+                    <tr>
+                        <th style="width:250px;"></th>
+                        {#if showPrepayment}
+                            <th colspan="3" style="text-align:center;">Höhe der Anzahlung</th>
+                        {#else}
+                            <th colspan="2" style="text-align:center;">Höhe der Anzahlung</th>
+                        {/if}
+                    </tr>
+                    -->
+                    <!--
+                    <tr>
+                        <th style="width:250px;"></th>
+                        <th style="width:100px; text-align:center;">Minimum</th>
+                        {#if showPrepayment}
+                        <th style="width:100px; text-align:center;">gewählt</th>
+                        {/if}
+                        <th style="width:100px; text-align:center;">Maximum</th>
+                    </tr>
+                    -->
+                    <tr>
+                        <th colspan="2">
+                            <b>Ihr prognostizierter Eigentumsübergang</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>Gesamtkosten PV-Anlage inkl. Ust. ***</td>
+                        {#if showPrepayment}
+                        <td style="text-align:right">{finalPriceAsString} EUR</td>
+                        {/if}
+                    </tr>
+                    <tr>
+                        <td>Anzahlung</td>
+                        {#if showPrepayment}
+                        <td style="text-align:right">{prepaymentAsString} EUR</td>
+                        {/if}
+                    </tr>
+                    {#if extras}
+                    <tr>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Zusatzleistungen</td>
+                    </tr>
+                    {/if}
+                    {#for extra in extras}
+                    <tr>
+                        <td>
+                            {extra.title}
+                        </td>
+                          <td style="text-align:right;">
+                            {extra.price} EUR
+                        </td>
+                    </tr>
+                    {/for}
+                    <tr>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <!--
+                        <td>Förderzuschuss Bund ({tariff.subventionInstitution})** basierend auf Anzahlung</td>
+                        -->
+                        <td>max. möglicher Förderzuschuss Bund ({tariff.subventionInstitution})**</td>
+                        {#if showPrepayment}
+                        <td style="text-align:right">{subventionAsString} EUR</td>
+                        {/if}
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td>Eigentumsübergang nach Jahren****</td>
+                        {#if showPrepayment}
+                        <td style="text-align:right"><b>{durationAsString}</b></td>
+                        {/if}
+                    </tr>
+                    {#if showOpenBalance}
+                    <tr>
+                        <td>Restbetrag nach 12,5 Jahren in Euro, zu zahlen an solar.family</td>
+                        {#if showPrepayment}
+                        <td style="text-align:right">{openBalanceAsString} EUR</td>
+                        {/if}
+                    </tr>
+                    {/if}
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br/><br/>
+    <!--<div style="padding-left:0px;">-->
+    <div style="position:absolute; width:100%; height:150px;bottom:-550px; ">
+        <hr/>
+        <table border="0">
+            <tr>
+                <td style="width:30px;">
+                    *
+                </td>
+                <td>
+                    Die Übersicht ist als Prognoserechnung zu verstehen und stellt keinen Vertragsbestandteil dar
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    **
+                </td>
+                <td>
+                    Vorbehaltlich Verfügbarkeit der Fördermittel
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">
+                    ***
+                </td>
+                <td>
+                    Der Preis inkludiert keine Aufwände für die Servicepauschale und die Herstellung des Internetzuganges.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ****
+                </td>
+                <td>
+                    Der Zeitpunkt des Eigentumüberganges ist von Ihrem Verbrauchsverhalten abhängig!
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,219 @@
+<div>
+  <br/>
+  <br/>
+  <div style="text-align:center; font-weight:bold; font-size:1.5em;">
+    Verrechnungsblatt zum
+    <br/>
+    VERTRAG
+  </div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <div style="text-align:center;">
+    abgeschlossen zwischen
+  </div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <table width="100%" border="1" style="border-collapse: collapse;">
+    <tr>
+      <td style="width:50%; padding:10px; vertical-align:top;">
+        solar.family GmbH
+        <br/>
+        Herrschaftsweg 29
+        <br/>
+        7551 Stegersbach
+        <br/>
+        in Folge kurz „s.f“ genannt
+      </td>
+      <td style="width:50%; padding:10px; vertical-align:top;">
+        {#if user.gender == 1}
+        Herr
+        {#else if user.gender == 2}
+        Frau
+        {#else if user.gender == 11}
+        Familie
+        {#else if user.gender == 12}
+        Verein:
+        {#else if user.gender == 13}
+        Gemeinde:
+        {/if}
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+        {user.lastName}, {user.titleSuffix}
+        {#else}
+        {user.lastName}
+        {/if}
+        <br/>
+        {address.street}
+        <br/>
+        {address.postNr} {address.city}
+        <br/>
+        {#if otherPropertyOwnerNr > 0}
+        <br/>
+        weitere Grundstückseigentümer:
+        {#for owner in otherPropertyOwners}
+        <br/>
+        {owner.person}
+        {/for}
+        {/if}
+        in Folge kurz „Kunde“ genannt
+      </td>
+    </tr>
+  </table>
+  <div style="page-break-before: always;"></div>
+  <p>
+    1. Die s.f errichtet für den Kunden eine PV-Anlage mit einer Leistung von {plantNominalPower} kWp. Weiters erbringt fg.e im Zusammenhang mit der Errichtung erhebliche Vorleistungen, insb. Planung, Förderabwicklung, Abwicklung des Bauvorhabens, Einholung von notwendigen Bewilligungen, usw.
+  </p>
+  <p>
+    Für die Errichtung der Anlage und die von s.f erbrachten Dienstleistungen bezahlt der Kunde € {sumValueAsString} inkl. Ust
+  </p>
+  <p>
+    Der Betrag für die Anlage inkludiert die nachstehenden Leistungen:
+    <br/>
+    *** Eintragungen auf Plattform noch zu definieren
+  </p>
+  <p>
+    2. Barauslagen, wie beispielsweise behördliche Gebühren für die Ausstellung von Bescheiden, oder dergleichen, werden ebenfalls vom Kunden getragen und soweit möglich gleich direkt bezahlt.
+  </p>
+  <p>
+    3. Für Service und Betrieb der Anlage verrechnet s.f dem Kunden € {serviceFeeAsString} an jährlicher Servicepauschale, welche jeweils in Abhängigkeit von der Übermittlung der Jahresabrechnung Zahlung fällig ist. Für unterjährige Vertragsabschlüsse wird ein aliquotes Serviceentgelt verrechnet. Das Serviceentgelt ist mit dem VPI 2010 [aktueller VPI] wertgesichert.
+  </p>
+  <p>
+    4. Die Bezahlung des unter Pkt. 1 genannten Gesamtvertrages durch den Kunden erfolgt wie folgt:
+    <div style="padding-left:30px; padding-top:10px;">
+      <table>
+        <tr>
+          <td style="width:20px;" valign="top">
+            1.
+          </td>
+          <td>
+            Die Verrechnung erfolgt auf Basis der vom jeweiligen Energieanbieter dem Kunden gelegten Jahresabrechnung sowie der an den Anlagenwechselrichtern bzw. über das zugehörige Online Überwachungssystem ausgewiesenen Photovoltaik-Jahresstrommenge in kWh im Nachhinein, wobei die Gutschrift für die eingespeiste Energie und der Eigenverbrauchsmenge zur Abrechnung herangezogen werden.
+            <br/><br/>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            2.
+          </td>
+          <td>
+            Der Kunde bezahlt s.f jenen Betrag, des als Anteil an der PV-Jahresenergiemenge als unmittelbar selbst verbrauchter Energie (Eigenverbrauch) berechnet wird. Zugrunde gelegt wird ein Preis von {consumptionPerKw} Cent/kWh.
+            <br/><br/>
+          </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          3.
+        </td>
+        <td>
+          Weiters bezahlt der Kunde s.f jenen Betrag, der auf der Jahresabrechnung als Gutschrift für den vom Kunden für die von der PV-Anlage produzierten und eingespeisten Überschussenergie, ausgewiesen ist. Zugrunde gelegt wird ein Preis von {productionPerKw} Cent/kwh.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          4.
+        </td>
+        <td>
+          s.f errechnet die nach Pkt. 2 und 3 zu bezahlenden Beträge anhand der Jahresabrechnung(en) und sind die so berechneten Beträge binnen 14 Tagen ab Vorschreibung durch s.f vom Kunden zu bezahlen.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          5.
+        </td>
+        <td>
+          Die erste Teilvorschreibung in Höhe des potentiellen Förderbetrages (noch zu prüfen), sowie die Servicepauschale für das erste Betriebsjahr ist unmittelbar nach Inbetriebnahme der Anlage zu leisten.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          6.
+        </td>
+        <td>
+          Der Kunde hat jedenfalls die mit der Stromlieferung verbundenen Steuern, Gebühren oder Abgaben sowie alle künftig eventuell neu eingeführten Steuern zu tragen.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          7.
+        </td>
+        <td>
+          In dem Zeitpunkt, in dem der Kunde mit den in Pkt. 2. und Pkt. 3. genannten Beträgen jenen Gesamtpreis nach Pkt. 1 bezahlt hat, geht das Eigentum an der gesamten Anlage an den Kunden über. Ab diesem Zeitpunkt hat auch der Kunde sämtliche mit der Anlage verbundenen Kosten zu bezahlen. Dem Kunden steht es frei, die s.f auch nach diesem Zeitpunkt mit dem Service der Anlage zu beauftragen.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          8.
+        </td>
+        <td>
+          Erreicht der Kunde innerhalb der Vertragsdauer nicht die gänzliche Rückzahlung des Gesamtbetrages nach Pkt. 1., so ist der dann noch offene Betrag binnen 14 Tagen zur Zahlung fällig. Pkt. 7 gilt sinngemäß.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          9.
+        </td>
+        <td>
+          Möchte der Kunde den Anlagenwert vorzeitig zurückzahlen, so ist dies unter Berücksichtigung eines Bearbeitungszuschlages in der Höhe von 5% des unter Pkt. 1 deklarierten Preises für die mit der vorzeitigen Kündigung verbundenen Kosten, möglich.
+          <br/><br/>
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+          10.
+        </td>
+        <td>
+          Die Bezahlung der Beträge ist – sofern der Kunde dies wünscht – auch mittels Lastschrift möglich.
+          <br/><br/>
+        </td>
+        </tr>
+      </table>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <p>
+        ________________, am ________________
+      </p>
+      <br/>
+      <br/>
+      <table width="100%">
+        <tr>
+          <td style="width:50%; padding:0px; vertical-align:top;">
+            ____________________________________
+            <br/>
+            solar.family GmbH
+          </td>
+          <td style="width:50%; padding-left:50px; vertical-align:top;">
+            ____________________________________
+            <br/>
+            {user.titlePrefix}
+            {user.firstName}
+            {#if user.titleSuffix != ""}
+            {user.lastName}, {user.titleSuffix}
+            {#else}
+            {user.lastName}
+            {/if}
+            {#if otherPropertyOwners != null}
+            {#for owner in otherPropertyOwners}
+            <br/><br/><br/>
+            ____________________________________
+            <br/>
+            {owner.person}
+            {/for}
+            {/if}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </p>
+</div>

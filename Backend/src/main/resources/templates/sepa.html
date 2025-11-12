@@ -1,0 +1,328 @@
+<div>
+  <div style="text-align:left; font-weight:bold; font-size:1.3em;">
+    SEPA- Firmenlastschrift - Mandat
+  </div>
+  <p>
+    <b>Mandatsreferenz:</b>
+    <br/>
+    {sepaId}
+  </p>
+  <p>
+    <b>Zahlungsempfänger:</b>
+    <br/>
+    solar.family GmbH
+    <br/>
+    Herrschaftsweg 29
+    <br/>
+    7551 Stegersbach
+  </p>
+  <p>
+    <b>Creditor ID:</b>
+    <br/>
+    ----------------------------------------------------------------------------------------------------------------------------------------------
+    <br/>
+    Ich ermächtige/ Wir ermächtigen die solar.family GmbH Zahlungen von meinem/ unserem Konto mittels SEPA - Lastschrift einzuziehen. Zugleich weise ich mein/ unser Kreditinstitut an, die von der solar.family GmbH auf mein/ unser Konto gezogenen SEPA – Lastschriften einzulösen.
+    Dieses SEPA -Firmenlastschriftmandat dient nur dem Einzug von SEPA -Firmenlastschriften, die auf Konten von Unternehmen gezogen sind. Ich bin/wir sind nicht berechtigt, nach der erfolgten Einlösung eine Erstattung des belasteten Betrages zu verlangen.
+    Ich bin/Wir sind berechtigt, mein/unser Kreditinstitut bis zum Fälligkeitstag anzuweisen,
+    SEPA -Firmenlastschriften nicht einzulösen.
+    <br/>
+    ----------------------------------------------------------------------------------------------------------------------------------------------
+  </p>
+  <p>
+    <b>Zahlungspflichtiger</b>
+  </p>
+  <p>
+    Name:
+    {user.titlePrefix}
+    {user.firstName}
+    {#if user.titleSuffix != ""}
+    {user.lastName}, {user.titleSuffix}
+    {#else}
+    {user.lastName}
+    {/if}
+    <br/>
+    Anschrift:
+    {address.street}, {address.postNr} {address.city}
+  </p>
+  <p>
+    IBAN: {sepa.account}
+    <br/>
+    <br/>
+    BIC: {sepa.bic}
+  </p>
+  <p>
+    ----------------------------------------------------------------------------------------------------------------------------------------------<br/>
+    Zahlungsart &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; x Wiederkehrender Einzug&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;o Einmaleinzug
+    ----------------------------------------------------------------------------------------------------------------------------------------------<br/>
+  </p>
+  <p>
+    Ort, Datum    ……………………………………………………………………………………………………………………………………
+  </p>
+  <br/>
+  <br/>
+  <p>
+    Unterschrift   ……………………………………………………………………………………………………………………………………
+  </p>
+  <p>
+    <b>
+      Wichtiger Hinweis für den Zahlungspflichtigen:
+      <br/>
+      Bitte dieses Mandat unbedingt vor dem 1. Einzug an Ihre Hausbank übermitteln!
+    </b>
+  </p>
+  <p>
+    <b>
+      <u>Beilage zur Vereinbarung über den Einzug von Forderungen im Wege des
+        <br/>
+        SEPA DIRECT DEBIT B2B Verfahrens (SEPA Firmenlastschrift, final)</u>
+    </b>
+  </p>
+  <p>
+    <b>
+      1. Mandatsgestaltung
+    </b>
+    <br/>
+    Ein SEPA Firmenlastschrift-Mandat kann sowohl als eigenes Mandat gestaltet werden als auch als Bestandteil eines Bestellformulars etc.
+  </p>
+  <p>
+    <b>
+      2. Mandatssprache und Mandatstext
+    </b>
+    <br/>
+    Das Mandat muss für die Verwendung in Österreich zumindest in deutscher Sprache sein.
+    <br/>
+    Für die Verwendung bei grenzüberschreitenden Einzügen jeweils in der Landessprache bzw. falls die verwendete Sprache für den Zahlungsempfänger nicht eindeutig ist, ergänzt um Englisch.
+    <br/>
+    Die unter Pkt.4 beschriebenen, verpflichtenden Mandatstexte stellen wir Ihnen auf Anfrage gerne auch in den Sprachen der verschiedenen SEPA-Länder zur Verfügung.
+  </p>
+  <p>
+    <b>
+      3. Bestandteile des Mandatsformulars
+    </b>
+    <br/>
+    Jedes SEPA Firmenlastschrift-Mandat umfasst folgende Bestandteile, von denen einige verpflichtend anzugeben sind, andere optional verwendet werden können.
+  </p>
+  <div style="padding-left:20px;">
+    <table border="1" style="width:600px; border-collapse: collapse;">
+      <tr>
+        <td style="padding:5px;">
+          Titel
+        </td>
+        <td style="width:300px; padding:5px;">
+          SEPA Lastschrift-Mandat
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          1
+        </td>
+        <td style="padding:5px;">
+          Mandatsreferenz
+        </td>
+        <td style="padding:5px;">
+          Optional
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          2
+        </td>
+        <td style="padding:5px;">
+          Name des Zahlungspflichtigen
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          3
+        </td>
+        <td style="padding:5px;">
+          Adresse des Zahlungspflichtigen
+          Straße und Hausnummer
+          Postleitzahl und Ort
+          Land
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          4
+        </td>
+        <td style="padding:5px;">
+          IBAN des Zahlungspflichtigen
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          5
+        </td>
+        <td style="padding:5px;">
+          BIC der Bank des Zahlungspflichtigen
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          6
+        </td>
+        <td style="padding:5px;">
+          Name des Zahlungsempfängers
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          7
+        </td>
+        <td style="padding:5px;">
+          Creditor-ID
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          8
+        </td>
+        <td style="padding:5px;">
+          Adresse des Zahlungsempfängers
+          Straße und Hausnummer
+          Postleitzahl und Ort
+          Lan
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          9
+        </td>
+        <td style="padding:5px;">
+          Art der Zahlung (Einmalig, Wiederkehrend)
+        </td>
+        <td style="padding:5px;">
+          Optional
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          10
+        </td>
+        <td style="padding:5px;">
+          Ort und Datum der Unterschrift(en)
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:5px;">
+          11
+        </td>
+        <td style="padding:5px;">
+          Unterschrift(en)
+        </td>
+        <td style="padding:5px;">
+          Verpflichtend
+        </td>
+      </tr>
+    </table>
+  </div>
+  <p>
+    <b>
+      4. Textierung des SEPA Firmenlastschiftmandats
+    </b>
+    <br/>
+    Zur Textierung des SEPA-Einzugsformulars ist am Formular folgende Textierung zu verwenden:
+    <br/>
+    ==============================================================================================
+    <br/>
+    Ich ermächtige/ Wir ermächtigen [Name des Zahlungsempfängers], Zahlungen von meinem/ unserem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein/ weisen wir unser Kreditinstitut an, die von [Name des Zahlungsempfängers] auf mein/ unser Konto gezogenen SEPA-Lastschriften einzulösen.
+    <br/><br/>
+    Dieses SEPA -Firmenlastschriftmandat dient nur dem Einzug von SEPA -Firmenlastschriften, die auf Konten von Unternehmen gezogen sind. Ich bin/wir sind nicht berechtigt, nach der erfolgten Einlösung eine Erstattung des belasteten Betrages zu verlangen.
+    Ich bin/Wir sind berechtigt, mein/unser Kreditinstitut bis zum Fälligkeitstag anzuweisen,
+    SEPA -Firmenlastschriften nicht einzulösen.
+    <br/>
+    ==============================================================================================
+  </p>
+  <p>
+    <b>
+      5. Begriffsbestimmungen
+    </b>
+    <br/>
+    <br/>
+    <b>Mandatsreferenz</b>
+    <br/>
+    Die Mandatsreferenz ist ein maximal 35 stelliger, alphanumerischer Zeichensatz und vom Zahlungsempfänger frei wählbar.  Am einfachsten ist es, bisher bestehende Kundennummern dafür weiter zu verwenden (z.B. Polizzennummern bei Versicherungen).
+    <br/>
+    <br/>
+    Wichtig:
+    <br/>
+    <b>Die Mandatsreferenz muss eindeutig einem Einzug zugeordnet werden.</b>
+    <br/>
+    Es dürfen nicht mehrere Einzüge desselben zahlungspflichtigen Kunden mit derselben Mandatsnummer versehen sein.
+  </p>
+  <p>
+    <b>
+      Creditor – ID (Gläubiger-Identifikationsnummer)
+    </b>
+    <br/>
+    <br/>
+    Die Creditor – ID ist die eindeutige Kennung eines Zahlungsempfängers  und muss bei jeder SEPA Lastschrift angegeben werden.
+    <br/>
+    <br/>
+    Die Vergabe erfolgt in Österreich ausschließlich über die Hausbank bei der OeNB.
+    <br/>
+    <br/>
+    Sie ist 18-stellig und (beispielhaft) wie folgt aufgebaut:
+    <br/>
+    <br/>
+    AT18ZZZ12345678901
+    <br/>
+    <br/>
+    <table border="0">
+      <tr>
+        <td style="width:50px;">
+          AT
+        </td>
+        <td style="width:250px;">
+          ISO Ländercode
+        </td>
+      </tr>
+      <tr>
+        <td>
+          18
+        </td>
+        <td>
+          Prüfziffer
+        </td>
+      </tr>
+      <tr>
+        <td>
+          ZZZ
+        </td>
+        <td>
+          Business Area Code*
+        </td>
+      </tr>
+    </table>
+    <br/>
+    12345678901	11- stelliges, nationales Erkennungszeichen
+  </p>
+</div>

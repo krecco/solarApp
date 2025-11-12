@@ -1,0 +1,197 @@
+<div>
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                {#if user.gender == 1}
+                    Herr
+                {#else if user.gender == 2}
+                    Frau
+                {#else if user.gender == 11}
+                    Familie
+                {#else if user.gender == 12}
+                    Verein:
+                {#else if user.gender == 13}
+                    Gemeinde:
+                {/if}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {user.titlePrefix}
+                {user.firstName}
+                {#if user.titleSuffix != ""}
+                    {user.lastName}, {user.titleSuffix}
+                {#else}
+                    {user.lastName}
+                {/if}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {address.street}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {address.postNr} {address.city}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right" style="text-align:right; !important">
+                <br/>
+                Stegersbach, {date}
+                <br/>
+                <i>Bearbeiter: {plant.createdByName}</i>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <table width="100%">
+        <tr>
+            <td style="font-size: 20px !important;">
+                <b>Unterlagen solar.family Photovoltaik-Anlage</b>
+            </td>
+        </tr>
+        <!--
+        <tr>
+            <td>
+                {plant.title}
+            </td>
+        </tr>
+        -->
+    </table>
+    <br/>
+    <br/>
+    <br/>
+    <p>
+        <!--Sehr geehrter Herr [IDT1] Ing. [IDT3] Max Sonnenschein [IDT2], MSc. [IDT3],-->
+        <!-- old
+        {#if user.gender == 1}
+            Sehr geehrter Herr
+        {#else if user.gender == 2}
+            Sehr geehrte Frau
+        {/if}
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+            {user.lastName}, {user.titleSuffix},
+        {#else}
+            {user.lastName},
+        {/if}
+        -->
+        {userTitle}
+    </p>
+    <p>
+        es freut uns sehr, dass unser <b>„solar.family“</b> Photovoltaik-Angebot Ihr Interesse geweckt hat.
+        <!--es freut uns sehr, dass wir mit dem Photovoltaik-Beteiligungsprojekt „{plant.title}“ Ihr Interesse wecken konnten.-->
+    </p>
+    <p>
+        Im Anhang übermitteln wir Ihnen die für die Teilnahme am Vorhaben relevanten nachstehenden Unterlagen zur Durchsicht:
+        <ul>
+            <li>Projektierungsunterlagen {plantNominalPower} kWp Photovoltaik-Anlage</li>
+            <li>Prognoserechnung unter Berücksichtigung der min. und max. Anzahlung</li>
+        </ul>
+    </p>
+    <p>
+        Sofern Sie das solar.family Angebot annehmen möchten, ersuchen wir Sie um Bestätigung, bzw Mitteilung zur Änderung der gewünschten Anzahlung.
+    </p>
+    <p>
+        Basierend auf Ihrer Entscheidung <b>werden die vertragsrelevanten Dokumente
+        elektronisch auf unserer solar.family Plattform zur Verfügung gestellt</b> (zu
+        diesen Zweck ersuchen wir sie um Bekanntgabe einer E-Mail Adresse – sie erhalten
+        in weiterer Folge die Zugangsdaten zur solar.family Plattform – über den Zugang
+        können dann die relevanten Verträge und Unterlagen heruntergeladen,
+        ausgedruckt und auch unterschrieben wieder hochladen werden).
+    </p>
+    <div style="page-break-before: always;"></div>
+    <p style="padding-top:15px;">
+        <b style="font-size: 18px !important;">ad Projektierungsunterlagen:</b>
+        <div style="margin-top:5px;">
+            Die Projektierungsunterlagen wurden auf Basis der örtlichen Gegebenheiten, Ihren
+            Angaben sowie Ihren prognostizierten Stromverbrauchswerten erstellt (Der PVDachbelegungsplan kann in Abstimmung mit uns im Bedarfsfall angepasst
+            werden).
+        </div>
+    </p>
+    <p>
+        Es kann bezugnehmend auf die ordnungsgemäßen Voraussetzungen zum Betrieb
+        einer Photovoltaik-Anlage erforderlich sein (das Erfordernis wird im Zuge der
+        Anlagenmontage überprüft), einen Erdspieß zu schlagen. Für den Fall, dass die
+        Herstellung eines Erdspießes notwendig ist, bieten wir Ihnen die Leistungen gerne
+        zu einem Herstellungspreis von € {tariffSpikePrice} inkl. USt. an.
+        <br/>
+        Ebenso kann es erforderlich sein, bei Ihrer bestehenden Stromversorgungsanlage
+        im Zählerverteiler Überspannungsableiter vom Typ I nachzurüsten. Gerne können
+        wir die Herstellung des Überspannungsableiter zum Preis von € {tariffSurgePrice} inkl. USt.
+        durchführen.
+        <br/>
+        Die o.g. Aufwände stellen keinen Vertragsbestandteil dar
+        <br/>
+        Die Herstellung der benötigten Internetverbindung ist über Ihr bestehendes
+        WLAN-System vorgesehen. Für den Fall, dass über das WLAN-System keine
+        Verbindung zum Wechselrichter hergestellt werden kann, muss die Verbindung mit
+        Hilfe von POWER-LAN Adaptern realisiert werden. Der Preis hierzu beläuft sich auf
+        € {tariffPricePowerLanAdapter} inkl. USt.
+    </p>
+    <!--
+    <div style="page-break-before: always;"></div>
+    -->
+    <p style="padding-top:15px;">
+        <b style="font-size: 18px !important;">ad Förderabwicklung:</b>
+        <div style="margin-top:5px;">
+            Mögliche Förderung ({tariff.subventionInstitution}) entnehmen Sie bitte den aktuellen Richtlinien.
+            <br/>
+            https://www.oem-ag.at/de/foerderung/
+            <br/>
+            Die Förderabwicklung wird unsererseits erledigt – Sie haben diesbezüglich keine Aufwände.
+            <br/>
+            Die Förderung wird in weiterer Folge von der Förderstelle an Sie ausbezahlt.
+            <br/>
+            Die Einbringung eines etwaigen Förderansuchens garantiert keine Förderzusage !
+        </div>
+    </p>
+    {#if plant.documentExtraTextBlockA}
+    <p>
+        {plant.documentExtraTextBlockA}
+    </p>
+    {/if}
+    <p>
+        <b style="font-size: 18px !important;">ad Rücksendung der Unterlagen:</b><br/>
+        Zum Zeichen Ihres Einverständnisses mit den Bedingungen zur Teilnahme am
+        Photovoltaik-Beteiligungsmodell ist es erforderlich, dass Sie uns ihre gewünschte
+        Anzahlungs Option <b>bis spätestens {validUntilDate}</b>  an die E-Mail Adresse
+        <br/><b>info@solar.family</b> bekanntzugeben.
+    </p>
+    <p>
+        Die in weiterer Folge über die solar.family Plattform zur Verfügung gestellten
+        Vertragsunterlagen erlangen erst nach Prüfung und Bereitstellung der unserseits
+        gegengezeichneten Vertragsdokumente ihre Gültigkeit. Als bald die
+        Voraussetzungen für die Umsetzung des Vorhabens gewährleistet sind, werden wir
+        uns mit Ihnen bzgl. eines für Sie passenden Montagetermins in Verbindung
+        setzten.
+    </p>
+    <p>
+        Im Rahmen des Projektes solar.family können Sie die Anlage auch direkt erwerben.
+        Sollte dies der Fall sein, bitten wir sie um Ihre Kontaktaufnahme.
+    </p>
+    <p>
+        Für etwaige Rückfragen stehen wir Ihnen unter +43 3326 52496-0 jederzeit gerne
+        zur Verfügung.
+    </p>
+    <br/>
+    <br/>
+    <p>
+        Mit freundlichen Grüßen
+        <br/>
+        Ihr solar.family Team
+    </p>
+    {#if plant.documentExtraTextBlockB}
+    <p>
+        <br/>
+        <br/>
+        {plant.documentExtraTextBlockB}
+    </p>
+    {/if}
+</div>

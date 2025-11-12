@@ -1,0 +1,218 @@
+<div
+  style="font-size:13px;"
+>
+  <table width="100%">
+    <tr>
+      <td colspan="2">
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+        {user.lastName}, {user.titleSuffix}
+        {#else}
+        {user.lastName}
+        {/if}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        {address.street}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        {address.postNr} {address.city}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="right" style="text-align:right; !important">
+        <br/>
+        Stegersbach, {date}
+      </td>
+    </tr>
+  </table>
+  <br/>
+  <br/>
+  <br/>
+  <b>
+    Abrechnung Rechnungszeitraum {dateFrom} bis {dateTo}
+    <br/>
+    Projekt: {plant.title}
+    <br/>(???Rechnung 1920/027 vom 10.11.2019???)
+    <br/>
+    <br/>
+    {plantPower} kWp Photovoltaik-Anlage
+  </b>
+  <br/>
+  <br/>
+  <table width="100%">
+    <tr>
+      <td>
+        Stromertrag PV-Anlage
+      </td>
+      <td>
+        {dateFrom} bis {dateTo}
+      </td>
+      <td>
+        {powerProduction} kWh
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        (lt. Solarweb bzw. Ablesung Wechselrichter)
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td
+        style="width:50%"
+      >
+        Überschussstrom PV-Anlage
+      </td>
+      <td>
+        {dateFrom} bis {dateTo}
+      </td>
+      <td>
+        {powerDiff} kWh
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        (???gemäß Gutschrift Nr. 30105050237 Energie Burgenland vom 16.09.2020???)
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Strom-Eigenverbrauch PV-Anlage
+      </td>
+      <td>
+        {dateFrom} bis {dateTo}
+      </td>
+      <td>
+        {powerConsumption} kWh*
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        (Stromertrag abzgl. Überschussstrom)
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        * - {powerConsumption} kWh entsprechen einem PV-Strom-Eigenverbrauchsanteil von {powerDiffPercent}%. Bei einem PV-Strom-Ertrag von {powerProduction} kWh (im
+        Rechnungszeitraum) und einem Eigenverbrauchsanteil von {powerDiffPercent}% erfolgt ein Eigentumsübertrag nach 12,5 Jahren.
+        <br/>
+        (???Restwert: 824,21 EUR???)
+        <br/>
+        <br/>
+        <hr/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Entgelt PV-Überschussstrom
+      </td>
+      <td>
+        {powerDiff} kWh x {productionTariff} €
+      </td>
+      <td>
+        {notUsedPower} €
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        (---gemäß Verrechnungsblatt zum Vertrag vom 14.08.2018)
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Entgelt PV-Strom-Eigenverbrauch
+      </td>
+      <td>
+        {powerConsumption} kWh x {consumptionTariff} €
+      </td>
+      <td>
+        {usedPower} €
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        (---gemäß Verrechnungsblatt zum Vertrag vom 14.08.2018)
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <b>Gesamt (Entgelt Überschuss + Entgelt Eigenverbrauch)</b>
+      </td>
+      <td>
+        <b>{sumPower} €</b>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <hr/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Basisbetrag lt. Abrechnung
+      </td>
+      <td>
+        Last year
+      </td>
+      <td>
+        {baseAmount} €
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Zahlungsbetrag Gesamt
+      </td>
+      <td>
+        {dateFrom} bis {dateTo}
+      </td>
+      <td>
+        - {sumPower} €
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <b>Verbleibender Basisbetrag neu</b>
+      </td>
+      <td>
+        <b>{sumNew} €</b>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <br/>
+        <br/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"
+        style="border: 1px solid; text-align:center;"
+      >
+        <b>
+          Zahlbar {sumPower} € | 7 Tage netto ohne Abzug auf das Konto:
+          <br/>IBAN: AT69 33125 00000078576 | BIC: RLBBAT2E125
+        </b>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"
+          style="text-align:center;"
+      >
+        Wir bedanken uns für Ihr entgegengebrachtes Vertrauen !
+      </td>
+    </tr>
+  </table>
+</div>

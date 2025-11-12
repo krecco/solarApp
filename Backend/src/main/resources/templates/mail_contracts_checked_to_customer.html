@@ -1,0 +1,28 @@
+{#if user.gender == 1}
+Sehr geehrter Herr
+{#else if user.gender == 2}
+Sehr geehrte Frau
+{#else if user.gender == 3}
+Sehr geehrte(r)
+{#else if user.gender == 11}
+Sehr geehrte Famile
+{#else if user.gender == 12}
+Sehr geehrte Damen und Herren vom Vereinsvorstand
+{#else if user.gender == 13}
+Sehr geehrte Damen und Herren vom Gemeindevorstand
+{/if}
+{user.titlePrefix}
+{user.firstName}
+{#if user.titleSuffix != ""}
+{user.lastName}, {user.titleSuffix}
+{#else}
+{user.lastName}
+{/if},
+<br><br>
+Die Vertragsunterlagen für Ihre solar.family Photovotlaik-Anlage wurden geprüft und bestätigt.
+<br>
+Es freut uns sehr Sie als Teil der solar.family begrüßen zu dürfen.
+<br><br>
+Nach Abschluss aller administrativen Aktivitäten melden wir uns ehestmöglich zur Abstimmung eines Montagetermins bei Ihnen.
+<br><br>
+Für etwaige Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.

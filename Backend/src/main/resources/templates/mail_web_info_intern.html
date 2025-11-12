@@ -1,0 +1,38 @@
+Liebes Service-Team,
+<br><br>
+am {stringDate} ist folgende Anfrage eingegangen:
+<br><br>
+<b>Anrede:</b>
+{#if webInfo.title == 1}
+    Herr
+{#else if webInfo.title == 2}
+    Frau
+{#else}
+    Divers
+{/if}
+<br>
+<b>Titel:</b> {webInfo.titlePrefix}
+<br>
+<b>Vorname:</b> {webInfo.firstName}
+<br>
+<b>Nachname:</b> {webInfo.lastName}
+<br>
+<b>Titel nachgestellt:</b> {webInfo.titleSuffix}
+<br>
+<b>E-Mail:</b> {webInfo.email}
+<br>
+<b>Telefonnummer:</b> {webInfo.phone}
+<br>
+<b>Straße:</b> {webInfo.addressStreet}
+<br>
+<b>Adresszusatz:</b> {webInfo.addressExtra}
+<br>
+<b>Postleitzahl:</b> {webInfo.addressPostNr}
+<br>
+<b>Ort:</b> {webInfo.addressCity}
+<br>
+<b>Vorname:</b> {webInfo.firstName}
+<br><br>
+<b>Gewünschter Telefontermin:</b> {stringTermin}
+<br><br>
+<b>zusätzliche Daten:</b> <pre>{webInfo.webCalculation}</pre>

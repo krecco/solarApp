@@ -1,0 +1,103 @@
+<div>
+  <br/>
+  <br/>
+  <div style="text-align:center; font-weight:bold; font-size:1.5em;">
+    VOLLMACHT
+  </div>
+  <br/>
+  <br/>
+  <p>
+    Ich
+  </p>
+  <p>
+    <!--Herr [IDT1] u. Frau / Firma / Gemeinde:	Ing. [IDT3] Max Sonnenschein [IDT2], MSc. [IDT4]-->
+    {#if user.gender == 1}
+    Herr
+    {#else if user.gender == 2}
+    Frau
+    {#else if user.gender == 11}
+    Familie
+    {#else if user.gender == 12}
+    Verein:
+    {#else if user.gender == 13}
+    Gemeinde:
+    {/if}
+    {user.titlePrefix}
+    {user.firstName}
+    {#if user.titleSuffix != ""}
+      {user.lastName}, {user.titleSuffix}
+    {#else}
+      {user.lastName}
+    {/if}
+  </p>
+  <table width="100%" border="0">
+    <tr>
+      <td style="width:20%; padding:00px; vertical-align:top;">
+        Ansprechperson:
+      </td>
+      <td style="padding:0px; vertical-align:top;">
+        <!--ing. [IDT3] Max Sonnenschein [IDT2], MSc. [IDT4]-->
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+          {user.lastName}, {user.titleSuffix}
+        {#else}
+          {user.lastName}
+        {/if}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:20%; padding:00px; vertical-align:top;">
+        Straße:
+      </td>
+      <td style="padding:0px; vertical-align:top;">
+        <!--Solarweg 12 [IDT5]-->
+        {address.street}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:20%; padding:00px; vertical-align:top;">
+        PLZ / Ort::
+      </td>
+      <td style="padding:0px; vertical-align:top;">
+        {address.postNr} {address.city}
+      </td>
+    </tr>
+  </table>
+  <p>
+    als Vollmachtgeber bevollmächtige/n und beauftrage/n hiermit ausdrücklich die
+  </p>
+  <br/>
+  <p>
+    <div style="text-align:center; font-weight:bold;">
+      solar.family GmbH,
+      <br/>
+      Herrschaftsweg 29, 7551 Stegersbach
+    </div>
+  </p>
+  <br/>
+  <p>
+    als Vollmachtnehmer mich / uns in unserem Namen, auf unseren Auftrag und auf unsere Rechnung beim Amt der Burgenländischen Landesregierung, der {powerBill.netProvider}, der {powerBill.provider} dem Klimafonds, der {plant.subventionProvider} sowie den dafür zuständigen Behörden zu vertreten und alle Rechtshandlungen zu setzen, Eingaben zu tätigen, Anträge zu stellen und Erklärungen in der erforderlichen und notwendigen Form abzugeben sowie allenfalls Rechtsmittel zu ergreifen, die notwendig und zweckmäßig sind, um die Bewilligung und den Betrieb einer Photovoltaikanlage zu erlangen.
+  </p>
+  <br/>
+  <br/>
+  <p>
+    _____________________________
+    <br/>
+    Ort, Datum
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    ______________________________
+    <br/>
+    <!--[IDT1] bis [IDT6]-->
+    {user.titlePrefix}
+    {user.firstName}
+    {#if user.titleSuffix != ""}
+      {user.lastName}, {user.titleSuffix}
+    {#else}
+      {user.lastName}
+    {/if}
+  </p>
+</div>

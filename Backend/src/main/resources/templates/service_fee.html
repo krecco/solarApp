@@ -1,0 +1,175 @@
+<div
+  style="font-size:13px;"
+>
+  <table width="100%">
+    <tr>
+      <td colspan="2">
+        {user.titlePrefix}
+        {user.firstName}
+        {#if user.titleSuffix != ""}
+        {user.lastName}, {user.titleSuffix}
+        {#else}
+        {user.lastName}
+        {/if}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        {address.street}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        {address.postNr} {address.city}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="right" style="text-align:right; !important">
+        <br/>
+        Stegersbach, {date}
+      </td>
+    </tr>
+  </table>
+  <br/>
+  <br/>
+  <br/>
+  <b>
+     RECHNUNG 2022/0001
+  </b>
+  <br/>
+  {plantPower} kWp Photovoltaik-Anlage
+  <br/>
+  <br/>
+  <table width="100%"
+    style="border: 1px solid;"
+  >
+    <tr
+      style="background: #E8E8E8;"
+    >
+      <td>
+        POS.
+      </td>
+      <td>
+        MENGE
+      </td>
+      <td>
+        EINH.
+      </td>
+      <td>
+        BESCHREIBUNG
+      </td>
+      <td>
+        PREIS
+      </td>
+      <td>
+        GESAMT
+      </td>
+    </tr>
+    <tr>
+      <td>
+        1
+      </td>
+      <td>
+        1
+      </td>
+      <td>
+        PA
+      </td>
+      <td>
+        <b>{plant.title}</b>
+        <br/>
+        Service Betriebspauschale. {plantPower} kWp
+        <br/>
+        (???gemäß Verrechnungsblatt zum Vertrag vom 8/14/2018???)
+      </td>
+      <td>
+        {serviceFee} €
+      </td>
+      <td>
+        {serviceFee} €
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td colspan="3">
+        <hr/>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td>
+        NETTOBETRAG GESAMT
+      </td>
+      <td>
+      </td>
+      <td>
+        {serviceFee} €
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td colspan="3">
+        <hr/>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td>
+        UST 20%
+      </td>
+      <td>
+      </td>
+      <td>
+        {serviceFeeTax} €
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td colspan="3">
+        <hr/>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="3">
+      </td>
+      <td>
+        <b>BRUTTOBETRAG</b>
+      </td>
+      <td>
+      </td>
+      <td>
+        <b>{serviceFeeBrutto} €</b>
+      </td>
+    </tr>
+  </table>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  Leistungszeitraum: 09/19 bis 09/20
+  <br/>
+  <br/>
+  Zahlbar 7 Tage ohne Abzug auf das Konto:
+  <br/>
+  IBAN: AT69 3312 5000 0007 8576 | BIC: RLBBAT2E125
+  <br/>
+  <br/>
+  <br/>
+  <div
+    style="text-align:center;"
+  >
+    Wir bedanken uns für Ihr entgegengebrachtes Vertrauen !
+  </div>
+</div>

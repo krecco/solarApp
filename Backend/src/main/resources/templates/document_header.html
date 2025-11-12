@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>solar.family</title>
+  <style>
+    @page {
+       @bottom-right {
+          content: 'Seite ' counter(page) "/" counter(pages) ' | {issueDate}';
+       }
+       @bottom-left {
+          content: 'Unterlagen solar.family Photovoltaik-Anlage';
+       }
+    }
+
+    body {
+        font-family: 'Open Sans',sans-serif !important;
+        font-size: 15px !important;
+        line-height: 1.35 !important;
+        text-align: justify !important;
+    }
+
+    .basicTable {
+      border-collapse: collapse;
+      width: 100%;
+      text-align: left !important;
+    }
+
+    .basicTable td, .basicTable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .basicTable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #66a959;
+      color: white;
+    }
+
+    /* uncomment this to hide page number on page one, don't forget to move <div style="-fs-page-sequence: start;"></div> to beginning of page two!
+    @page:first {
+       @bottom-center {
+          content: '';
+       }
+    }
+    */
+  </style>
+</head>
+<body style="padding:0px; margin:0px;">
+  <div style="margin-bottom:100px;">
+    <div>
+        solar.family
+        {#if subHeader}
+          <br/>
+          <i>{subHeader}</i>
+        {/if}
+    </div>
+    <div style="float:right;">
+      <img src="../../images/logo-solar.png" style="height:30px; margin-top:-20px; padding-top:0px;"/>
+    </div>
+  </div>

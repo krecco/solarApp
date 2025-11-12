@@ -1,0 +1,30 @@
+[
+  {
+    "name" : "com.openhtmltopdf.pdfboxout.PdfRendererBuilder",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.openhtmltopdf.pdfboxout.PdfBoxRenderer",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name":"com.sun.org.apache.xerces.internal.parsers.SAXParser",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  }
+]
