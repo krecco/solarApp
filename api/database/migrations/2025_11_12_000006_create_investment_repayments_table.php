@@ -60,7 +60,7 @@ return new class extends Migration
         Schema::create('solar_plant_repayment_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('solar_plant_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('solar_plant_repayment_data_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('solar_plant_repayment_data_id')->nullable()->constrained('solar_plant_repayment_data')->nullOnDelete();
 
             $table->decimal('amount', 12, 2);
             $table->date('payment_date');
@@ -76,7 +76,7 @@ return new class extends Migration
         Schema::create('solar_plant_repayment_log_reminders', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('solar_plant_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('solar_plant_repayment_data_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('solar_plant_repayment_data_id')->nullable()->constrained('solar_plant_repayment_data')->nullOnDelete();
 
             $table->date('reminder_date');
             $table->boolean('sent')->default(false);

@@ -286,9 +286,9 @@ class DemoDataSeeder extends Seeder
             if ($repayment->due_date < Carbon::now() && rand(1, 100) <= 80) {
                 $repayment->update([
                     'status' => 'paid',
-                    'paid_at' => $repayment->due_date->addDays(rand(1, 5)),
+                    'paid_date' => $repayment->due_date->addDays(rand(1, 5)),
                     'payment_method' => 'sepa',
-                    'payment_reference' => 'DEMO-' . strtoupper(substr(md5(uniqid()), 0, 10)),
+                    'reference_number' => 'DEMO-' . strtoupper(substr(md5(uniqid()), 0, 10)),
                 ]);
 
                 // Update investment paid amount
