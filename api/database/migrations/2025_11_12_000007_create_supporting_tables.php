@@ -109,17 +109,8 @@ return new class extends Migration
             $table->index('status');
         });
 
-        // Settings (key-value store)
-        Schema::create('settings', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('key')->unique();
-            $table->text('value')->nullable();
-            $table->string('type')->default('string'); // string, integer, boolean, json
-            $table->text('description')->nullable();
-
-            $table->timestamps();
-        });
+        // Note: Settings table is created in 2025_11_12_150837_create_settings_table.php
+        // with group support, is_public flag, and soft deletes
 
         // Activity logs (audit trail)
         Schema::create('activity_logs', function (Blueprint $table) {
@@ -164,7 +155,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('web_info');
         Schema::dropIfExists('activity_logs');
-        Schema::dropIfExists('settings');
+        // Settings table is dropped in 2025_11_12_150837_create_settings_table.php
         Schema::dropIfExists('campaigns');
         Schema::dropIfExists('solar_plant_extras');
         Schema::dropIfExists('extras');
