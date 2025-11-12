@@ -3,10 +3,12 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PreferenceController;
+use App\Http\Controllers\Api\SolarPlantController;
 use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -81,6 +83,36 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [PreferenceController::class, 'show']);
         Route::put('/', [PreferenceController::class, 'update']);
         Route::post('/reset', [PreferenceController::class, 'reset']);
+    });
+
+    // Solar Plants (All authenticated users can view, admin/manager can create/edit)
+    Route::prefix('solar-plants')->group(function () {
+        Route::get('/', [SolarPlantController::class, 'index']);
+        Route::get('/statistics', [SolarPlantController::class, 'statistics']);
+        Route::get('/{solarPlant}', [SolarPlantController::class, 'show']);
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/', [SolarPlantController::class, 'store']);
+            Route::put('/{solarPlant}', [SolarPlantController::class, 'update']);
+            Route::delete('/{solarPlant}', [SolarPlantController::class, 'destroy']);
+            Route::post('/{solarPlant}/status', [SolarPlantController::class, 'updateStatus']);
+        });
+    });
+
+    // Investments (All authenticated users can view own, admin/manager can verify)
+    Route::prefix('investments')->group(function () {
+        Route::get('/', [InvestmentController::class, 'index']);
+        Route::get('/statistics', [InvestmentController::class, 'statistics']);
+        Route::post('/', [InvestmentController::class, 'store']);
+        Route::get('/{investment}', [InvestmentController::class, 'show']);
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::put('/{investment}', [InvestmentController::class, 'update']);
+            Route::delete('/{investment}', [InvestmentController::class, 'destroy']);
+            Route::post('/{investment}/verify', [InvestmentController::class, 'verify']);
+        });
     });
 
     // System Admin Routes
