@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmailVerificationController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PreferenceController;
 use App\Http\Controllers\Api\RepaymentController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\SolarPlantController;
 use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +55,9 @@ Route::prefix('v1')->group(function () {
     // Email Verification (PUBLIC - users are not logged in when verifying)
     Route::post('/email/verify', [EmailVerificationController::class, 'verifyPublic']);
     Route::post('/email/resend', [EmailVerificationController::class, 'resendPublic']);
+
+    // Public Settings (accessible without authentication)
+    Route::get('/settings/public', [SettingsController::class, 'publicSettings']);
 });
 
 // Protected routes (require authentication)
@@ -143,6 +149,46 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Admin and Manager only routes
         Route::middleware('role:admin|manager')->group(function () {
             Route::post('/{file}/verify', [FileController::class, 'verify']); // Verify file
+        });
+    });
+
+    // Reports and Analytics
+    Route::prefix('reports')->group(function () {
+        Route::get('/dashboard', [ReportController::class, 'dashboard']); // Dashboard overview
+        Route::get('/investments/analytics', [ReportController::class, 'investmentAnalytics']); // Investment analytics
+        Route::get('/repayments/analytics', [ReportController::class, 'repaymentAnalytics']); // Repayment analytics
+        Route::get('/plants/analytics', [ReportController::class, 'plantAnalytics']); // Solar plant analytics
+        Route::get('/monthly/{year}/{month}', [ReportController::class, 'monthlyReport']); // Monthly report
+        Route::get('/investments/{investment}/performance', [ReportController::class, 'investmentPerformance']); // Investment performance
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/investments/export', [ReportController::class, 'exportInvestments'])->name('api.reports.export-investments'); // Export investments
+            Route::get('/download/{filename}', [ReportController::class, 'downloadExport'])->name('api.reports.download'); // Download export
+        });
+    });
+
+    // Activity Logs (Audit Trail)
+    Route::prefix('activity-logs')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index']); // List all activity logs (with filters)
+        Route::get('/statistics', [ActivityLogController::class, 'statistics']); // Activity statistics
+        Route::get('/{activity}', [ActivityLogController::class, 'show']); // View single activity log
+        Route::get('/model/{modelType}/{modelId}', [ActivityLogController::class, 'forModel']); // Activities for specific model
+        Route::get('/user/{userId}', [ActivityLogController::class, 'byUser']); // Activities by specific user
+    });
+
+    // System Settings
+    Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'index']); // Get all settings (or by group)
+        Route::get('/{group}/{key}', [SettingsController::class, 'show']); // Get single setting
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/', [SettingsController::class, 'store']); // Create new setting
+            Route::put('/{group}/{key}', [SettingsController::class, 'update']); // Update setting
+            Route::delete('/{group}/{key}', [SettingsController::class, 'destroy']); // Delete setting
+            Route::post('/bulk-update', [SettingsController::class, 'bulkUpdate']); // Bulk update settings
+            Route::post('/reset', [SettingsController::class, 'reset']); // Reset to default
         });
     });
 
