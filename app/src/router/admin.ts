@@ -61,6 +61,68 @@ export const adminRoutes: RouteRecordRaw[] = [
           breadcrumb: 'Edit User',
           parent: 'AdminUserList'
         }
+      },
+      // Solar Plant Management Routes
+      {
+        path: 'solar-plants',
+        name: 'AdminSolarPlantList',
+        component: () => import('@/views/admin/solar-plants/SolarPlantList.vue'),
+        meta: {
+          title: 'Solar Plants',
+          breadcrumb: 'Solar Plants',
+          icon: 'pi pi-sun'
+        }
+      },
+      {
+        path: 'solar-plants/new',
+        name: 'AdminSolarPlantCreate',
+        component: () => import('@/views/admin/solar-plants/SolarPlantCreate.vue'),
+        meta: {
+          title: 'Create Solar Plant',
+          breadcrumb: 'Create Plant',
+          parent: 'AdminSolarPlantList'
+        }
+      },
+      {
+        path: 'solar-plants/:id',
+        name: 'AdminSolarPlantDetail',
+        component: () => import('@/views/admin/solar-plants/SolarPlantDetail.vue'),
+        meta: {
+          title: 'Solar Plant Details',
+          breadcrumb: 'Plant Details',
+          parent: 'AdminSolarPlantList'
+        }
+      },
+      {
+        path: 'solar-plants/:id/edit',
+        name: 'AdminSolarPlantEdit',
+        component: () => import('@/views/admin/solar-plants/SolarPlantEdit.vue'),
+        meta: {
+          title: 'Edit Solar Plant',
+          breadcrumb: 'Edit Plant',
+          parent: 'AdminSolarPlantList'
+        }
+      },
+      // Investment Management Routes
+      {
+        path: 'investments',
+        name: 'AdminInvestmentList',
+        component: () => import('@/views/admin/investments/InvestmentList.vue'),
+        meta: {
+          title: 'Investments',
+          breadcrumb: 'Investments',
+          icon: 'pi pi-wallet'
+        }
+      },
+      {
+        path: 'investments/:id',
+        name: 'AdminInvestmentDetail',
+        component: () => import('@/views/admin/investments/InvestmentDetail.vue'),
+        meta: {
+          title: 'Investment Details',
+          breadcrumb: 'Investment Details',
+          parent: 'AdminInvestmentList'
+        }
       }
     ]
   }

@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { adminRoutes } from './admin'
 import { managerRoutes } from './manager'
 import { userRoutes } from './user'
+import { customerRoutes } from './customer'
 import { ensureAuthInitialized } from '@/middleware/authMiddleware'
 
 // Define routes
@@ -13,6 +14,8 @@ const routes: RouteRecordRaw[] = [
   ...managerRoutes,
   // User routes
   ...userRoutes,
+  // Customer routes
+  ...customerRoutes,
   {
     path: '/',
     redirect: '/dashboard'
