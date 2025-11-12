@@ -775,6 +775,7 @@ $user->preferences = [
 - 🇩🇪 German (de)
 - 🇪🇸 Spanish (es)
 - 🇫🇷 French (fr)
+- 🇸🇮 Slovenian (si)
 
 **Implementation Approach:**
 - **Backend:** Language table + SetLocale middleware + lang files

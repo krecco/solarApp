@@ -15,10 +15,11 @@ The Solar App requires full multilingual support across:
 - **Email Notifications** - Multilingual email templates
 
 **Supported Languages:**
-1. 🇩🇪 **German (de)** - Primary language
-2. 🇬🇧 **English (en)** - Default/fallback
+1. 🇬🇧 **English (en)** - Default/fallback
+2. 🇩🇪 **German (de)**
 3. 🇪🇸 **Spanish (es)**
 4. 🇫🇷 **French (fr)**
+5. 🇸🇮 **Slovenian (si)**
 
 ---
 
@@ -174,6 +175,7 @@ DB::table('languages')->insert([
     ['code' => 'de', 'name' => 'German', 'native_name' => 'Deutsch', 'flag_emoji' => '🇩🇪', 'is_active' => true, 'is_default' => false, 'sort_order' => 2],
     ['code' => 'es', 'name' => 'Spanish', 'native_name' => 'Español', 'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
     ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français', 'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
+    ['code' => 'si', 'name' => 'Slovenian', 'native_name' => 'Slovenščina', 'flag_emoji' => '🇸🇮', 'is_active' => true, 'is_default' => false, 'sort_order' => 5],
 ]);
 ```
 
@@ -290,6 +292,8 @@ public function run()
          'flag_emoji' => '🇪🇸', 'is_active' => true, 'is_default' => false, 'sort_order' => 3],
         ['code' => 'fr', 'name' => 'French', 'native_name' => 'Français',
          'flag_emoji' => '🇫🇷', 'is_active' => true, 'is_default' => false, 'sort_order' => 4],
+        ['code' => 'si', 'name' => 'Slovenian', 'native_name' => 'Slovenščina',
+         'flag_emoji' => '🇸🇮', 'is_active' => true, 'is_default' => false, 'sort_order' => 5],
     ]);
 }
 ```
@@ -1122,7 +1126,7 @@ const generateContract = async () => {
 ```php
 // config/languages.php
 return [
-    'supported' => ['en', 'de', 'es', 'fr'],
+    'supported' => ['en', 'de', 'es', 'fr', 'si'],
     'default' => 'en',
     'fallback' => 'en',
 
@@ -1131,6 +1135,7 @@ return [
         'de' => 'Deutsch',
         'es' => 'Español',
         'fr' => 'Français',
+        'si' => 'Slovenščina',
     ],
 
     'flags' => [
@@ -1138,6 +1143,7 @@ return [
         'de' => '🇩🇪',
         'es' => '🇪🇸',
         'fr' => '🇫🇷',
+        'si' => '🇸🇮',
     ],
 ];
 ```
