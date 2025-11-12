@@ -669,28 +669,111 @@ In admin portal, user detail view had multiple tabs:
 
 ---
 
+## 11. Multilingual Support ❌ CRITICAL
+
+**Old System Had:**
+- Frontend: 4 languages (German, English, Spanish, French)
+- Backend: Java i18n with properties files
+- PDFs: Generated in user's preferred language
+- Emails: Sent in user's language preference
+- User language preference storage
+
+**New System:**
+- ✅ Frontend: Full i18n support (4 languages, 1,700+ lines each)
+  - en.ts, de.ts, es.ts, fr.ts in `/app/src/locales/`
+  - Vue i18n properly configured
+  - TypeScript type safety for translations
+- ⚠️ Backend: Partial support
+  - ✅ User preferences field exists (JSON)
+  - ✅ Laravel locale config exists
+  - ❌ No language files in `lang/` directory
+  - ❌ No SetLocale middleware
+  - ❌ No translation function usage
+  - ❌ No language table in database
+- ❌ PDF Generation: Not multilingual
+  - Uses Blade templates + DomPDF (barryvdh/laravel-dompdf)
+  - ❌ No locale parameter support
+  - ❌ Hardcoded text (likely German/English mix)
+  - ❌ No `__()` translation helper usage
+- ❌ Email Notifications: Not multilingual
+  - ❌ No locale consideration in Mailables
+  - ❌ Hardcoded email text
+
+**Impact:** HIGH - International customers cannot use system in their language
+
+**Required Implementation:**
+1. **Backend Language Infrastructure** (2 days)
+   - Create language table (de, en, es, fr)
+   - Add SetLocale middleware for API requests
+   - Create Laravel lang files (contracts, emails, common)
+   - Update User model with language helper methods
+
+2. **Multilingual PDF Generation** (2 days)
+   - Update ContractGeneratorService with locale support
+   - Convert PDF templates to use `__()` helper
+   - Add language parameter to document generation
+   - Support user preference and per-document override
+
+3. **Multilingual Email Notifications** (1 day)
+   - Update all Mailable classes with locale support
+   - Convert email templates to use translations
+   - Respect user's email language preference
+
+4. **Frontend Integration** (1 day)
+   - Language selector component (already exists?)
+   - Document language selection in forms
+   - API integration for language preferences
+
+**User Preference Structure:**
+```php
+$user->preferences = [
+    'ui_language' => 'de',        // Frontend display language
+    'document_language' => 'de',  // PDF/contract language
+    'email_language' => 'de',     // Email notification language
+];
+```
+
+**Document Language Priority:**
+1. Explicit parameter in generation request
+2. Per-document override (optional)
+3. User's document language preference
+4. User's UI language preference
+5. System default (German)
+
+**See:** `MULTILINGUAL_IMPLEMENTATION_PLAN.md` for complete implementation details
+
+**Estimated Effort:** 6-7 days
+
+---
+
 ## Priority Recommendations
 
 ### 🔴 Critical - Must Have (Before Production)
 
-1. **Customer Document Upload Workflows**
+1. **Multilingual Support (Backend + PDFs + Emails)**
+   - **Why:** International customers need system in their language
+   - **Effort:** High (6-7 days)
+   - **Components:** Language table, lang files, PDF localization, email localization
+   - **See:** MULTILINGUAL_IMPLEMENTATION_PLAN.md
+
+2. **Customer Document Upload Workflows**
    - **Why:** Customers need to submit identity docs, power bills, contracts
    - **Effort:** Medium (2-3 days)
    - **Components:** 4-5 new customer views
 
-2. **Contract Download/Viewing for Customers**
+3. **Contract Download/Viewing for Customers**
    - **Why:** Customers need to access and sign contracts
    - **Effort:** Low (1 day)
    - **Components:** Update existing detail views
 
-3. **Admin Settings - Extras Management**
+4. **Admin Settings - Extras Management**
    - **Why:** Need to manage add-on services and pricing
    - **Effort:** Medium (2 days)
    - **Components:** List and detail views for extras
 
 ### 🟡 High Priority - Important Features
 
-4. **Messaging/Chat System**
+5. **Messaging/Chat System**
    - **Why:** Customer-Admin communication is essential
    - **Effort:** High (5-7 days)
    - **Components:** Backend controller, admin chat view, customer chat view
@@ -743,31 +826,37 @@ In admin portal, user detail view had multiple tabs:
 
 ## Implementation Roadmap
 
-### Phase 1: Critical Customer Features (Week 1)
+### Phase 1: Multilingual Foundation (Week 1)
+- [ ] Backend language infrastructure (2 days)
+- [ ] Multilingual PDF generation (2 days)
+- [ ] Multilingual email notifications (1 day)
+- [ ] Frontend language integration (1 day)
+
+### Phase 2: Critical Customer Features (Week 2)
 - [ ] Customer document upload workflows (3 days)
 - [ ] Contract download/viewing (1 day)
 - [ ] Customer profile editor (2 days)
 
-### Phase 2: Admin Essentials (Week 2)
+### Phase 3: Admin Essentials (Week 3)
 - [ ] Extras/add-ons management (2 days)
 - [ ] Enhanced user detail view with tabs (3 days)
 
-### Phase 3: Communication (Week 3)
+### Phase 4: Communication (Week 4)
 - [ ] Messaging/chat system backend (3 days)
 - [ ] Admin chat interface (2 days)
 - [ ] Customer chat interface (1 day)
 
-### Phase 4: Plant Management (Week 4)
+### Phase 5: Plant Management (Week 5)
 - [ ] Plant repayment list & detail views (2 days)
 - [ ] Plant repayment report generation (1 day)
 - [ ] Activity log UI (1 day)
 
-### Phase 5: Settings & Polish (Week 5)
+### Phase 6: Settings & Polish (Week 6)
 - [ ] Tariff settings management (2 days)
 - [ ] Campaign management (2 days)
 - [ ] Web info/news management (1 day)
 
-### Phase 6: Optional Features (Future)
+### Phase 7: Optional Features (Future)
 - [ ] Invoice & reminder system
 - [ ] Projects display
 - [ ] Advanced reporting
@@ -778,13 +867,15 @@ In admin portal, user detail view had multiple tabs:
 
 | Category | Effort (Days) |
 |----------|--------------|
-| Critical Features | 6 days |
+| Critical Features | 13 days (including 6-7 days for multilingual) |
 | High Priority | 13 days |
 | Medium Priority | 6 days |
 | Low Priority | 5 days |
-| **Total** | **30 days** |
+| **Total** | **37 days** |
 
-**Recommendation:** Focus on Critical + High Priority features first (19 days of work) to achieve feature parity with most important functionality from old system.
+**Recommendation:** Focus on Critical + High Priority features first (26 days of work) to achieve feature parity with most important functionality from old system.
+
+**Note:** Multilingual support adds 6-7 days to the original estimate but is CRITICAL for international deployment.
 
 ---
 
