@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PdfController;
+use App\Http\Controllers\Api\PlantRepaymentController;
 use App\Http\Controllers\Api\PreferenceController;
 use App\Http\Controllers\Api\RepaymentController;
 use App\Http\Controllers\Api\ReportController;
@@ -169,6 +170,20 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
     });
 
+    // Plant Repayments (All authenticated users can view, admin/manager can manage)
+    Route::prefix('plant-repayments')->group(function () {
+        Route::get('/', [PlantRepaymentController::class, 'index']); // List all plant repayments
+        Route::get('/statistics', [PlantRepaymentController::class, 'statistics']); // Get statistics
+        Route::get('/{repayment}', [PlantRepaymentController::class, 'show']); // View repayment details
+        Route::get('/plant/{solarPlant}', [PlantRepaymentController::class, 'forPlant']); // Get repayments for specific plant
+        Route::post('/generate-report', [PlantRepaymentController::class, 'generateReport']); // Generate report
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/{repayment}/record-payment', [PlantRepaymentController::class, 'recordPayment']); // Record payment
+        });
+    });
+
     // Investments (All authenticated users can view own, admin/manager can verify)
     Route::prefix('investments')->group(function () {
         Route::get('/', [InvestmentController::class, 'index']);
@@ -240,9 +255,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('activity-logs')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index']); // List all activity logs (with filters)
         Route::get('/statistics', [ActivityLogController::class, 'statistics']); // Activity statistics
+        Route::get('/timeline', [ActivityLogController::class, 'timeline']); // Timeline view (grouped by date)
+        Route::get('/recent', [ActivityLogController::class, 'recent']); // Recent activities
         Route::get('/{activity}', [ActivityLogController::class, 'show']); // View single activity log
         Route::get('/model/{modelType}/{modelId}', [ActivityLogController::class, 'forModel']); // Activities for specific model
         Route::get('/user/{userId}', [ActivityLogController::class, 'byUser']); // Activities by specific user
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/export', [ActivityLogController::class, 'export']); // Export activity logs
+        });
     });
 
     // System Settings

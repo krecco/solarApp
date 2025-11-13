@@ -346,6 +346,215 @@ class ActivityLogController extends Controller
     }
 
     /**
+     * Get timeline view of activities (grouped by date)
+     */
+    public function timeline(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'nullable|uuid',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'limit' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $query = Activity::with(['subject', 'causer']);
+
+        // Apply user filter
+        if ($request->has('user_id')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('causer_id', $request->user_id)
+                  ->orWhere('subject_id', $request->user_id);
+            });
+        }
+
+        // Apply date filters
+        if ($request->has('start_date')) {
+            $query->where('created_at', '>=', $request->start_date);
+        }
+        if ($request->has('end_date')) {
+            $query->where('created_at', '<=', $request->end_date);
+        }
+
+        // Role-based filtering
+        $user = $request->user();
+        if ($user->hasRole('customer')) {
+            $query->where('causer_id', $user->id);
+        }
+
+        // Get activities
+        $limit = $request->input('limit', 50);
+        $activities = $query->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        // Group by date
+        $timeline = $activities->groupBy(function ($activity) {
+            return $activity->created_at->format('Y-m-d');
+        })->map(function ($dayActivities, $date) {
+            return [
+                'date' => $date,
+                'count' => $dayActivities->count(),
+                'activities' => $dayActivities->map(function ($activity) {
+                    return [
+                        'id' => $activity->id,
+                        'description' => $activity->description,
+                        'log_name' => $activity->log_name,
+                        'subject_type' => class_basename($activity->subject_type),
+                        'subject_id' => $activity->subject_id,
+                        'causer' => $activity->causer ? [
+                            'id' => $activity->causer->id,
+                            'name' => $activity->causer->name ?? 'System',
+                        ] : null,
+                        'created_at' => $activity->created_at,
+                    ];
+                }),
+            ];
+        })->values();
+
+        return response()->json([
+            'data' => $timeline,
+        ]);
+    }
+
+    /**
+     * Export activity logs
+     */
+    public function export(Request $request): JsonResponse
+    {
+        // Only admin can export logs
+        if (!$request->user()->hasRole('admin')) {
+            return response()->json([
+                'message' => 'Unauthorized. Only administrators can export activity logs.',
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'format' => 'sometimes|in:json,csv',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $query = Activity::with(['subject', 'causer'])
+            ->where('created_at', '>=', $request->start_date)
+            ->where('created_at', '<=', $request->end_date)
+            ->orderBy('created_at', 'desc');
+
+        $activities = $query->get();
+
+        $exportData = $activities->map(function ($activity) {
+            return [
+                'id' => $activity->id,
+                'description' => $activity->description,
+                'log_name' => $activity->log_name,
+                'event' => $activity->event,
+                'subject_type' => $activity->subject_type,
+                'subject_id' => $activity->subject_id,
+                'causer_type' => $activity->causer_type,
+                'causer_id' => $activity->causer_id,
+                'causer_name' => $activity->causer ? $activity->causer->name : 'System',
+                'properties' => $activity->properties,
+                'created_at' => $activity->created_at->toIso8601String(),
+            ];
+        });
+
+        // Log the export
+        activity()
+            ->causedBy($request->user())
+            ->withProperties([
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'count' => $activities->count(),
+            ])
+            ->log('exported activity logs');
+
+        return response()->json([
+            'data' => [
+                'export' => $exportData,
+                'metadata' => [
+                    'total_records' => $activities->count(),
+                    'start_date' => $request->start_date,
+                    'end_date' => $request->end_date,
+                    'exported_at' => now()->toIso8601String(),
+                    'exported_by' => [
+                        'id' => $request->user()->id,
+                        'name' => $request->user()->name,
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Get recent activities (last 24 hours by default)
+     */
+    public function recent(Request $request): JsonResponse
+    {
+        $hours = $request->input('hours', 24);
+        $hours = min($hours, 168); // Max 7 days
+
+        $query = Activity::with(['subject', 'causer'])
+            ->where('created_at', '>=', now()->subHours($hours));
+
+        // Role-based filtering
+        $user = $request->user();
+        if ($user->hasRole('customer')) {
+            $query->where('causer_id', $user->id);
+        } elseif ($user->hasRole('manager')) {
+            $query->where(function ($q) use ($user) {
+                $q->where('causer_id', $user->id)
+                  ->orWhereHasMorph('subject', ['App\Models\SolarPlant'], function ($query) use ($user) {
+                      $query->where('manager_id', $user->id);
+                  })
+                  ->orWhereHasMorph('subject', ['App\Models\Investment'], function ($query) use ($user) {
+                      $query->whereHas('solarPlant', function ($q) use ($user) {
+                          $q->where('manager_id', $user->id);
+                      });
+                  });
+            });
+        }
+
+        $activities = $query->orderBy('created_at', 'desc')
+            ->limit(50)
+            ->get();
+
+        return response()->json([
+            'data' => $activities->map(function ($activity) {
+                return [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'log_name' => $activity->log_name,
+                    'subject_type' => class_basename($activity->subject_type),
+                    'subject_id' => $activity->subject_id,
+                    'causer' => $activity->causer ? [
+                        'id' => $activity->causer->id,
+                        'name' => $activity->causer->name,
+                    ] : null,
+                    'created_at' => $activity->created_at,
+                    'time_ago' => $activity->created_at->diffForHumans(),
+                ];
+            }),
+            'meta' => [
+                'hours' => $hours,
+                'count' => $activities->count(),
+            ],
+        ]);
+    }
+
+    /**
      * Get model class from type
      */
     protected function getModelClass(string $modelType): string
@@ -355,6 +564,8 @@ class ActivityLogController extends Controller
             'solar_plant' => \App\Models\SolarPlant::class,
             'user' => \App\Models\User::class,
             'repayment' => \App\Models\InvestmentRepayment::class,
+            'conversation' => \App\Models\Conversation::class,
+            'message' => \App\Models\Message::class,
         ];
 
         return $map[$modelType] ?? \App\Models\Investment::class;
