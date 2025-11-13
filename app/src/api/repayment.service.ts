@@ -36,7 +36,7 @@ export const repaymentService = {
    * Get repayments for a specific investment
    */
   async getInvestmentRepayments(investmentId: string) {
-    const response = await api.get(`/v1/investments/${investmentId}/repayments`)
+    const response = await api.get(`/api/v1/investments/${investmentId}/repayments`)
     return response.data
   },
 
@@ -44,7 +44,7 @@ export const repaymentService = {
    * Regenerate repayment schedule for an investment (admin only)
    */
   async regenerateSchedule(investmentId: string) {
-    const response = await api.post(`/v1/investments/${investmentId}/repayments/regenerate`)
+    const response = await api.post(`/api/v1/investments/${investmentId}/repayments/regenerate`)
     return response.data
   },
 
@@ -52,7 +52,7 @@ export const repaymentService = {
    * Get repayment statistics
    */
   async getStatistics() {
-    const response = await api.get('/v1/repayments/statistics')
+    const response = await api.get('/api/v1/repayments/statistics')
     return response.data
   },
 
@@ -60,7 +60,7 @@ export const repaymentService = {
    * Get overdue repayments
    */
   async getOverdue(filters?: RepaymentFilters) {
-    const response = await api.get('/v1/repayments/overdue', { params: filters })
+    const response = await api.get('/api/v1/repayments/overdue', { params: filters })
     return response.data
   },
 
@@ -68,7 +68,7 @@ export const repaymentService = {
    * Get upcoming repayments
    */
   async getUpcoming(daysAhead?: number) {
-    const response = await api.get('/v1/repayments/upcoming', {
+    const response = await api.get('/api/v1/repayments/upcoming', {
       params: { days_ahead: daysAhead },
     })
     return response.data
@@ -85,7 +85,7 @@ export const repaymentService = {
       notes?: string
     }
   ) {
-    const response = await api.post(`/v1/repayments/${repaymentId}/mark-paid`, data)
+    const response = await api.post(`/api/v1/repayments/${repaymentId}/mark-paid`, data)
     return response.data
   },
 }

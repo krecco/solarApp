@@ -53,7 +53,7 @@ export const investmentService = {
    * Get list of investments with filters
    */
   async getInvestments(filters?: InvestmentFilters) {
-    const response = await api.get('/v1/investments', { params: filters })
+    const response = await api.get('/api/v1/investments', { params: filters })
     return response.data
   },
 
@@ -61,7 +61,7 @@ export const investmentService = {
    * Get single investment by ID
    */
   async getInvestment(id: string) {
-    const response = await api.get(`/v1/investments/${id}`)
+    const response = await api.get(`/api/v1/investments/${id}`)
     return response.data.data
   },
 
@@ -69,7 +69,7 @@ export const investmentService = {
    * Create new investment
    */
   async create(data: CreateInvestmentDto) {
-    const response = await api.post('/v1/investments', data)
+    const response = await api.post('/api/v1/investments', data)
     return response.data.data
   },
 
@@ -77,7 +77,7 @@ export const investmentService = {
    * Update existing investment
    */
   async update(id: string, data: Partial<CreateInvestmentDto>) {
-    const response = await api.put(`/v1/investments/${id}`, data)
+    const response = await api.put(`/api/v1/investments/${id}`, data)
     return response.data.data
   },
 
@@ -85,7 +85,7 @@ export const investmentService = {
    * Delete investment
    */
   async delete(id: string) {
-    const response = await api.delete(`/v1/investments/${id}`)
+    const response = await api.delete(`/api/v1/investments/${id}`)
     return response.data
   },
 
@@ -93,7 +93,7 @@ export const investmentService = {
    * Verify investment (admin/manager only)
    */
   async verify(id: string) {
-    const response = await api.post(`/v1/investments/${id}/verify`)
+    const response = await api.post(`/api/v1/investments/${id}/verify`)
     return response.data.data
   },
 
@@ -101,7 +101,7 @@ export const investmentService = {
    * Get investment statistics
    */
   async getStatistics() {
-    const response = await api.get('/v1/investments/statistics')
+    const response = await api.get('/api/v1/investments/statistics')
     return response.data
   },
 }

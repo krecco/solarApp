@@ -78,7 +78,7 @@ export const solarPlantService = {
    * Get list of solar plants with filters
    */
   async getPlants(filters?: SolarPlantFilters) {
-    const response = await api.get('/v1/solar-plants', { params: filters })
+    const response = await api.get('/api/v1/solar-plants', { params: filters })
     return response.data
   },
 
@@ -86,7 +86,7 @@ export const solarPlantService = {
    * Get single solar plant by ID
    */
   async getPlant(id: string) {
-    const response = await api.get(`/v1/solar-plants/${id}`)
+    const response = await api.get(`/api/v1/solar-plants/${id}`)
     return response.data.data
   },
 
@@ -94,7 +94,7 @@ export const solarPlantService = {
    * Create new solar plant
    */
   async create(data: CreateSolarPlantDto) {
-    const response = await api.post('/v1/solar-plants', data)
+    const response = await api.post('/api/v1/solar-plants', data)
     return response.data.data
   },
 
@@ -102,7 +102,7 @@ export const solarPlantService = {
    * Update existing solar plant
    */
   async update(id: string, data: Partial<CreateSolarPlantDto>) {
-    const response = await api.put(`/v1/solar-plants/${id}`, data)
+    const response = await api.put(`/api/v1/solar-plants/${id}`, data)
     return response.data.data
   },
 
@@ -110,7 +110,7 @@ export const solarPlantService = {
    * Delete solar plant
    */
   async delete(id: string) {
-    const response = await api.delete(`/v1/solar-plants/${id}`)
+    const response = await api.delete(`/api/v1/solar-plants/${id}`)
     return response.data
   },
 
@@ -118,7 +118,7 @@ export const solarPlantService = {
    * Update plant status
    */
   async updateStatus(id: string, status: string) {
-    const response = await api.post(`/v1/solar-plants/${id}/status`, { status })
+    const response = await api.post(`/api/v1/solar-plants/${id}/status`, { status })
     return response.data.data
   },
 
@@ -126,7 +126,7 @@ export const solarPlantService = {
    * Get solar plant statistics
    */
   async getStatistics() {
-    const response = await api.get('/v1/solar-plants/statistics')
+    const response = await api.get('/api/v1/solar-plants/statistics')
     return response.data
   },
 }

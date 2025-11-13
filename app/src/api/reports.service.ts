@@ -77,7 +77,7 @@ export const reportsService = {
    * Get dashboard overview statistics
    */
   async getDashboard(): Promise<DashboardStats> {
-    const response = await api.get('/v1/reports/dashboard')
+    const response = await api.get('/api/v1/reports/dashboard')
     return response.data.data
   },
 
@@ -88,7 +88,7 @@ export const reportsService = {
     start_date?: string
     end_date?: string
   }): Promise<InvestmentAnalytics> {
-    const response = await api.get('/v1/reports/investments/analytics', { params: filters })
+    const response = await api.get('/api/v1/reports/investments/analytics', { params: filters })
     return response.data.data
   },
 
@@ -99,7 +99,7 @@ export const reportsService = {
     start_date?: string
     end_date?: string
   }): Promise<RepaymentAnalytics> {
-    const response = await api.get('/v1/reports/repayments/analytics', { params: filters })
+    const response = await api.get('/api/v1/reports/repayments/analytics', { params: filters })
     return response.data.data
   },
 
@@ -107,7 +107,7 @@ export const reportsService = {
    * Get plant analytics
    */
   async getPlantAnalytics(): Promise<PlantAnalytics> {
-    const response = await api.get('/v1/reports/plants/analytics')
+    const response = await api.get('/api/v1/reports/plants/analytics')
     return response.data.data
   },
 
@@ -115,7 +115,7 @@ export const reportsService = {
    * Get monthly report
    */
   async getMonthlyReport(year: number, month: number): Promise<MonthlyReport> {
-    const response = await api.get(`/v1/reports/monthly/${year}/${month}`)
+    const response = await api.get(`/api/v1/reports/monthly/${year}/${month}`)
     return response.data.data
   },
 
@@ -123,7 +123,7 @@ export const reportsService = {
    * Get investment performance metrics
    */
   async getInvestmentPerformance(investmentId: string): Promise<InvestmentPerformance> {
-    const response = await api.get(`/v1/reports/investments/${investmentId}/performance`)
+    const response = await api.get(`/api/v1/reports/investments/${investmentId}/performance`)
     return response.data.data
   },
 
@@ -135,7 +135,7 @@ export const reportsService = {
     end_date?: string
     status?: string
   }) {
-    const response = await api.post('/v1/reports/investments/export', filters)
+    const response = await api.post('/api/v1/reports/investments/export', filters)
     return response.data.data
   },
 
@@ -143,7 +143,7 @@ export const reportsService = {
    * Download exported file
    */
   async downloadExport(filename: string) {
-    const response = await api.get(`/v1/reports/download/${filename}`, {
+    const response = await api.get(`/api/v1/reports/download/${filename}`, {
       responseType: 'blob',
     })
     return response.data
