@@ -51,19 +51,25 @@
       </div>
     </div>
 
-    <Card>
+    <!-- Filters Section -->
+    <Card class="filters-card mb-4">
       <template #content>
-        <!-- Filters -->
-        <div class="grid mb-3">
-          <div class="col-12 md:col-4">
-            <InputText
-              v-model="filters.search"
-              placeholder="Search plants..."
-              class="w-full"
-              @input="onSearch"
-            />
+        <div class="filters-grid">
+          <div class="filter-item search-item">
+            <IconField>
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText
+                v-model="filters.search"
+                placeholder="Search plants..."
+                class="w-full"
+                @input="onSearch"
+              />
+            </IconField>
           </div>
-          <div class="col-12 md:col-3">
+
+          <div class="filter-item">
             <Dropdown
               v-model="filters.status"
               :options="statusOptions"
@@ -72,31 +78,50 @@
               placeholder="Filter by Status"
               class="w-full"
               @change="fetchData"
-            />
-          </div>
-          <div class="col-12 md:col-3">
-            <Dropdown
-              v-model="filters.sort_by"
-              :options="sortOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Sort by"
-              class="w-full"
-              @change="fetchData"
-            />
-          </div>
-          <div class="col-12 md:col-2">
-            <Button
-              label="Clear Filters"
-              icon="pi pi-filter-slash"
-              severity="secondary"
-              class="w-full"
-              @click="clearFilters"
-            />
+            >
+              <template #value="slotProps">
+                <span v-if="!slotProps.value" class="filter-placeholder">
+                  <i class="pi pi-filter"></i> Status
+                </span>
+                <span v-else class="filter-value">
+                  <i class="pi pi-filter"></i> {{ statusOptions.find(s => s.value === slotProps.value)?.label }}
+                </span>
+              </template>
+            </Dropdown>
           </div>
         </div>
 
-        <!-- DataTable -->
+        <!-- Active Filter Pills -->
+        <div v-if="hasActiveFilters" class="active-filter-pills">
+          <Chip
+            v-if="filters.status"
+            removable
+            @remove="filters.status = ''; fetchData()"
+            class="filter-pill"
+          >
+            <span class="pill-content">
+              <i class="pi pi-filter pill-icon"></i>
+              {{ statusOptions.find(s => s.value === filters.status)?.label || filters.status }}
+            </span>
+          </Chip>
+
+          <Chip
+            removable
+            @remove="clearFilters"
+            class="clear-filter-chip"
+          >
+            <span class="pill-content">
+              <i class="pi pi-filter-slash pill-icon"></i>
+              Clear All Filters
+            </span>
+          </Chip>
+        </div>
+      </template>
+    </Card>
+
+    <!-- Data Table using modern wrapper from utilities -->
+    <Card class="modern-table-wrapper">
+      <template #content>
         <DataTable
           :value="store.plants"
           :loading="store.loading"
@@ -105,9 +130,34 @@
           :totalRecords="store.pagination.total"
           :lazy="true"
           @page="onPage"
+          :rowsPerPageOptions="[10, 15, 25, 50]"
+          paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} plants"
+          responsiveLayout="scroll"
+          :rowHover="true"
           dataKey="id"
           stripedRows
         >
+          <template #loading>
+            <div class="table-loading-spinner">
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+              <p>Loading solar plants...</p>
+            </div>
+          </template>
+
+          <template #empty>
+            <EnhancedEmptyState
+              v-if="!store.loading"
+              icon="pi pi-sun"
+              :title="hasActiveFilters ? 'No solar plants found' : 'No solar plants yet'"
+              :description="hasActiveFilters ? 'Try adjusting your filters' : 'Get started by adding your first solar plant'"
+              :actionLabel="hasActiveFilters ? undefined : 'New Plant'"
+              actionIcon="pi pi-plus"
+              @action="router.push({ name: 'AdminSolarPlantCreate' })"
+              :helpText="hasActiveFilters ? undefined : 'Manage all your solar plant installations'"
+              compact
+            />
+          </template>
           <Column field="title" header="Title" sortable>
             <template #body="{ data }">
               <div class="font-semibold">{{ data.title }}</div>
@@ -134,34 +184,42 @@
               <Tag :value="data.status" :severity="getStatusSeverity(data.status)" />
             </template>
           </Column>
-          <Column header="Actions" :exportable="false">
+          <Column header="Actions" style="width: 8rem">
             <template #body="{ data }">
-              <Button
-                icon="pi pi-eye"
-                severity="info"
-                text
-                rounded
-                @click="viewPlant(data.id)"
-                v-tooltip.top="'View'"
-              />
-              <Button
-                icon="pi pi-pencil"
-                severity="warning"
-                text
-                rounded
-                @click="editPlant(data.id)"
-                v-tooltip.top="'Edit'"
-                v-if="isAdmin || isManager"
-              />
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                text
-                rounded
-                @click="confirmDelete(data)"
-                v-tooltip.top="'Delete'"
-                v-if="isAdmin || isManager"
-              />
+              <div class="action-buttons-cell">
+                <Button
+                  icon="pi pi-eye"
+                  severity="info"
+                  text
+                  rounded
+                  size="small"
+                  @click="viewPlant(data.id)"
+                  v-tooltip.top="'View'"
+                  class="action-btn view-btn"
+                />
+                <Button
+                  icon="pi pi-pencil"
+                  severity="warning"
+                  text
+                  rounded
+                  size="small"
+                  @click="editPlant(data.id)"
+                  v-tooltip.top="'Edit'"
+                  v-if="isAdmin || isManager"
+                  class="action-btn edit-btn"
+                />
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  text
+                  rounded
+                  size="small"
+                  @click="confirmDelete(data)"
+                  v-tooltip.top="'Delete'"
+                  v-if="isAdmin || isManager"
+                  class="action-btn delete-btn"
+                />
+              </div>
             </template>
           </Column>
         </DataTable>
@@ -199,9 +257,15 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
+import Chip from 'primevue/chip'
+
+// Import UX enhancement components
+import EnhancedEmptyState from '@/components/common/EnhancedEmptyState.vue'
 
 const router = useRouter()
 const store = useSolarPlantStore()
@@ -223,6 +287,10 @@ const activeCount = computed(() => {
 
 const totalPower = computed(() => {
   return (store.plants || []).reduce((sum, plant) => sum + (plant.nominal_power || 0), 0).toFixed(0)
+})
+
+const hasActiveFilters = computed(() => {
+  return filters.value.search || filters.value.status
 })
 
 const deleteDialog = ref(false)

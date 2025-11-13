@@ -57,119 +57,110 @@
       </div>
     </div>
 
-    <!-- Statistics Cards (Hidden, moved to header stats) -->
-    <div class="grid mb-3">
-      <div class="col-12 md:col-3">
-        <Card>
-          <template #content>
-            <div class="flex justify-content-between align-items-center">
-              <div>
-                <div class="text-sm text-gray-500 mb-2">Total Investments</div>
-                <div class="text-2xl font-bold text-primary">{{ store.pagination.total || 0 }}</div>
-              </div>
-              <i class="pi pi-wallet text-4xl text-primary-300"></i>
-            </div>
-          </template>
-        </Card>
-      </div>
-      <div class="col-12 md:col-3">
-        <Card>
-          <template #content>
-            <div class="flex justify-content-between align-items-center">
-              <div>
-                <div class="text-sm text-gray-500 mb-2">Total Amount</div>
-                <div class="text-2xl font-bold text-green-600">{{ formatCurrency(totalInvested) }}</div>
-              </div>
-              <i class="pi pi-euro text-4xl text-green-300"></i>
-            </div>
-          </template>
-        </Card>
-      </div>
-      <div class="col-12 md:col-3">
-        <Card>
-          <template #content>
-            <div class="flex justify-content-between align-items-center">
-              <div>
-                <div class="text-sm text-gray-500 mb-2">Pending Verification</div>
-                <div class="text-2xl font-bold text-orange-600">{{ pendingCount }}</div>
-              </div>
-              <i class="pi pi-clock text-4xl text-orange-300"></i>
-            </div>
-          </template>
-        </Card>
-      </div>
-      <div class="col-12 md:col-3">
-        <Card>
-          <template #content>
-            <div class="flex justify-content-between align-items-center">
-              <div>
-                <div class="text-sm text-gray-500 mb-2">Active</div>
-                <div class="text-2xl font-bold text-blue-600">{{ activeCount }}</div>
-              </div>
-              <i class="pi pi-check-circle text-4xl text-blue-300"></i>
-            </div>
-          </template>
-        </Card>
-      </div>
-    </div>
-
-    <Card>
+    <!-- Filters Section -->
+    <Card class="filters-card mb-4">
       <template #content>
-        <!-- Filters -->
-        <div class="grid mb-3">
-          <div class="col-12 md:col-3">
-            <InputText
-              v-model="filters.search"
-              placeholder="Search investments..."
-              class="w-full"
-              @input="onSearch"
-            />
+        <div class="filters-grid">
+          <div class="filter-item search-item">
+            <IconField>
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText
+                v-model="filters.search"
+                placeholder="Search investments..."
+                class="w-full"
+                @input="onSearch"
+              />
+            </IconField>
           </div>
-          <div class="col-12 md:col-2">
+
+          <div class="filter-item">
             <Dropdown
               v-model="filters.status"
               :options="statusOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Status"
+              placeholder="Filter by Status"
               class="w-full"
               @change="fetchData"
-            />
+            >
+              <template #value="slotProps">
+                <span v-if="!slotProps.value" class="filter-placeholder">
+                  <i class="pi pi-filter"></i> Status
+                </span>
+                <span v-else class="filter-value">
+                  <i class="pi pi-filter"></i> {{ statusOptions.find(s => s.value === slotProps.value)?.label }}
+                </span>
+              </template>
+            </Dropdown>
           </div>
-          <div class="col-12 md:col-2">
+
+          <div class="filter-item">
             <Dropdown
               v-model="filters.verified"
               :options="verifiedOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Verification"
+              placeholder="Verification Status"
               class="w-full"
               @change="fetchData"
-            />
-          </div>
-          <div class="col-12 md:col-3">
-            <Dropdown
-              v-model="filters.sort_by"
-              :options="sortOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Sort by"
-              class="w-full"
-              @change="fetchData"
-            />
-          </div>
-          <div class="col-12 md:col-2">
-            <Button
-              label="Clear"
-              icon="pi pi-filter-slash"
-              severity="secondary"
-              class="w-full"
-              @click="clearFilters"
-            />
+            >
+              <template #value="slotProps">
+                <span v-if="!slotProps.value" class="filter-placeholder">
+                  <i class="pi pi-check-circle"></i> Verification
+                </span>
+                <span v-else class="filter-value">
+                  <i class="pi pi-check-circle"></i> {{ verifiedOptions.find(v => v.value === slotProps.value)?.label }}
+                </span>
+              </template>
+            </Dropdown>
           </div>
         </div>
 
-        <!-- DataTable -->
+        <!-- Active Filter Pills -->
+        <div v-if="hasActiveFilters" class="active-filter-pills">
+          <Chip
+            v-if="filters.status"
+            removable
+            @remove="filters.status = ''; fetchData()"
+            class="filter-pill"
+          >
+            <span class="pill-content">
+              <i class="pi pi-filter pill-icon"></i>
+              {{ statusOptions.find(s => s.value === filters.status)?.label || filters.status }}
+            </span>
+          </Chip>
+
+          <Chip
+            v-if="filters.verified"
+            removable
+            @remove="filters.verified = ''; fetchData()"
+            class="filter-pill"
+          >
+            <span class="pill-content">
+              <i class="pi pi-check-circle pill-icon"></i>
+              {{ verifiedOptions.find(v => v.value === filters.verified)?.label }}
+            </span>
+          </Chip>
+
+          <Chip
+            removable
+            @remove="clearFilters"
+            class="clear-filter-chip"
+          >
+            <span class="pill-content">
+              <i class="pi pi-filter-slash pill-icon"></i>
+              Clear All Filters
+            </span>
+          </Chip>
+        </div>
+      </template>
+    </Card>
+
+    <!-- Data Table using modern wrapper from utilities -->
+    <Card class="modern-table-wrapper">
+      <template #content>
         <DataTable
           :value="store.investments"
           :loading="store.loading"
@@ -178,10 +169,32 @@
           :totalRecords="store.pagination.total"
           :lazy="true"
           @page="onPage"
+          :rowsPerPageOptions="[10, 15, 25, 50]"
+          paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} investments"
+          responsiveLayout="scroll"
+          :rowHover="true"
           dataKey="id"
           stripedRows
           :rowClass="rowClass"
         >
+          <template #loading>
+            <div class="table-loading-spinner">
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+              <p>Loading investments...</p>
+            </div>
+          </template>
+
+          <template #empty>
+            <EnhancedEmptyState
+              v-if="!store.loading"
+              icon="pi pi-wallet"
+              :title="hasActiveFilters ? 'No investments found' : 'No investments yet'"
+              :description="hasActiveFilters ? 'Try adjusting your filters' : 'Investments will appear here once created'"
+              :helpText="hasActiveFilters ? undefined : 'Monitor and manage all investment activities'"
+              compact
+            />
+          </template>
           <Column field="id" header="ID" style="width: 100px">
             <template #body="{ data }">
               <span class="font-mono text-sm">{{ data.id.substring(0, 8) }}</span>
@@ -253,34 +266,42 @@
             </template>
           </Column>
 
-          <Column header="Actions" :exportable="false" style="width: 150px">
+          <Column header="Actions" style="width: 10rem">
             <template #body="{ data }">
-              <Button
-                icon="pi pi-eye"
-                severity="info"
-                text
-                rounded
-                @click="viewInvestment(data.id)"
-                v-tooltip.top="'View'"
-              />
-              <Button
-                icon="pi pi-check-circle"
-                severity="success"
-                text
-                rounded
-                @click="confirmVerify(data)"
-                v-tooltip.top="'Verify'"
-                v-if="!data.verified && (isAdmin || isManager)"
-              />
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                text
-                rounded
-                @click="confirmDelete(data)"
-                v-tooltip.top="'Delete'"
-                v-if="isAdmin"
-              />
+              <div class="action-buttons-cell">
+                <Button
+                  icon="pi pi-eye"
+                  severity="info"
+                  text
+                  rounded
+                  size="small"
+                  @click="viewInvestment(data.id)"
+                  v-tooltip.top="'View'"
+                  class="action-btn view-btn"
+                />
+                <Button
+                  icon="pi pi-check-circle"
+                  severity="success"
+                  text
+                  rounded
+                  size="small"
+                  @click="confirmVerify(data)"
+                  v-tooltip.top="'Verify'"
+                  v-if="!data.verified && (isAdmin || isManager)"
+                  class="action-btn verify-btn"
+                />
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  text
+                  rounded
+                  size="small"
+                  @click="confirmDelete(data)"
+                  v-tooltip.top="'Delete'"
+                  v-if="isAdmin"
+                  class="action-btn delete-btn"
+                />
+              </div>
             </template>
           </Column>
         </DataTable>
@@ -389,9 +410,15 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
+import Chip from 'primevue/chip'
+
+// Import UX enhancement components
+import EnhancedEmptyState from '@/components/common/EnhancedEmptyState.vue'
 
 const router = useRouter()
 const store = useInvestmentStore()
@@ -447,6 +474,10 @@ const activeCount = computed(() => {
   return (store.investments || []).filter((inv) => inv.status === 'active').length
 })
 
+const hasActiveFilters = computed(() => {
+  return filters.value.search || filters.value.status || filters.value.verified
+})
+
 let searchTimeout: any = null
 
 onMounted(() => {
@@ -466,7 +497,7 @@ async function fetchData() {
 
 async function loadStatistics() {
   try {
-    statistics.value = await store.getStatistics()
+    statistics.value = await store.fetchStatistics()
   } catch (error) {
     console.error('Error loading statistics:', error)
   }
