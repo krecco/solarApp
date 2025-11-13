@@ -15,42 +15,27 @@ class SolarPlantController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        // TEMPORARY: Remove eager loading to debug
-        $query = SolarPlant::query()->where('rs', 0);
+        $query = SolarPlant::with(['owner', 'manager', 'propertyOwner', 'extras.extra'])
+            ->where('rs', 0);
 
         // Role-based filtering
         $user = $request->user();
 
-        // DEBUG LOGGING
-        \Log::info('SolarPlant::index called', [
-            'user_id' => $user->id,
-            'user_email' => $user->email,
-            'roles_sanctum' => $user->roles()->where('guard_name', 'sanctum')->pluck('name')->toArray(),
-            'hasRole_admin' => $user->hasRole('admin', 'sanctum'),
-            'hasRole_manager' => $user->hasRole('manager', 'sanctum'),
-            'hasRole_customer' => $user->hasRole('customer', 'sanctum'),
-            'total_plants_before_filter' => SolarPlant::where('rs', 0)->count(),
-        ]);
-
         if ($user->hasRole('customer', 'sanctum')) {
             // Customers only see their own plants
-            \Log::info('Applying CUSTOMER filter', ['user_id' => $user->id]);
             $query->where('user_id', $user->id);
         } elseif ($user->hasRole('manager', 'sanctum')) {
             // Managers see plants assigned to them
-            \Log::info('Applying MANAGER filter', ['user_id' => $user->id]);
             $query->where('manager_id', $user->id);
-        } else {
-            \Log::info('NO FILTER applied - showing all plants (admin)');
         }
         // Admins see all plants
 
-        // Filters
-        if ($request->has('status')) {
+        // Filters (use filled() instead of has() to ignore empty strings)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -64,14 +49,9 @@ class SolarPlantController extends Controller
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
-        // DEBUG: Log the SQL query
-        \Log::info('SQL Query', ['sql' => $query->toSql(), 'bindings' => $query->getBindings()]);
-
         // Pagination
         $perPage = $request->get('per_page', 15);
         $plants = $query->paginate($perPage);
-
-        \Log::info('SolarPlant::index result', ['count' => $plants->total(), 'items' => $plants->count()]);
 
         return response()->json($plants);
     }
