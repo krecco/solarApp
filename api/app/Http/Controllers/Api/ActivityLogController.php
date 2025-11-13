@@ -200,7 +200,7 @@ class ActivityLogController extends Controller
     public function forModel(Request $request, string $modelType, string $modelId): JsonResponse
     {
         $validator = Validator::make(['model_type' => $modelType], [
-            'model_type' => 'required|in:investment,solar_plant,user,repayment',
+            'model_type' => 'required|in:investment,solar_plant,user,repayment,campaign,web_info,conversation,message',
         ]);
 
         if ($validator->fails()) {
@@ -566,6 +566,8 @@ class ActivityLogController extends Controller
             'repayment' => \App\Models\InvestmentRepayment::class,
             'conversation' => \App\Models\Conversation::class,
             'message' => \App\Models\Message::class,
+            'campaign' => \App\Models\Campaign::class,
+            'web_info' => \App\Models\WebInfo::class,
         ];
 
         return $map[$modelType] ?? \App\Models\Investment::class;

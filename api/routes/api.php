@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDocumentController;
 use App\Http\Controllers\Api\AdminUserDetailController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\ExtrasController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\SolarPlantController;
 use App\Http\Controllers\Api\UserProfileController;
+use App\Http\Controllers\Api\WebInfoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -279,6 +281,44 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::delete('/{group}/{key}', [SettingsController::class, 'destroy']); // Delete setting
             Route::post('/bulk-update', [SettingsController::class, 'bulkUpdate']); // Bulk update settings
             Route::post('/reset', [SettingsController::class, 'reset']); // Reset to default
+        });
+    });
+
+    // Campaigns
+    Route::prefix('campaigns')->group(function () {
+        Route::get('/', [CampaignController::class, 'index']); // List campaigns (with filters)
+        Route::get('/active', [CampaignController::class, 'active']); // Get active campaigns
+        Route::get('/statistics', [CampaignController::class, 'statistics']); // Campaign statistics
+        Route::get('/{campaign}', [CampaignController::class, 'show']); // Get single campaign
+        Route::post('/validate-code', [CampaignController::class, 'validateCode']); // Validate campaign code
+
+        // Apply campaign (authenticated users)
+        Route::post('/{campaign}/apply', [CampaignController::class, 'apply']); // Apply campaign to investment
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/', [CampaignController::class, 'store']); // Create campaign
+            Route::put('/{campaign}', [CampaignController::class, 'update']); // Update campaign
+            Route::delete('/{campaign}', [CampaignController::class, 'destroy']); // Delete campaign
+        });
+    });
+
+    // Web Info / News Management
+    Route::prefix('web-info')->group(function () {
+        Route::get('/published', [WebInfoController::class, 'published']); // Get published items (public)
+        Route::get('/featured', [WebInfoController::class, 'featured']); // Get featured items (public)
+        Route::get('/categories', [WebInfoController::class, 'categories']); // Get categories list
+        Route::get('/slug/{slug}', [WebInfoController::class, 'bySlug']); // Get by slug (public)
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/', [WebInfoController::class, 'index']); // List all items (admin)
+            Route::get('/statistics', [WebInfoController::class, 'statistics']); // Statistics
+            Route::post('/', [WebInfoController::class, 'store']); // Create item
+            Route::get('/{webInfo}', [WebInfoController::class, 'show']); // Get by ID (admin)
+            Route::put('/{webInfo}', [WebInfoController::class, 'update']); // Update item
+            Route::delete('/{webInfo}', [WebInfoController::class, 'destroy']); // Delete item
+            Route::post('/{webInfo}/toggle-publish', [WebInfoController::class, 'togglePublish']); // Publish/unpublish
         });
     });
 
