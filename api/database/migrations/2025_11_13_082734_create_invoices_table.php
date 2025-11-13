@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('invoice_number')->unique();
-            $table->uuid('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->uuid('investment_id')->nullable();
             $table->uuid('repayment_id')->nullable();
             $table->enum('type', ['repayment', 'plant_billing', 'service', 'other'])->default('repayment');

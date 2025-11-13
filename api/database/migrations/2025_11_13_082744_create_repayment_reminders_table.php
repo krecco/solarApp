@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('repayment_reminders', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('repayment_id');
-            $table->uuid('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->enum('type', ['upcoming', 'overdue', 'final_notice'])->default('upcoming');
             $table->integer('days_before_due')->nullable();
             $table->integer('days_overdue')->nullable();

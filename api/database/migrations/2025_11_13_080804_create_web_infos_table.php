@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('is_published')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->timestamp('published_at')->nullable();
-            $table->uuid('author_id');
+            $table->unsignedBigInteger('author_id');
             $table->string('featured_image')->nullable();
             $table->json('meta')->nullable();
             $table->json('tags')->nullable();
