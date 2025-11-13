@@ -170,4 +170,85 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->isCustomerType('plant_owner');
     }
+
+    /**
+     * Language preference helper methods
+     */
+
+    /**
+     * Get user's UI language preference.
+     * Defaults to system default if not set.
+     */
+    public function getLanguage(): string
+    {
+        return $this->preferences['ui_language'] ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Get user's document language preference.
+     * Falls back to UI language if not set separately.
+     */
+    public function getDocumentLanguage(): string
+    {
+        return $this->preferences['document_language']
+            ?? $this->preferences['ui_language']
+            ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Get user's email language preference.
+     * Falls back to UI language if not set separately.
+     */
+    public function getEmailLanguage(): string
+    {
+        return $this->preferences['email_language']
+            ?? $this->preferences['ui_language']
+            ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Set user's UI language preference.
+     */
+    public function setLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['ui_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set user's document language preference.
+     */
+    public function setDocumentLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['document_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set user's email language preference.
+     */
+    public function setEmailLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['email_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set all language preferences at once.
+     */
+    public function setAllLanguages(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['ui_language'] = $languageCode;
+        $preferences['document_language'] = $languageCode;
+        $preferences['email_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
 }

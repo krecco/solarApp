@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
+use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
@@ -58,6 +59,12 @@ Route::prefix('v1')->group(function () {
 
     // Public Settings (accessible without authentication)
     Route::get('/settings/public', [SettingsController::class, 'publicSettings']);
+
+    // Languages (public - accessible without authentication)
+    Route::prefix('languages')->group(function () {
+        Route::get('/', [LanguageController::class, 'index']); // Get all active languages
+        Route::get('/default', [LanguageController::class, 'getDefault']); // Get default language
+    });
 });
 
 // Protected routes (require authentication)
@@ -91,6 +98,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [PreferenceController::class, 'show']);
         Route::put('/', [PreferenceController::class, 'update']);
         Route::post('/reset', [PreferenceController::class, 'reset']);
+    });
+
+    // User Language Preferences (authenticated)
+    Route::prefix('languages')->group(function () {
+        Route::get('/me', [LanguageController::class, 'show']); // Get user's language preferences
+        Route::put('/me', [LanguageController::class, 'update']); // Update user's language preferences
     });
 
     // Solar Plants (All authenticated users can view, admin/manager can create/edit)
