@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminDocumentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
@@ -79,6 +81,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserProfileController::class, 'show']); // Get full profile
         Route::put('/', [UserProfileController::class, 'update']); // Update profile
         Route::put('/password', [UserProfileController::class, 'updatePassword']); // Update password
+    });
+
+    // Customer Documents (Verification Documents)
+    Route::prefix('documents')->group(function () {
+        Route::get('/requirements', [CustomerDocumentController::class, 'requirements']); // Get document requirements with status
+        Route::get('/summary', [CustomerDocumentController::class, 'summary']); // Get verification summary
+        Route::get('/types', [CustomerDocumentController::class, 'documentTypes']); // Get available document types
+        Route::get('/', [CustomerDocumentController::class, 'index']); // List user's uploaded documents
+        Route::post('/upload', [CustomerDocumentController::class, 'upload']); // Upload document
+        Route::get('/{file}', [CustomerDocumentController::class, 'show']); // Get document details
+        Route::get('/{file}/download', [CustomerDocumentController::class, 'download']); // Download document
+        Route::delete('/{file}', [CustomerDocumentController::class, 'destroy']); // Delete unverified document
     });
 
     // Email Verification (authenticated - for re-verification if needed)
@@ -228,6 +242,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/users/{user}/send-welcome-email', [AdminController::class, 'sendWelcomeEmail']);
         Route::post('/users/{user}/avatar', [AdminController::class, 'updateAvatar']);
         Route::delete('/users/{user}/avatar', [AdminController::class, 'deleteAvatar']);
+    });
+
+    // Admin Document Verification Routes (admin and manager)
+    Route::prefix('admin/documents')->middleware('role:admin|manager')->group(function () {
+        Route::get('/pending', [AdminDocumentController::class, 'pendingDocuments']); // List pending documents
+        Route::get('/rejected', [AdminDocumentController::class, 'rejectedDocuments']); // List rejected documents
+        Route::get('/statistics', [AdminDocumentController::class, 'statistics']); // Verification statistics
+        Route::get('/users/{user}/status', [AdminDocumentController::class, 'userVerificationStatus']); // User verification status
+        Route::post('/files/{file}/verify', [AdminDocumentController::class, 'verify']); // Verify document
+        Route::post('/files/{file}/reject', [AdminDocumentController::class, 'reject']); // Reject document with reason
     });
 });
 

@@ -251,4 +251,66 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->preferences = $preferences;
         $this->save();
     }
+
+    /**
+     * Get or create file container for this user.
+     */
+    public function fileContainer()
+    {
+        return $this->morphOne(\App\Models\FileContainer::class, 'containable');
+    }
+
+    /**
+     * Get or create file container instance
+     */
+    public function getOrCreateFileContainer(): \App\Models\FileContainer
+    {
+        return $this->fileContainer()->firstOrCreate([
+            'containable_type' => self::class,
+            'containable_id' => $this->id,
+        ], [
+            'name' => "Documents for {$this->name}",
+            'description' => 'User verification documents',
+        ]);
+    }
+
+    /**
+     * Document requirement helper methods
+     */
+
+    /**
+     * Check if user has all required documents verified
+     */
+    public function hasAllRequiredDocuments(): bool
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->hasAllRequiredDocuments($this);
+    }
+
+    /**
+     * Get document verification completion percentage
+     */
+    public function getDocumentCompletionPercentage(): float
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getDocumentCompletionPercentage($this);
+    }
+
+    /**
+     * Get document verification summary
+     */
+    public function getDocumentVerificationSummary(): array
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getDocumentVerificationSummary($this);
+    }
+
+    /**
+     * Get missing required documents
+     */
+    public function getMissingRequiredDocuments()
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getMissingRequiredDocuments($this);
+    }
 }
