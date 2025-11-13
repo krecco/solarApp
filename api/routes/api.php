@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ExtrasController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\LanguageController;
+use App\Http\Controllers\Api\MessagingController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
@@ -109,6 +110,19 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
         Route::delete('/{id}', [NotificationController::class, 'destroy']);
         Route::delete('/clear-read', [NotificationController::class, 'clearRead']);
+    });
+
+    // Messaging/Chat System
+    Route::prefix('messages')->group(function () {
+        Route::get('/conversations', [MessagingController::class, 'conversations']); // List all conversations
+        Route::post('/conversations', [MessagingController::class, 'create']); // Create new conversation
+        Route::get('/conversations/{conversation}', [MessagingController::class, 'show']); // Get conversation with messages
+        Route::post('/conversations/{conversation}/messages', [MessagingController::class, 'sendMessage']); // Send message
+        Route::post('/conversations/{conversation}/read', [MessagingController::class, 'markAsRead']); // Mark as read
+        Route::post('/conversations/{conversation}/archive', [MessagingController::class, 'archive']); // Archive conversation
+        Route::post('/conversations/{conversation}/reactivate', [MessagingController::class, 'reactivate']); // Reactivate conversation
+        Route::get('/unread-count', [MessagingController::class, 'unreadCount']); // Get unread message count
+        Route::get('/search-users', [MessagingController::class, 'searchUsers']); // Search users for new conversation
     });
 
     // User Preferences

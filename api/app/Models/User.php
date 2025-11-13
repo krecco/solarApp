@@ -313,4 +313,36 @@ class User extends Authenticatable implements MustVerifyEmail
         return app(\App\Services\DocumentRequirementService::class)
             ->getMissingRequiredDocuments($this);
     }
+
+    /**
+     * Messaging relationships
+     */
+
+    /**
+     * Get conversations where user is a participant
+     */
+    public function conversations()
+    {
+        return $this->belongsToMany(\App\Models\Conversation::class, 'conversation_participants')
+            ->withPivot(['last_read_at', 'unread_count'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get messages sent by user
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(\App\Models\Message::class, 'sender_id');
+    }
+
+    /**
+     * Get total unread message count
+     */
+    public function getTotalUnreadMessagesCount(): int
+    {
+        return \DB::table('conversation_participants')
+            ->where('user_id', $this->id)
+            ->sum('unread_count');
+    }
 }
