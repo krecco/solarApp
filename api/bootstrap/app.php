@@ -26,11 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
-        // Add Sanctum and other middleware to API routes
-        $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        ]);
-
+        // Add SetLocale middleware to API routes
         $middleware->api(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
