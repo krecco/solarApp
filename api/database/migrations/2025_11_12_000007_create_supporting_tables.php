@@ -94,21 +94,7 @@ return new class extends Migration
             $table->index('extra_id');
         });
 
-        // Campaigns
-        Schema::create('campaigns', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->string('status')->default('draft'); // draft, active, completed
-
-            $table->timestamps();
-
-            $table->index('status');
-        });
-
+        // Note: Campaigns table is created in 2025_11_13_080754_create_campaigns_table.php
         // Note: Settings table is created in 2025_11_12_150837_create_settings_table.php
         // with group support, is_public flag, and soft deletes
 
@@ -133,19 +119,7 @@ return new class extends Migration
             $table->index('action');
         });
 
-        // Web info/pages
-        Schema::create('web_info', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('slug')->unique();
-            $table->string('title');
-            $table->longText('content');
-            $table->boolean('is_published')->default(false);
-
-            $table->timestamps();
-
-            $table->index(['is_published', 'slug']);
-        });
+        // Note: Web infos table is created in 2025_11_13_080804_create_web_infos_table.php
     }
 
     /**
@@ -153,10 +127,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('web_info');
+        // Web infos table is dropped in 2025_11_13_080804_create_web_infos_table.php
         Schema::dropIfExists('activity_logs');
         // Settings table is dropped in 2025_11_12_150837_create_settings_table.php
-        Schema::dropIfExists('campaigns');
+        // Campaigns table is dropped in 2025_11_13_080754_create_campaigns_table.php
         Schema::dropIfExists('solar_plant_extras');
         Schema::dropIfExists('extras');
         Schema::dropIfExists('solar_plant_property_owners');
