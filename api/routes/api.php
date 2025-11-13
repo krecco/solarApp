@@ -76,8 +76,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // User Profile
     Route::prefix('profile')->group(function () {
-        Route::put('/', [UserProfileController::class, 'update']);
-        Route::put('/password', [UserProfileController::class, 'updatePassword']);
+        Route::get('/', [UserProfileController::class, 'show']); // Get full profile
+        Route::put('/', [UserProfileController::class, 'update']); // Update profile
+        Route::put('/password', [UserProfileController::class, 'updatePassword']); // Update password
     });
 
     // Email Verification (authenticated - for re-verification if needed)
