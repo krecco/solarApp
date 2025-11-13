@@ -1,30 +1,81 @@
 <template>
-  <div class="admin-investment-detail">
-    <PageHeader :title="`Investment #${investment?.id?.substring(0, 8) || 'Details'}`">
-      <template #actions>
-        <Button
-          label="Back to List"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          @click="router.push({ name: 'AdminInvestmentList' })"
-        />
+  <div class="page-container">
+    <!-- Modern Page Header with Back Button -->
+    <div class="page-header-modern" v-if="investment">
+      <div class="header-content">
+        <div class="header-text">
+          <div class="header-title-row">
+            <Button
+              icon="pi pi-arrow-left"
+              severity="secondary"
+              text
+              rounded
+              @click="router.push({ name: 'AdminInvestmentList' })"
+              v-tooltip.top="'Back to List'"
+              class="back-btn"
+            />
+            <h1 class="header-title">
+              <i class="pi pi-wallet"></i>
+              Investment #{{ investment.id.substring(0, 8) }}
+            </h1>
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              text
+              rounded
+              @click="fetchInvestment"
+              v-tooltip.top="'Refresh'"
+              :loading="loading"
+              class="refresh-inline-btn"
+            />
+          </div>
+          <p class="header-subtitle">
+            {{ investment.user?.name || 'Unknown Investor' }} - {{ formatCurrency(investment.amount) }}
+          </p>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              <i :class="investment.verified ? 'pi pi-check-circle' : 'pi pi-clock'" class="mr-2"></i>
+              {{ investment.verified ? 'Verified' : 'Pending' }}
+            </span>
+            <span class="stat-label">Verification</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              <i class="pi pi-tag mr-2"></i>
+              {{ capitalizeFirst(investment.status) }}
+            </span>
+            <span class="stat-label">Status</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              {{ completionPercentage.toFixed(0) }}%
+            </span>
+            <span class="stat-label">Completed</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
         <Button
           label="Verify"
           icon="pi pi-check-circle"
           severity="success"
           @click="handleVerify"
-          v-if="investment && !investment.verified && (isAdmin || isManager)"
+          v-if="!investment.verified && (isAdmin || isManager)"
         />
         <Button
           label="Edit"
           icon="pi pi-pencil"
+          severity="primary"
           @click="editMode = true"
           v-if="isAdmin || isManager"
+          class="add-user-btn"
         />
-      </template>
-    </PageHeader>
+      </div>
+    </div>
 
-    <div v-if="loading" class="flex justify-content-center py-8">
+    <div v-if="loading && !investment" class="flex justify-content-center py-8">
       <ProgressSpinner />
     </div>
 
@@ -534,7 +585,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useInvestmentStore } from '@/stores/investment'
 import { useRole } from '@/composables/useRole'
 import type { Investment } from '@/api/investment.service'
-import PageHeader from '@/components/layout/PageHeader.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Tag from 'primevue/tag'
@@ -691,10 +741,8 @@ function getInitials(name: string): string {
 }
 </script>
 
-<style scoped>
-.admin-investment-detail {
-  max-width: 1400px;
-}
+<style scoped lang="scss">
+@import '@/styles/views/_admin-users';
 
 .field label {
   display: block;

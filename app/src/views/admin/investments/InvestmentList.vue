@@ -1,22 +1,63 @@
 <template>
-  <div class="investment-list">
-    <PageHeader title="Investments">
-      <template #actions>
+  <div class="page-container">
+    <!-- Modern Page Header with Refresh Inline -->
+    <div class="page-header-modern">
+      <div class="header-content">
+        <div class="header-text">
+          <div class="header-title-row">
+            <h1 class="header-title">
+              <i class="pi pi-wallet"></i>
+              Investments
+            </h1>
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              text
+              rounded
+              @click="fetchData"
+              v-tooltip.top="'Refresh'"
+              :loading="store.loading"
+              class="refresh-inline-btn"
+            />
+          </div>
+          <p class="header-subtitle">
+            Manage and monitor all investment activities
+          </p>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ store.pagination.total || 0 }}</span>
+            <span class="stat-label">Total Investments</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ formatCurrency(totalInvested) }}</span>
+            <span class="stat-label">Total Amount</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ activeCount }}</span>
+            <span class="stat-label">Active</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
         <Button
           label="Export Report"
           icon="pi pi-download"
           severity="secondary"
+          outlined
           @click="exportReport"
         />
         <Button
           label="Statistics"
           icon="pi pi-chart-bar"
+          severity="primary"
           @click="showStatistics = true"
+          class="add-user-btn"
         />
-      </template>
-    </PageHeader>
+      </div>
+    </div>
 
-    <!-- Statistics Cards -->
+    <!-- Statistics Cards (Hidden, moved to header stats) -->
     <div class="grid mb-3">
       <div class="col-12 md:col-3">
         <Card>
@@ -343,7 +384,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInvestmentStore } from '@/stores/investment'
 import { useRole } from '@/composables/useRole'
-import PageHeader from '@/components/layout/PageHeader.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -538,10 +578,8 @@ function formatDate(date: string): string {
 }
 </script>
 
-<style scoped>
-.investment-list {
-  max-width: 1600px;
-}
+<style scoped lang="scss">
+@import '@/styles/views/_admin-users';
 
 .confirmation-content {
   display: flex;

@@ -1,23 +1,75 @@
 <template>
-  <div class="solar-plant-detail">
-    <PageHeader :title="plant?.title || 'Loading...'" v-if="plant">
-      <template #actions>
+  <div class="page-container">
+    <!-- Modern Page Header with Back Button -->
+    <div class="page-header-modern" v-if="plant">
+      <div class="header-content">
+        <div class="header-text">
+          <div class="header-title-row">
+            <Button
+              icon="pi pi-arrow-left"
+              severity="secondary"
+              text
+              rounded
+              @click="router.back()"
+              v-tooltip.top="'Back'"
+              class="back-btn"
+            />
+            <h1 class="header-title">
+              <i class="pi pi-sun"></i>
+              {{ plant.title }}
+            </h1>
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              text
+              rounded
+              @click="loadPlant"
+              v-tooltip.top="'Refresh'"
+              :loading="store.loading"
+              class="refresh-inline-btn"
+            />
+          </div>
+          <p class="header-subtitle">
+            {{ plant.location || 'No location specified' }}
+          </p>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              <i class="pi pi-bolt mr-2"></i>
+              {{ plant.nominal_power }} kWp
+            </span>
+            <span class="stat-label">Nominal Power</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              <i class="pi pi-tag mr-2"></i>
+              {{ capitalizeFirst(plant.status) }}
+            </span>
+            <span class="stat-label">Status</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">
+              {{ formatCurrency(plant.total_cost) }}
+            </span>
+            <span class="stat-label">Total Cost</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
         <Button
           label="Edit"
           icon="pi pi-pencil"
+          severity="primary"
           @click="router.push({ name: 'AdminSolarPlantEdit', params: { id: plant.id } })"
           v-if="isAdmin || isManager"
+          :disabled="store.loading"
+          class="add-user-btn"
         />
-        <Button
-          label="Back"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          @click="router.back()"
-        />
-      </template>
-    </PageHeader>
+      </div>
+    </div>
 
-    <div v-if="store.loading" class="flex justify-content-center p-5">
+    <div v-if="store.loading && !plant" class="flex justify-content-center p-5">
       <ProgressSpinner />
     </div>
 
@@ -156,7 +208,6 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSolarPlantStore } from '@/stores/solarPlant'
 import { useRole } from '@/composables/useRole'
-import PageHeader from '@/components/layout/PageHeader.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Tag from 'primevue/tag'
@@ -171,6 +222,11 @@ const { isAdmin, isManager } = useRole()
 const plantId = computed(() => route.params.id as string)
 const plant = computed(() => store.currentPlant)
 const newStatus = ref('')
+
+const loadPlant = async () => {
+  await store.fetchPlant(plantId.value)
+  newStatus.value = plant.value?.status || 'draft'
+}
 
 const statusOptions = [
   { label: 'Draft', value: 'draft' },
@@ -214,4 +270,13 @@ function formatCurrency(value: number): string {
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('de-DE')
 }
+
+function capitalizeFirst(str: string): string {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
 </script>
+
+<style scoped lang="scss">
+@import '@/styles/views/_admin-users';
+</style>

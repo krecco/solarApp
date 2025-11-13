@@ -1,15 +1,39 @@
 <template>
-  <div class="solar-plant-create">
-    <PageHeader title="Create Solar Plant">
-      <template #actions>
+  <div class="page-container">
+    <!-- Modern Page Header with Back Button -->
+    <div class="page-header-modern">
+      <div class="header-content">
+        <div class="header-text">
+          <div class="header-title-row">
+            <Button
+              icon="pi pi-arrow-left"
+              severity="secondary"
+              text
+              rounded
+              @click="router.back()"
+              v-tooltip.top="'Back'"
+              class="back-btn"
+            />
+            <h1 class="header-title">
+              <i class="pi pi-sun"></i>
+              Create Solar Plant
+            </h1>
+          </div>
+          <p class="header-subtitle">
+            Add a new solar plant to the system
+          </p>
+        </div>
+      </div>
+      <div class="header-actions">
         <Button
           label="Cancel"
           icon="pi pi-times"
           severity="secondary"
+          outlined
           @click="router.back()"
         />
-      </template>
-    </PageHeader>
+      </div>
+    </div>
 
     <Card>
       <template #content>
@@ -259,7 +283,6 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSolarPlantStore } from '@/stores/solarPlant'
 import { useAdminStore } from '@/stores/admin'
-import PageHeader from '@/components/layout/PageHeader.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -342,3 +365,7 @@ async function handleSubmit() {
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import '@/styles/views/_admin-users';
+</style>
