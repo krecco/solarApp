@@ -28,18 +28,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'last_login_at',
         'preferences',
-        // Solar app fields
-        'title_prefix',
-        'title_suffix',
-        'phone_nr',
-        'gender',
-        'is_business',
-        'customer_type',
-        'user_files_verified',
-        'user_verified_at',
-        'document_extra_text_block_a',
-        'document_extra_text_block_b',
-        'customer_no',
         'status',
     ];
 
@@ -63,11 +51,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
-            'user_verified_at' => 'datetime',
             'password' => 'hashed',
             'preferences' => 'array',
-            'is_business' => 'boolean',
-            'user_files_verified' => 'boolean',
         ];
     }
 
@@ -126,6 +111,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get customer profile.
+     */
+    public function customerProfile()
+    {
+        return $this->hasOne(\App\Models\CustomerProfile::class);
+    }
+
+    /**
      * Get SEPA permissions.
      */
     public function sepaPermissions()
@@ -138,10 +131,14 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getFullNameWithTitlesAttribute(): string
     {
+        if (!$this->customerProfile) {
+            return $this->name;
+        }
+
         $parts = array_filter([
-            $this->title_prefix,
+            $this->customerProfile->title_prefix,
             $this->name,
-            $this->title_suffix,
+            $this->customerProfile->title_suffix,
         ]);
 
         return implode(' ', $parts);
@@ -152,7 +149,11 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isCustomerType(string $type): bool
     {
-        return $this->customer_type === $type || $this->customer_type === 'both';
+        if (!$this->customerProfile) {
+            return false;
+        }
+
+        return $this->customerProfile->customer_type === $type || $this->customerProfile->customer_type === 'both';
     }
 
     /**
@@ -169,6 +170,66 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isPlantOwner(): bool
     {
         return $this->isCustomerType('plant_owner');
+    }
+
+    /**
+     * Backward compatibility accessors for customer profile fields
+     * These delegate to the customerProfile relationship
+     */
+
+    public function getCustomerTypeAttribute()
+    {
+        return $this->customerProfile?->customer_type;
+    }
+
+    public function getCustomerNoAttribute()
+    {
+        return $this->customerProfile?->customer_no;
+    }
+
+    public function getIsBusinessAttribute()
+    {
+        return $this->customerProfile?->is_business ?? false;
+    }
+
+    public function getTitlePrefixAttribute()
+    {
+        return $this->customerProfile?->title_prefix;
+    }
+
+    public function getTitleSuffixAttribute()
+    {
+        return $this->customerProfile?->title_suffix;
+    }
+
+    public function getPhoneNrAttribute()
+    {
+        return $this->customerProfile?->phone_nr;
+    }
+
+    public function getGenderAttribute()
+    {
+        return $this->customerProfile?->gender;
+    }
+
+    public function getUserFilesVerifiedAttribute()
+    {
+        return $this->customerProfile?->user_files_verified ?? false;
+    }
+
+    public function getUserVerifiedAtAttribute()
+    {
+        return $this->customerProfile?->user_verified_at;
+    }
+
+    public function getDocumentExtraTextBlockAAttribute()
+    {
+        return $this->customerProfile?->document_extra_text_block_a;
+    }
+
+    public function getDocumentExtraTextBlockBAttribute()
+    {
+        return $this->customerProfile?->document_extra_text_block_b;
     }
 
     /**
