@@ -45,7 +45,7 @@ class InvoiceController extends Controller
             ->where('rs', 0);
 
         // Non-admin users can only see their own invoices
-        if (!$user->hasRole('admin') && !$user->hasRole('manager')) {
+        if (!$user->hasRole('admin', 'sanctum') && !$user->hasRole('manager', 'sanctum')) {
             $query->where('user_id', $user->id);
         } elseif ($request->has('user_id')) {
             $query->where('user_id', $request->user_id);
@@ -105,7 +105,7 @@ class InvoiceController extends Controller
         $user = $request->user();
 
         // Check authorization
-        if (!$user->hasRole('admin') && !$user->hasRole('manager') && $invoice->user_id !== $user->id) {
+        if (!$user->hasRole('admin', 'sanctum') && !$user->hasRole('manager', 'sanctum') && $invoice->user_id !== $user->id) {
             return response()->json([
                 'message' => 'Unauthorized to view this invoice',
             ], 403);
@@ -127,7 +127,7 @@ class InvoiceController extends Controller
         $query = Invoice::where('rs', 0);
 
         // Filter by user if not admin
-        if (!$user->hasRole('admin') && !$user->hasRole('manager')) {
+        if (!$user->hasRole('admin', 'sanctum') && !$user->hasRole('manager', 'sanctum')) {
             $query->where('user_id', $user->id);
         }
 
@@ -161,7 +161,7 @@ class InvoiceController extends Controller
             ->overdue();
 
         // Filter by user if not admin
-        if (!$user->hasRole('admin') && !$user->hasRole('manager')) {
+        if (!$user->hasRole('admin', 'sanctum') && !$user->hasRole('manager', 'sanctum')) {
             $query->where('user_id', $user->id);
         }
 

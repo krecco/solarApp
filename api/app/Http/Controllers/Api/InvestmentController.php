@@ -32,10 +32,10 @@ class InvestmentController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             // Customers only see their own investments
             $query->where('user_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             // Managers see investments for plants they manage
             $query->whereHas('solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
@@ -140,10 +140,10 @@ class InvestmentController extends Controller
     {
         // Authorization check
         $user = $request->user();
-        if ($user->hasRole('customer') && $investment->user_id !== $user->id) {
+        if ($user->hasRole('customer', 'sanctum') && $investment->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        if ($user->hasRole('manager') && $investment->solarPlant->manager_id !== $user->id) {
+        if ($user->hasRole('manager', 'sanctum') && $investment->solarPlant->manager_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -317,9 +317,9 @@ class InvestmentController extends Controller
         $query = Investment::where('rs', 0);
 
         // Apply role-based filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('user_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->whereHas('solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
             });

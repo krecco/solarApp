@@ -189,7 +189,7 @@ class FileController extends Controller
     public function destroy(Request $request, File $file): JsonResponse
     {
         // Only admin or file uploader can delete
-        if (!$request->user()->hasRole('admin') && $file->uploaded_by !== $request->user()->id) {
+        if (!$request->user()->hasRole('admin', 'sanctum') && $file->uploaded_by !== $request->user()->id) {
             return response()->json([
                 'message' => 'Unauthorized to delete this file',
             ], 403);
@@ -285,7 +285,7 @@ class FileController extends Controller
     protected function verifyContainerAccess($user, string $containerType, string $containerId): bool
     {
         // Admin has access to everything
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin', 'sanctum')) {
             return true;
         }
 
@@ -298,7 +298,7 @@ class FileController extends Controller
                 if ($user->id === $investment->user_id) return true;
 
                 // Manager can access investments for their managed plants
-                if ($user->hasRole('manager') && $investment->solarPlant->manager_id === $user->id) {
+                if ($user->hasRole('manager', 'sanctum') && $investment->solarPlant->manager_id === $user->id) {
                     return true;
                 }
                 break;
@@ -311,7 +311,7 @@ class FileController extends Controller
                 if ($user->id === $plant->user_id) return true;
 
                 // Manager can access managed plants
-                if ($user->hasRole('manager') && $plant->manager_id === $user->id) {
+                if ($user->hasRole('manager', 'sanctum') && $plant->manager_id === $user->id) {
                     return true;
                 }
                 break;
@@ -330,7 +330,7 @@ class FileController extends Controller
     protected function verifyFileAccess($user, File $file): bool
     {
         // Admin has access to everything
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin', 'sanctum')) {
             return true;
         }
 

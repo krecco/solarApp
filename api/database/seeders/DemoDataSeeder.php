@@ -94,8 +94,12 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
+        // Assign role to both web and sanctum guards
         if (!$user->hasRole($role)) {
-            $user->assignRole($role);
+            $user->assignRole($role); // web guard
+        }
+        if (!$user->hasRole($role, 'sanctum')) {
+            $user->roles()->attach(\Spatie\Permission\Models\Role::where('name', $role)->where('guard_name', 'sanctum')->first());
         }
 
         return $user;

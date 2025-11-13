@@ -35,7 +35,8 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]);
-            $manager->assignRole('manager');
+            $manager->assignRole('manager'); // web guard
+            $manager->roles()->attach(\Spatie\Permission\Models\Role::where('name', 'manager')->where('guard_name', 'sanctum')->first());
 
             // Create test regular user
             $user = User::factory()->create([
@@ -44,7 +45,8 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]);
-            $user->assignRole('user');
+            $user->assignRole('user'); // web guard
+            $user->roles()->attach(\Spatie\Permission\Models\Role::where('name', 'user')->where('guard_name', 'sanctum')->first());
 
             // Create additional test admin
             $testAdmin = User::factory()->create([
@@ -53,7 +55,8 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]);
-            $testAdmin->assignRole('admin');
+            $testAdmin->assignRole('admin'); // web guard
+            $testAdmin->roles()->attach(\Spatie\Permission\Models\Role::where('name', 'admin')->where('guard_name', 'sanctum')->first());
 
             $this->command->info('');
             $this->command->info('Test users created with roles:');

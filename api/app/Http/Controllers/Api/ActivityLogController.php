@@ -73,10 +73,10 @@ class ActivityLogController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             // Customers can only see their own activities
             $query->where('causer_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             // Managers can see activities related to their managed plants and investments
             $query->where(function ($q) use ($user) {
                 $q->where('causer_id', $user->id)
@@ -153,9 +153,9 @@ class ActivityLogController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('causer_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->where(function ($q) use ($user) {
                 $q->where('causer_id', $user->id)
                   ->orWhereHasMorph('subject', ['App\Models\SolarPlant'], function ($query) use ($user) {
@@ -247,8 +247,8 @@ class ActivityLogController extends Controller
         $user = $request->user();
 
         // Check authorization
-        if (!$user->hasRole('admin') && $user->id !== $userId) {
-            if ($user->hasRole('manager')) {
+        if (!$user->hasRole('admin', 'sanctum') && $user->id !== $userId) {
+            if ($user->hasRole('manager', 'sanctum')) {
                 // Manager can view activities related to their managed entities
                 // This is complex, so we'll allow it but filter in the query
             } else {
@@ -271,7 +271,7 @@ class ActivityLogController extends Controller
      */
     protected function canViewActivity($user, Activity $activity): bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin', 'sanctum')) {
             return true;
         }
 
@@ -279,7 +279,7 @@ class ActivityLogController extends Controller
             return true;
         }
 
-        if ($user->hasRole('manager') && $activity->subject) {
+        if ($user->hasRole('manager', 'sanctum') && $activity->subject) {
             if ($activity->subject_type === 'App\Models\SolarPlant') {
                 return $activity->subject->manager_id === $user->id;
             }
@@ -297,7 +297,7 @@ class ActivityLogController extends Controller
      */
     protected function canViewModelActivities($user, $model): bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin', 'sanctum')) {
             return true;
         }
 
@@ -310,7 +310,7 @@ class ActivityLogController extends Controller
                     return true;
                 }
                 // Manager can view investments for their managed plants
-                if ($user->hasRole('manager') && $model->solarPlant->manager_id === $user->id) {
+                if ($user->hasRole('manager', 'sanctum') && $model->solarPlant->manager_id === $user->id) {
                     return true;
                 }
                 break;
@@ -321,7 +321,7 @@ class ActivityLogController extends Controller
                     return true;
                 }
                 // Manager can view managed plants
-                if ($user->hasRole('manager') && $model->manager_id === $user->id) {
+                if ($user->hasRole('manager', 'sanctum') && $model->manager_id === $user->id) {
                     return true;
                 }
                 break;
@@ -336,7 +336,7 @@ class ActivityLogController extends Controller
                 if ($user->id === $investment->user_id) {
                     return true;
                 }
-                if ($user->hasRole('manager') && $investment->solarPlant->manager_id === $user->id) {
+                if ($user->hasRole('manager', 'sanctum') && $investment->solarPlant->manager_id === $user->id) {
                     return true;
                 }
                 break;
@@ -384,7 +384,7 @@ class ActivityLogController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('causer_id', $user->id);
         }
 
@@ -429,7 +429,7 @@ class ActivityLogController extends Controller
     public function export(Request $request): JsonResponse
     {
         // Only admin can export logs
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'message' => 'Unauthorized. Only administrators can export activity logs.',
             ], 403);
@@ -511,9 +511,9 @@ class ActivityLogController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('causer_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->where(function ($q) use ($user) {
                 $q->where('causer_id', $user->id)
                   ->orWhereHasMorph('subject', ['App\Models\SolarPlant'], function ($query) use ($user) {

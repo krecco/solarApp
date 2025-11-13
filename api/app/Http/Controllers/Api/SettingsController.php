@@ -106,7 +106,7 @@ class SettingsController extends Controller
         }
 
         // Check if setting is public or user is admin
-        if (!$setting->is_public && !$request->user()->hasRole('admin')) {
+        if (!$setting->is_public && !$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'message' => 'Unauthorized to view this setting',
             ], 403);
