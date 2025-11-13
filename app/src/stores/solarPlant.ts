@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Ref } from 'vue'
 import solarPlantService, { type SolarPlant, type CreateSolarPlantDto, type SolarPlantFilters } from '@/api/solarPlant.service'
 import { useToast } from 'primevue/usetoast'
 
@@ -8,7 +7,7 @@ export const useSolarPlantStore = defineStore('solarPlant', () => {
   const toast = useToast()
 
   // State
-  const plants: Ref<SolarPlant[]> = ref([])
+  const plants = ref<SolarPlant[]>([])
   const currentPlant = ref<SolarPlant | null>(null)
   const loading = ref(false)
   const statistics = ref<any>(null)
