@@ -15,8 +15,8 @@ class SolarPlantController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = SolarPlant::with(['owner', 'manager', 'propertyOwner', 'extras.extra'])
-            ->where('rs', 0);
+        // TEMPORARY: Remove eager loading to debug
+        $query = SolarPlant::query()->where('rs', 0);
 
         // Role-based filtering
         $user = $request->user();
@@ -64,11 +64,14 @@ class SolarPlantController extends Controller
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
+        // DEBUG: Log the SQL query
+        \Log::info('SQL Query', ['sql' => $query->toSql(), 'bindings' => $query->getBindings()]);
+
         // Pagination
         $perPage = $request->get('per_page', 15);
         $plants = $query->paginate($perPage);
 
-        \Log::info('SolarPlant::index result', ['count' => $plants->total()]);
+        \Log::info('SolarPlant::index result', ['count' => $plants->total(), 'items' => $plants->count()]);
 
         return response()->json($plants);
     }
