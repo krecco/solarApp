@@ -46,7 +46,7 @@ export const activityLogService = {
    * Get activity logs with filters
    */
   async getLogs(filters?: ActivityLogFilters) {
-    const response = await api.get('/v1/activity-logs', { params: filters })
+    const response = await api.get('/api/v1/activity-logs', { params: filters })
     return response.data
   },
 
@@ -54,7 +54,7 @@ export const activityLogService = {
    * Get single activity log
    */
   async getLog(activityId: number): Promise<ActivityLog> {
-    const response = await api.get(`/v1/activity-logs/${activityId}`)
+    const response = await api.get(`/api/v1/activity-logs/${activityId}`)
     return response.data.data
   },
 
@@ -65,7 +65,7 @@ export const activityLogService = {
     start_date?: string
     end_date?: string
   }): Promise<ActivityStatistics> {
-    const response = await api.get('/v1/activity-logs/statistics', { params: filters })
+    const response = await api.get('/api/v1/activity-logs/statistics', { params: filters })
     return response.data.data
   },
 
@@ -77,7 +77,7 @@ export const activityLogService = {
     modelId: string,
     perPage?: number
   ) {
-    const response = await api.get(`/v1/activity-logs/model/${modelType}/${modelId}`, {
+    const response = await api.get(`/api/v1/activity-logs/model/${modelType}/${modelId}`, {
       params: { per_page: perPage },
     })
     return response.data
@@ -87,7 +87,7 @@ export const activityLogService = {
    * Get activities by a specific user
    */
   async getByUser(userId: number, perPage?: number) {
-    const response = await api.get(`/v1/activity-logs/user/${userId}`, {
+    const response = await api.get(`/api/v1/activity-logs/user/${userId}`, {
       params: { per_page: perPage },
     })
     return response.data

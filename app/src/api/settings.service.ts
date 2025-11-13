@@ -55,7 +55,7 @@ export const settingsService = {
    * Get public settings (no auth required)
    */
   async getPublicSettings(): Promise<SettingsResponse> {
-    const response = await api.get('/v1/settings/public')
+    const response = await api.get('/api/v1/settings/public')
     return response.data.data
   },
 
@@ -63,7 +63,7 @@ export const settingsService = {
    * Get all settings or by group
    */
   async getSettings(group?: SettingGroup): Promise<SettingsResponse> {
-    const response = await api.get('/v1/settings', {
+    const response = await api.get('/api/v1/settings', {
       params: group ? { group } : undefined,
     })
     return response.data.data
@@ -73,7 +73,7 @@ export const settingsService = {
    * Get single setting
    */
   async getSetting(group: string, key: string): Promise<SettingValue> {
-    const response = await api.get(`/v1/settings/${group}/${key}`)
+    const response = await api.get(`/api/v1/settings/${group}/${key}`)
     return response.data.data
   },
 
@@ -81,7 +81,7 @@ export const settingsService = {
    * Create new setting (admin only)
    */
   async create(data: CreateSettingData): Promise<Setting> {
-    const response = await api.post('/v1/settings', data)
+    const response = await api.post('/api/v1/settings', data)
     return response.data.data
   },
 
@@ -89,7 +89,7 @@ export const settingsService = {
    * Update setting (admin only)
    */
   async update(group: string, key: string, data: UpdateSettingData): Promise<Setting> {
-    const response = await api.put(`/v1/settings/${group}/${key}`, data)
+    const response = await api.put(`/api/v1/settings/${group}/${key}`, data)
     return response.data.data
   },
 
@@ -97,7 +97,7 @@ export const settingsService = {
    * Delete setting (admin only)
    */
   async delete(group: string, key: string) {
-    const response = await api.delete(`/v1/settings/${group}/${key}`)
+    const response = await api.delete(`/api/v1/settings/${group}/${key}`)
     return response.data
   },
 
@@ -105,7 +105,7 @@ export const settingsService = {
    * Bulk update settings (admin only)
    */
   async bulkUpdate(settings: BulkUpdateItem[]) {
-    const response = await api.post('/v1/settings/bulk-update', { settings })
+    const response = await api.post('/api/v1/settings/bulk-update', { settings })
     return response.data.data
   },
 
@@ -113,7 +113,7 @@ export const settingsService = {
    * Reset settings to default (admin only)
    */
   async reset(group?: SettingGroup) {
-    const response = await api.post('/v1/settings/reset', group ? { group } : undefined)
+    const response = await api.post('/api/v1/settings/reset', group ? { group } : undefined)
     return response.data.data
   },
 

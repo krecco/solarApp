@@ -50,7 +50,7 @@ export const filesService = {
       formData.append('description', data.description)
     }
 
-    const response = await api.post('/v1/files/upload', formData, {
+    const response = await api.post('/api/v1/files/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -62,7 +62,7 @@ export const filesService = {
    * List files in a container
    */
   async getFiles(filters: FileFilters): Promise<FileItem[]> {
-    const response = await api.get('/v1/files', { params: filters })
+    const response = await api.get('/api/v1/files', { params: filters })
     return response.data.data
   },
 
@@ -70,7 +70,7 @@ export const filesService = {
    * Download a file
    */
   async download(fileId: string) {
-    const response = await api.get(`/v1/files/${fileId}/download`, {
+    const response = await api.get(`/api/v1/files/${fileId}/download`, {
       responseType: 'blob',
     })
     return response.data
@@ -80,7 +80,7 @@ export const filesService = {
    * Delete a file
    */
   async delete(fileId: string) {
-    const response = await api.delete(`/v1/files/${fileId}`)
+    const response = await api.delete(`/api/v1/files/${fileId}`)
     return response.data
   },
 
@@ -88,7 +88,7 @@ export const filesService = {
    * Verify a file (admin/manager only)
    */
   async verify(fileId: string) {
-    const response = await api.post(`/v1/files/${fileId}/verify`)
+    const response = await api.post(`/api/v1/files/${fileId}/verify`)
     return response.data.data
   },
 
