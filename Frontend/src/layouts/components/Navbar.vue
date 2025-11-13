@@ -23,6 +23,8 @@
       -->
       <notification-dropdown />
       &nbsp;&nbsp;
+      <language-switcher />
+      &nbsp;&nbsp;
       <b-nav-item-dropdown
         right
         toggle-class="d-flex align-items-center dropdown-user-link"
@@ -66,6 +68,7 @@ import { initialAbility } from '@/libs/acl/config'
 
 //  import NewMessageIndicator from './NewMessageIndicator.vue'
 import NotificationDropdown from './NotificationDropdown.vue'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 export default {
   components: {
@@ -76,6 +79,7 @@ export default {
     //  BDropdownDivider,
     BAvatar,
     NotificationDropdown,
+    LanguageSwitcher,
     //  NewMessageIndicator,
   },
   props: {
