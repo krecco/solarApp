@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\PdfController;
 use App\Http\Controllers\Api\PreferenceController;
 use App\Http\Controllers\Api\RepaymentController;
 use App\Http\Controllers\Api\ReportController;
@@ -150,6 +151,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::middleware('role:admin|manager')->group(function () {
             Route::post('/{repayment}/mark-paid', [RepaymentController::class, 'markAsPaid']);
         });
+    });
+
+    // PDF Document Generation
+    Route::prefix('pdf')->group(function () {
+        Route::get('/languages', [PdfController::class, 'availableLanguages']); // Get available languages
+        Route::get('/investments/{investment}/contract', [PdfController::class, 'generateInvestmentContract']); // Generate investment contract
+        Route::get('/investments/{investment}/repayment-schedule', [PdfController::class, 'generateRepaymentSchedule']); // Generate repayment schedule
     });
 
     // File Management
