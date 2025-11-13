@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AdminDocumentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\ExtrasController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\LanguageController;
@@ -134,6 +135,22 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::put('/{solarPlant}', [SolarPlantController::class, 'update']);
             Route::delete('/{solarPlant}', [SolarPlantController::class, 'destroy']);
             Route::post('/{solarPlant}/status', [SolarPlantController::class, 'updateStatus']);
+        });
+    });
+
+    // Extras/Add-ons (All can view active, admin can manage)
+    Route::prefix('extras')->group(function () {
+        Route::get('/active', [ExtrasController::class, 'activeExtras']); // Public active extras
+        Route::get('/', [ExtrasController::class, 'index']); // List all extras (with filters)
+        Route::get('/{extra}', [ExtrasController::class, 'show']); // View extra details
+        Route::get('/{extra}/usage', [ExtrasController::class, 'usage']); // View extra usage statistics
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/', [ExtrasController::class, 'store']); // Create extra
+            Route::put('/{extra}', [ExtrasController::class, 'update']); // Update extra
+            Route::delete('/{extra}', [ExtrasController::class, 'destroy']); // Delete extra
+            Route::post('/{extra}/toggle-active', [ExtrasController::class, 'toggleActive']); // Toggle active status
         });
     });
 
