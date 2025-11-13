@@ -90,9 +90,18 @@ class DemoDataSeeder extends Seeder
                 'name' => $name,
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'customer_type' => $role === 'customer' ? 'investor' : 'both',
             ]
         );
+
+        // Create customer profile for customer roles
+        if ($role === 'customer') {
+            if (!$user->customerProfile) {
+                $user->customerProfile()->create([
+                    'customer_type' => 'investor',
+                    'customer_no' => 'CUST-' . str_pad($user->id, 6, '0', STR_PAD_LEFT),
+                ]);
+            }
+        }
 
         // Assign role to both web and sanctum guards
         if (!$user->hasRole($role)) {
