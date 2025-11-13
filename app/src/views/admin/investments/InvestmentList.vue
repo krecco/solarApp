@@ -396,15 +396,15 @@ const sortOptions = [
 ]
 
 const totalInvested = computed(() => {
-  return store.investments.reduce((sum, inv) => sum + inv.amount, 0)
+  return (store.investments || []).reduce((sum, inv) => sum + inv.amount, 0)
 })
 
 const pendingCount = computed(() => {
-  return store.investments.filter((inv) => !inv.verified).length
+  return (store.investments || []).filter((inv) => !inv.verified).length
 })
 
 const activeCount = computed(() => {
-  return store.investments.filter((inv) => inv.status === 'active').length
+  return (store.investments || []).filter((inv) => inv.status === 'active').length
 })
 
 let searchTimeout: any = null
