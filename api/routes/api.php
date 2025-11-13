@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDocumentController;
+use App\Http\Controllers\Api\AdminUserDetailController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
@@ -259,6 +260,17 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/users/{user}/send-welcome-email', [AdminController::class, 'sendWelcomeEmail']);
         Route::post('/users/{user}/avatar', [AdminController::class, 'updateAvatar']);
         Route::delete('/users/{user}/avatar', [AdminController::class, 'deleteAvatar']);
+    });
+
+    // Admin User Detail Routes (admin and manager) - Enhanced tabbed user view
+    Route::prefix('admin/users/{user}')->middleware('role:admin|manager')->group(function () {
+        Route::get('/overview', [AdminUserDetailController::class, 'overview']); // Complete overview (all tabs)
+        Route::get('/account', [AdminUserDetailController::class, 'accountInfo']); // Account info tab
+        Route::get('/documents', [AdminUserDetailController::class, 'documents']); // Documents tab
+        Route::get('/investments', [AdminUserDetailController::class, 'investments']); // Investments tab
+        Route::get('/power-plants', [AdminUserDetailController::class, 'powerPlants']); // Power plants tab
+        Route::get('/billing', [AdminUserDetailController::class, 'billing']); // Billing & SEPA tab
+        Route::get('/activity', [AdminUserDetailController::class, 'activity']); // Activity timeline tab
     });
 
     // Admin Document Verification Routes (admin and manager)
