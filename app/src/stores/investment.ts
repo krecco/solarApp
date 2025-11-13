@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 import investmentService, { type Investment, type CreateInvestmentDto, type InvestmentFilters } from '@/api/investment.service'
 import { useToast } from 'primevue/usetoast'
 
@@ -7,7 +8,7 @@ export const useInvestmentStore = defineStore('investment', () => {
   const toast = useToast()
 
   // State
-  const investments = ref<Investment[]>([])
+  const investments: Ref<Investment[]> = ref([])
   const currentInvestment = ref<Investment | null>(null)
   const loading = ref(false)
   const statistics = ref<any>(null)
