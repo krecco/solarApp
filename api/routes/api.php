@@ -87,6 +87,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // DEBUG ENDPOINT - Check user roles and solar plants count
     Route::get('/debug/check', function () {
         $user = request()->user();
+
+        // Get roles for each guard
+        $webRoles = $user->roles()->where('guard_name', 'web')->pluck('name')->toArray();
+        $sanctumRoles = $user->roles()->where('guard_name', 'sanctum')->pluck('name')->toArray();
+
         $plantsQuery = \App\Models\SolarPlant::where('rs', 0);
         $investmentsQuery = \App\Models\Investment::where('rs', 0);
 
@@ -97,10 +102,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
                 'name' => $user->name,
             ],
             'roles' => [
-                'web' => $user->getRoleNames('web')->toArray(),
-                'sanctum' => $user->getRoleNames('sanctum')->toArray(),
+                'web' => $webRoles,
+                'sanctum' => $sanctumRoles,
             ],
             'role_checks' => [
+                'hasRole_admin_web' => $user->hasRole('admin', 'web'),
                 'hasRole_admin_sanctum' => $user->hasRole('admin', 'sanctum'),
                 'hasRole_manager_sanctum' => $user->hasRole('manager', 'sanctum'),
                 'hasRole_customer_sanctum' => $user->hasRole('customer', 'sanctum'),
