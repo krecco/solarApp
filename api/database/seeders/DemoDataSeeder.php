@@ -2,14 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Models\Extra;
 use App\Models\Investment;
 use App\Models\InvestmentRepayment;
 use App\Models\SolarPlant;
+use App\Models\SolarPlantExtra;
+use App\Models\SolarPlantPropertyOwner;
 use App\Models\User;
+use App\Models\UserAddress;
+use App\Models\UserSepaPermission;
 use App\Services\RepaymentCalculatorService;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DemoDataSeeder extends Seeder
 {
@@ -48,9 +54,29 @@ class DemoDataSeeder extends Seeder
             $this->command->info('✓ Created manager user: manager@example.com');
         }
 
+        // Create user addresses
+        $this->createUserAddresses([$owner, $investor1, $investor2, $investor3]);
+        $this->command->info('✓ Created user addresses');
+
+        // Create SEPA permissions
+        $this->createSepaPermissions([$investor1, $investor2, $investor3]);
+        $this->command->info('✓ Created SEPA permissions for investors');
+
+        // Create extras catalog
+        $extras = $this->createExtras();
+        $this->command->info('✓ Created ' . count($extras) . ' extras/add-ons');
+
         // Create demo solar plants
         $plants = $this->createSolarPlants($owner, $manager);
         $this->command->info('✓ Created ' . count($plants) . ' solar plants (owner_id: ' . $owner->id . ', manager_id: ' . $manager->id . ')');
+
+        // Add extras to solar plants
+        $this->addExtrasToPlants($plants, $extras);
+        $this->command->info('✓ Added extras to solar plants');
+
+        // Create property owners for some plants
+        $this->createPropertyOwners($plants);
+        $this->command->info('✓ Created property owner records');
 
         // Create demo investments
         $investments = $this->createInvestments($plants, [$investor1, $investor2, $investor3], $manager);
@@ -96,9 +122,21 @@ class DemoDataSeeder extends Seeder
         // Create customer profile for customer roles
         if ($role === 'customer') {
             if (!$user->customerProfile) {
+                // Determine customer type based on email
+                $customerType = str_contains($email, 'plant-owner') ? 'plant_owner' : 'investor';
+                if (str_contains($email, 'both')) {
+                    $customerType = 'both';
+                }
+
                 $user->customerProfile()->create([
-                    'customer_type' => 'investor',
+                    'customer_type' => $customerType,
                     'customer_no' => 'CUST-' . str_pad($user->id, 6, '0', STR_PAD_LEFT),
+                    'is_business' => rand(0, 1) === 1,
+                    'title_prefix' => rand(0, 3) === 0 ? ['Dr.', 'Prof.', 'Prof. Dr.'][rand(0, 2)] : null,
+                    'phone_nr' => '+49 ' . rand(30, 89) . ' ' . rand(10000000, 99999999),
+                    'gender' => ['male', 'female', 'other'][rand(0, 2)],
+                    'user_files_verified' => $role === 'customer' && rand(0, 1) === 1,
+                    'user_verified_at' => $role === 'customer' && rand(0, 1) === 1 ? Carbon::now()->subDays(rand(1, 90)) : null,
                 ]);
             }
         }
@@ -323,5 +361,206 @@ class DemoDataSeeder extends Seeder
         }
 
         return $count;
+    }
+
+    /**
+     * Create user addresses
+     */
+    protected function createUserAddresses(array $users): void
+    {
+        $addresses = [
+            ['street' => 'Hauptstraße', 'street_number' => '42', 'city' => 'Berlin', 'postal_code' => '10115', 'country' => 'DE'],
+            ['street' => 'Bahnhofstraße', 'street_number' => '17', 'city' => 'München', 'postal_code' => '80331', 'country' => 'DE'],
+            ['street' => 'Kaiserstraße', 'street_number' => '88', 'city' => 'Frankfurt', 'postal_code' => '60311', 'country' => 'DE'],
+            ['street' => 'Rheinufer', 'street_number' => '23', 'city' => 'Köln', 'postal_code' => '50668', 'country' => 'DE'],
+        ];
+
+        foreach ($users as $index => $user) {
+            $addressData = $addresses[$index % count($addresses)];
+
+            // Create billing address
+            UserAddress::firstOrCreate(
+                ['user_id' => $user->id, 'type' => 'billing'],
+                array_merge($addressData, [
+                    'is_primary' => true,
+                ])
+            );
+
+            // Some users also have a shipping address
+            if ($index % 2 === 0) {
+                UserAddress::firstOrCreate(
+                    ['user_id' => $user->id, 'type' => 'shipping'],
+                    [
+                        'street' => 'Nebengasse',
+                        'street_number' => ($index + 10),
+                        'city' => $addressData['city'],
+                        'postal_code' => $addressData['postal_code'],
+                        'country' => 'DE',
+                        'is_primary' => false,
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
+     * Create SEPA permissions for investors
+     */
+    protected function createSepaPermissions(array $investors): void
+    {
+        $ibans = [
+            'DE89370400440532013000',
+            'DE27100777770209299700',
+            'DE91100000000123456789',
+        ];
+
+        foreach ($investors as $index => $investor) {
+            UserSepaPermission::firstOrCreate(
+                ['user_id' => $investor->id],
+                [
+                    'iban' => $ibans[$index % count($ibans)],
+                    'bic' => 'COBADEFFXXX',
+                    'account_holder' => $investor->name,
+                    'mandate_reference' => 'SEPA-' . strtoupper(Str::random(10)),
+                    'mandate_date' => Carbon::now()->subMonths(rand(1, 6)),
+                    'is_active' => true,
+                ]
+            );
+        }
+    }
+
+    /**
+     * Create extras catalog
+     */
+    protected function createExtras(): array
+    {
+        $extrasData = [
+            [
+                'name' => 'Batteriespeicher 10kWh',
+                'description' => 'Hochleistungs-Batteriespeicher zur Erhöhung des Eigenverbrauchs',
+                'default_price' => 8500.00,
+                'unit' => 'piece',
+            ],
+            [
+                'name' => 'Wallbox 11kW',
+                'description' => 'Ladestation für Elektrofahrzeuge',
+                'default_price' => 1200.00,
+                'unit' => 'piece',
+            ],
+            [
+                'name' => 'Smart Home Integration',
+                'description' => 'Integration in bestehende Smart Home Systeme',
+                'default_price' => 800.00,
+                'unit' => 'service',
+            ],
+            [
+                'name' => 'Monitoring System Premium',
+                'description' => 'Erweitertes Monitoring mit Echtzeitdaten und Benachrichtigungen',
+                'default_price' => 450.00,
+                'unit' => 'service',
+            ],
+            [
+                'name' => 'Wartungspaket Pro',
+                'description' => 'Jährliche professionelle Wartung und Reinigung',
+                'default_price' => 350.00,
+                'unit' => 'service',
+            ],
+            [
+                'name' => 'Optimierer pro Modul',
+                'description' => 'Leistungsoptimierer zur Maximierung des Ertrags',
+                'default_price' => 85.00,
+                'unit' => 'piece',
+            ],
+        ];
+
+        $extras = [];
+        foreach ($extrasData as $data) {
+            $extras[] = Extra::firstOrCreate(
+                ['name' => $data['name']],
+                $data
+            );
+        }
+
+        return $extras;
+    }
+
+    /**
+     * Add extras to solar plants
+     */
+    protected function addExtrasToPlants(array $plants, array $extras): void
+    {
+        // Plant 1 (Operational) - has battery and wallbox
+        if (isset($plants[0]) && isset($extras[0]) && isset($extras[1])) {
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[0]->id, 'extra_id' => $extras[0]->id],
+                ['price' => 8500.00, 'quantity' => 1]
+            );
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[0]->id, 'extra_id' => $extras[1]->id],
+                ['price' => 1200.00, 'quantity' => 2]
+            );
+        }
+
+        // Plant 2 (Active) - has smart home and monitoring
+        if (isset($plants[1]) && isset($extras[2]) && isset($extras[3])) {
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[1]->id, 'extra_id' => $extras[2]->id],
+                ['price' => 800.00, 'quantity' => 1]
+            );
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[1]->id, 'extra_id' => $extras[3]->id],
+                ['price' => 450.00, 'quantity' => 1]
+            );
+        }
+
+        // Plant 3 (Draft) - has maintenance package
+        if (isset($plants[2]) && isset($extras[4])) {
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[2]->id, 'extra_id' => $extras[4]->id],
+                ['price' => 350.00, 'quantity' => 1]
+            );
+        }
+
+        // Plant 4 (Active) - has optimizers
+        if (isset($plants[3]) && isset($extras[5])) {
+            SolarPlantExtra::firstOrCreate(
+                ['solar_plant_id' => $plants[3]->id, 'extra_id' => $extras[5]->id],
+                ['price' => 85.00, 'quantity' => 25]
+            );
+        }
+    }
+
+    /**
+     * Create property owners for some plants
+     */
+    protected function createPropertyOwners(array $plants): void
+    {
+        // Plant 2 has a different property owner
+        if (isset($plants[1])) {
+            SolarPlantPropertyOwner::firstOrCreate(
+                ['solar_plant_id' => $plants[1]->id],
+                [
+                    'first_name' => 'Klaus',
+                    'last_name' => 'Müller',
+                    'email' => 'klaus.mueller@example.com',
+                    'phone' => '+49 40 12345678',
+                    'notes' => 'Eigentümer der Lagerhalle',
+                ]
+            );
+        }
+
+        // Plant 4 also has a different property owner
+        if (isset($plants[3])) {
+            SolarPlantPropertyOwner::firstOrCreate(
+                ['solar_plant_id' => $plants[3]->id],
+                [
+                    'first_name' => 'Maria',
+                    'last_name' => 'Schmidt',
+                    'email' => 'maria.schmidt@example.com',
+                    'phone' => '+49 221 9876543',
+                    'notes' => 'Eigentümerin des Industriegebäudes',
+                ]
+            );
+        }
     }
 }
