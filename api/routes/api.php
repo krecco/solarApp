@@ -84,50 +84,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
-    // DEBUG ENDPOINT - Check user roles and solar plants count
-    Route::get('/debug/check', function () {
-        $user = request()->user();
-
-        // Get roles for each guard
-        $webRoles = $user->roles()->where('guard_name', 'web')->pluck('name')->toArray();
-        $sanctumRoles = $user->roles()->where('guard_name', 'sanctum')->pluck('name')->toArray();
-
-        $plantsQuery = \App\Models\SolarPlant::where('rs', 0);
-        $investmentsQuery = \App\Models\Investment::where('rs', 0);
-
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->name,
-            ],
-            'roles' => [
-                'web' => $webRoles,
-                'sanctum' => $sanctumRoles,
-            ],
-            'role_checks' => [
-                'hasRole_admin_web' => $user->hasRole('admin', 'web'),
-                'hasRole_admin_sanctum' => $user->hasRole('admin', 'sanctum'),
-                'hasRole_manager_sanctum' => $user->hasRole('manager', 'sanctum'),
-                'hasRole_customer_sanctum' => $user->hasRole('customer', 'sanctum'),
-            ],
-            'database_counts' => [
-                'total_plants' => \App\Models\SolarPlant::where('rs', 0)->count(),
-                'total_investments' => \App\Models\Investment::where('rs', 0)->count(),
-            ],
-            'filtered_counts' => [
-                'plants_after_filter' => (clone $plantsQuery)->when($user->hasRole('customer', 'sanctum'), function ($q) use ($user) {
-                    return $q->where('user_id', $user->id);
-                })->when($user->hasRole('manager', 'sanctum') && !$user->hasRole('admin', 'sanctum'), function ($q) use ($user) {
-                    return $q->where('manager_id', $user->id);
-                })->count(),
-                'investments_after_filter' => (clone $investmentsQuery)->when($user->hasRole('customer', 'sanctum'), function ($q) use ($user) {
-                    return $q->where('user_id', $user->id);
-                })->count(),
-            ],
-        ]);
-    });
-
     // User Profile
     Route::prefix('profile')->group(function () {
         Route::get('/', [UserProfileController::class, 'show']); // Get full profile
