@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\ExtrasController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
+use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\LanguageController;
 use App\Http\Controllers\Api\MessagingController;
 use App\Http\Controllers\Api\NotificationController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PdfController;
 use App\Http\Controllers\Api\PlantRepaymentController;
 use App\Http\Controllers\Api\PreferenceController;
+use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\RepaymentController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingsController;
@@ -320,6 +322,39 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::delete('/{webInfo}', [WebInfoController::class, 'destroy']); // Delete item
             Route::post('/{webInfo}/toggle-publish', [WebInfoController::class, 'togglePublish']); // Publish/unpublish
         });
+    });
+
+    // Invoices & Reminders
+    Route::prefix('invoices')->group(function () {
+        Route::get('/', [InvoiceController::class, 'index']); // List invoices (filtered by user)
+        Route::get('/statistics', [InvoiceController::class, 'statistics']); // Invoice statistics
+        Route::get('/overdue', [InvoiceController::class, 'overdue']); // Get overdue invoices
+        Route::get('/{invoice}', [InvoiceController::class, 'show']); // Get single invoice
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/', [InvoiceController::class, 'store']); // Create invoice
+            Route::post('/repayment/{repayment}/generate', [InvoiceController::class, 'generateFromRepayment']); // Generate invoice from repayment
+            Route::put('/{invoice}', [InvoiceController::class, 'update']); // Update invoice
+            Route::post('/{invoice}/mark-paid', [InvoiceController::class, 'markAsPaid']); // Mark as paid
+            Route::post('/{invoice}/send', [InvoiceController::class, 'send']); // Send invoice
+            Route::post('/{invoice}/cancel', [InvoiceController::class, 'cancel']); // Cancel invoice
+            Route::delete('/{invoice}', [InvoiceController::class, 'destroy']); // Delete invoice
+
+            // Repayment reminders
+            Route::post('/repayment/{repayment}/send-reminder', [InvoiceController::class, 'sendReminder']); // Send reminder
+            Route::get('/repayment/{repayment}/reminders', [InvoiceController::class, 'reminders']); // Get reminders for repayment
+        });
+    });
+
+    // Projects Display (Public showcase)
+    Route::prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index']); // List all projects (public)
+        Route::get('/statistics', [ProjectController::class, 'statistics']); // Project statistics
+        Route::get('/featured', [ProjectController::class, 'featured']); // Get featured projects
+        Route::get('/by-location', [ProjectController::class, 'byLocation']); // Projects grouped by location
+        Route::get('/opportunities', [ProjectController::class, 'opportunities']); // Investment opportunities
+        Route::get('/{project}', [ProjectController::class, 'show']); // Get single project details
     });
 
     // System Admin Routes
