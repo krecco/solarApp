@@ -27,10 +27,11 @@ class DemoDataSeeder extends Seeder
     public function run(): void
     {
         // Only run in development/local
-        if (!app()->environment(['local', 'development'])) {
-            $this->command->warn('Demo data seeder only runs in local/development environment.');
-            return;
-        }
+        // Environment check temporarily disabled for demo purposes
+        // if (!app()->environment(['local', 'development'])) {
+        //     $this->command->warn('Demo data seeder only runs in local/development environment.');
+        //     return;
+        // }
 
         $this->command->info('Creating demo data...');
 
