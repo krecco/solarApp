@@ -20,12 +20,28 @@ class SolarPlantController extends Controller
 
         // Role-based filtering
         $user = $request->user();
+
+        // DEBUG LOGGING
+        \Log::info('SolarPlant::index called', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'roles_sanctum' => $user->roles()->where('guard_name', 'sanctum')->pluck('name')->toArray(),
+            'hasRole_admin' => $user->hasRole('admin', 'sanctum'),
+            'hasRole_manager' => $user->hasRole('manager', 'sanctum'),
+            'hasRole_customer' => $user->hasRole('customer', 'sanctum'),
+            'total_plants_before_filter' => SolarPlant::where('rs', 0)->count(),
+        ]);
+
         if ($user->hasRole('customer', 'sanctum')) {
             // Customers only see their own plants
+            \Log::info('Applying CUSTOMER filter', ['user_id' => $user->id]);
             $query->where('user_id', $user->id);
         } elseif ($user->hasRole('manager', 'sanctum')) {
             // Managers see plants assigned to them
+            \Log::info('Applying MANAGER filter', ['user_id' => $user->id]);
             $query->where('manager_id', $user->id);
+        } else {
+            \Log::info('NO FILTER applied - showing all plants (admin)');
         }
         // Admins see all plants
 
@@ -51,6 +67,8 @@ class SolarPlantController extends Controller
         // Pagination
         $perPage = $request->get('per_page', 15);
         $plants = $query->paginate($perPage);
+
+        \Log::info('SolarPlant::index result', ['count' => $plants->total()]);
 
         return response()->json($plants);
     }
