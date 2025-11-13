@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Investment;
+use App\Models\Language;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +23,21 @@ class ContractGeneratorService
      * @param array $options Additional options for contract generation
      * @return string Path to generated PDF
      */
-    public function generateInvestmentContract(Investment $investment, array $options = []): string
+    public function generateInvestmentContract(Investment $investment, array $options = [])
     {
         // Load relationships
         $investment->load(['user', 'solarPlant', 'repayments']);
 
+        // Determine language for document
+        $language = $this->determineDocumentLanguage($investment, $options);
+
         // Prepare contract data
         $data = $this->prepareContractData($investment, $options);
+        $data['locale'] = $language;
 
-        // Generate PDF
-        $pdf = Pdf::loadView('pdfs.investment-contract', $data);
+        // Generate PDF with language-specific template
+        $templatePath = "pdfs.{$language}.investment-contract";
+        $pdf = Pdf::loadView($templatePath, $data);
 
         // Set paper size and orientation
         $pdf->setPaper('a4', 'portrait');
@@ -216,9 +222,12 @@ class ContractGeneratorService
      * @param Investment $investment
      * @return string Path to generated PDF
      */
-    public function generateRepaymentSchedule(Investment $investment): string
+    public function generateRepaymentSchedule(Investment $investment, array $options = []): string
     {
         $investment->load(['user', 'solarPlant', 'repayments']);
+
+        // Determine language for document
+        $language = $this->determineDocumentLanguage($investment, $options);
 
         $data = [
             'investment' => $investment,
@@ -226,9 +235,12 @@ class ContractGeneratorService
             'solarPlant' => $investment->solarPlant,
             'repayments' => $investment->repayments->sortBy('due_date'),
             'generatedAt' => Carbon::now(),
+            'locale' => $language,
         ];
 
-        $pdf = Pdf::loadView('pdfs.repayment-schedule', $data);
+        // Generate PDF with language-specific template
+        $templatePath = "pdfs.{$language}.repayment-schedule";
+        $pdf = Pdf::loadView($templatePath, $data);
         $pdf->setPaper('a4', 'portrait');
 
         $filename = sprintf(
@@ -259,5 +271,66 @@ class ContractGeneratorService
         // This would use a ContractReadyMail class similar to InvestmentVerifiedMail
         // Mail::to($investment->user->email)
         //     ->send(new ContractReadyMail($investment));
+    }
+
+    /**
+     * Determine the language to use for the document
+     *
+     * Priority:
+     * 1. Explicit language parameter in options
+     * 2. Investment document_language field
+     * 3. User's document language preference
+     * 4. User's general language preference
+     * 5. System default (English)
+     *
+     * @param Investment $investment
+     * @param array $options
+     * @return string
+     */
+    protected function determineDocumentLanguage(Investment $investment, array $options): string
+    {
+        // 1. Explicit parameter
+        if (isset($options['language']) && Language::isValidCode($options['language'])) {
+            return $options['language'];
+        }
+
+        // 2. Investment document_language field
+        if ($investment->document_language && Language::isValidCode($investment->document_language)) {
+            return $investment->document_language;
+        }
+
+        // 3. User's document language preference
+        if ($investment->user) {
+            $userDocLang = $investment->user->getDocumentLanguage();
+            if (Language::isValidCode($userDocLang)) {
+                return $userDocLang;
+            }
+
+            // 4. User's general language preference
+            $userLang = $investment->user->getLanguage();
+            if (Language::isValidCode($userLang)) {
+                return $userLang;
+            }
+        }
+
+        // 5. System default
+        return Language::getDefaultCode();
+    }
+
+    /**
+     * Get all available document languages
+     */
+    public function getAvailableLanguages(): array
+    {
+        return Language::active()->ordered()->pluck('code')->toArray();
+    }
+
+    /**
+     * Check if a template exists for a given language and document type
+     */
+    public function templateExists(string $documentType, string $language): bool
+    {
+        $viewPath = "pdfs.{$language}.{$documentType}";
+        return view()->exists($viewPath);
     }
 }
