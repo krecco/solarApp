@@ -248,8 +248,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/monthly/{year}/{month}', [ReportController::class, 'monthlyReport']); // Monthly report
         Route::get('/investments/{investment}/performance', [ReportController::class, 'investmentPerformance']); // Investment performance
 
-        // Admin and Manager only routes
+        // Advanced analytics (Admin and Manager only)
         Route::middleware('role:admin|manager')->group(function () {
+            Route::get('/cohort-analysis', [ReportController::class, 'cohortAnalysis']); // Cohort analysis
+            Route::get('/trend-analysis', [ReportController::class, 'trendAnalysis']); // Time-series trends
+            Route::get('/comparative-analysis', [ReportController::class, 'comparativeAnalysis']); // YoY, MoM, QoQ comparison
+            Route::get('/multi-dimensional', [ReportController::class, 'multiDimensionalAnalysis']); // Multi-dimensional analytics
+            Route::get('/forecast', [ReportController::class, 'forecast']); // Financial forecasting
+            Route::post('/advanced-export', [ReportController::class, 'exportAdvancedReport']); // Export advanced reports
+
+            // Export routes
             Route::post('/investments/export', [ReportController::class, 'exportInvestments'])->name('api.reports.export-investments'); // Export investments
             Route::get('/download/{filename}', [ReportController::class, 'downloadExport'])->name('api.reports.download'); // Download export
         });
