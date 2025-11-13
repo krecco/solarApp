@@ -84,7 +84,7 @@ class ExtrasController extends Controller
     public function store(Request $request): JsonResponse
     {
         // Only admin can create extras
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'error' => 'Unauthorized',
                 'message' => 'Only administrators can create extras.',
@@ -127,7 +127,7 @@ class ExtrasController extends Controller
     public function update(Request $request, Extra $extra): JsonResponse
     {
         // Only admin can update extras
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'error' => 'Unauthorized',
                 'message' => 'Only administrators can update extras.',
@@ -174,7 +174,7 @@ class ExtrasController extends Controller
     public function destroy(Request $request, Extra $extra): JsonResponse
     {
         // Only admin can delete extras
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'error' => 'Unauthorized',
                 'message' => 'Only administrators can delete extras.',
@@ -217,7 +217,7 @@ class ExtrasController extends Controller
     public function toggleActive(Request $request, Extra $extra): JsonResponse
     {
         // Only admin can toggle status
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'error' => 'Unauthorized',
                 'message' => 'Only administrators can change extra status.',

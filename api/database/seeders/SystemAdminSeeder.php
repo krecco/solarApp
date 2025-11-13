@@ -24,8 +24,11 @@ class SystemAdminSeeder extends Seeder
             ]
         );
 
-        // Assign admin role (simplified from system-admin)
-        $admin->assignRole('admin');
+        // Assign admin role to both web and sanctum guards
+        $admin->assignRole('admin'); // web guard (default)
+        if (!$admin->hasRole('admin', 'sanctum')) {
+            $admin->roles()->attach(\Spatie\Permission\Models\Role::where('name', 'admin')->where('guard_name', 'sanctum')->first());
+        }
 
         $this->command->info('System Admin created:');
         $this->command->info('Email: admin@saascentral.com');

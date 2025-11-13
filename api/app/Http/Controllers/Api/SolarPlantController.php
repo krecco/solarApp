@@ -20,10 +20,10 @@ class SolarPlantController extends Controller
 
         // Role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             // Customers only see their own plants
             $query->where('user_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             // Managers see plants assigned to them
             $query->where('manager_id', $user->id);
         }
@@ -113,10 +113,10 @@ class SolarPlantController extends Controller
     {
         // Authorization check
         $user = $request->user();
-        if ($user->hasRole('customer') && $solarPlant->user_id !== $user->id) {
+        if ($user->hasRole('customer', 'sanctum') && $solarPlant->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        if ($user->hasRole('manager') && $solarPlant->manager_id !== $user->id) {
+        if ($user->hasRole('manager', 'sanctum') && $solarPlant->manager_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -260,9 +260,9 @@ class SolarPlantController extends Controller
         $query = SolarPlant::where('rs', 0);
 
         // Apply role-based filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('user_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->where('manager_id', $user->id);
         }
 

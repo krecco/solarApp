@@ -28,10 +28,10 @@ class ReportController extends Controller
         $userId = null;
 
         // Determine role and userId for filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $role = 'customer';
             $userId = $user->id;
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $role = 'manager';
             $userId = $user->id;
         }
@@ -152,12 +152,12 @@ class ReportController extends Controller
         $user = $request->user();
 
         // Check access
-        if (!$user->hasRole('admin')) {
-            if ($user->hasRole('manager') && $investment->solarPlant->manager_id !== $user->id) {
+        if (!$user->hasRole('admin', 'sanctum')) {
+            if ($user->hasRole('manager', 'sanctum') && $investment->solarPlant->manager_id !== $user->id) {
                 return response()->json([
                     'message' => 'Unauthorized to view this investment performance',
                 ], 403);
-            } elseif ($user->hasRole('customer') && $investment->user_id !== $user->id) {
+            } elseif ($user->hasRole('customer', 'sanctum') && $investment->user_id !== $user->id) {
                 return response()->json([
                     'message' => 'Unauthorized to view this investment performance',
                 ], 403);
@@ -204,9 +204,9 @@ class ReportController extends Controller
 
         // Apply role-based filtering
         $user = $request->user();
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->where('user_id', $user->id);
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->whereHas('solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
             });

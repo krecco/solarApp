@@ -119,11 +119,11 @@ class RepaymentController extends Controller
             ->orderBy('due_date', 'asc');
 
         // Apply role-based filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->whereHas('investment', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->whereHas('investment.solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
             });
@@ -159,11 +159,11 @@ class RepaymentController extends Controller
             ->orderBy('due_date', 'asc');
 
         // Apply role-based filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->whereHas('investment', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->whereHas('investment.solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
             });
@@ -184,7 +184,7 @@ class RepaymentController extends Controller
     public function regenerate(Request $request, Investment $investment): JsonResponse
     {
         // Only admin can regenerate
-        if (!$request->user()->hasRole('admin')) {
+        if (!$request->user()->hasRole('admin', 'sanctum')) {
             return response()->json([
                 'message' => 'Unauthorized to regenerate repayment schedule',
             ], 403);
@@ -222,11 +222,11 @@ class RepaymentController extends Controller
         $query = InvestmentRepayment::query();
 
         // Apply role-based filtering
-        if ($user->hasRole('customer')) {
+        if ($user->hasRole('customer', 'sanctum')) {
             $query->whereHas('investment', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
-        } elseif ($user->hasRole('manager')) {
+        } elseif ($user->hasRole('manager', 'sanctum')) {
             $query->whereHas('investment.solarPlant', function ($q) use ($user) {
                 $q->where('manager_id', $user->id);
             });

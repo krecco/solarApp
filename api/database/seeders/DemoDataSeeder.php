@@ -40,11 +40,17 @@ class DemoDataSeeder extends Seeder
         $investor1 = $this->getOrCreateUser('investor1@example.com', 'Investor One', 'customer');
         $investor2 = $this->getOrCreateUser('investor2@example.com', 'Investor Two', 'customer');
         $investor3 = $this->getOrCreateUser('investor3@example.com', 'Investor Three', 'customer');
+
+        // Get or create manager
         $manager = User::where('email', 'manager@example.com')->first();
+        if (!$manager) {
+            $manager = $this->getOrCreateUser('manager@example.com', 'Demo Manager', 'manager');
+            $this->command->info('✓ Created manager user: manager@example.com');
+        }
 
         // Create demo solar plants
         $plants = $this->createSolarPlants($owner, $manager);
-        $this->command->info('✓ Created ' . count($plants) . ' solar plants');
+        $this->command->info('✓ Created ' . count($plants) . ' solar plants (owner_id: ' . $owner->id . ', manager_id: ' . $manager->id . ')');
 
         // Create demo investments
         $investments = $this->createInvestments($plants, [$investor1, $investor2, $investor3], $manager);
@@ -62,10 +68,14 @@ class DemoDataSeeder extends Seeder
         $this->command->info('Demo data created successfully!');
         $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         $this->command->info('Demo Users:');
-        $this->command->info('  Plant Owner: plant-owner@example.com / password');
-        $this->command->info('  Investor 1:  investor1@example.com / password');
-        $this->command->info('  Investor 2:  investor2@example.com / password');
-        $this->command->info('  Investor 3:  investor3@example.com / password');
+        $this->command->info('  Plant Owner: plant-owner@example.com / password (ID: ' . $owner->id . ')');
+        $this->command->info('  Investor 1:  investor1@example.com / password (ID: ' . $investor1->id . ')');
+        $this->command->info('  Investor 2:  investor2@example.com / password (ID: ' . $investor2->id . ')');
+        $this->command->info('  Investor 3:  investor3@example.com / password (ID: ' . $investor3->id . ')');
+        $this->command->info('  Manager:     manager@example.com / password (ID: ' . $manager->id . ')');
+        $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        $this->command->info('Login as admin (john@example.com) or manager (manager@example.com) to view all data');
+        $this->command->info('Or login as an investor to see their own investments only');
         $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     }
 
@@ -84,8 +94,12 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
+        // Assign role to both web and sanctum guards
         if (!$user->hasRole($role)) {
-            $user->assignRole($role);
+            $user->assignRole($role); // web guard
+        }
+        if (!$user->hasRole($role, 'sanctum')) {
+            $user->roles()->attach(\Spatie\Permission\Models\Role::where('name', $role)->where('guard_name', 'sanctum')->first());
         }
 
         return $user;
