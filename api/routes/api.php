@@ -2,19 +2,31 @@
 
 use App\Http\Controllers\Api\ActivityLogController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminDocumentController;
+use App\Http\Controllers\Api\AdminUserDetailController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\ExtrasController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\InvestmentController;
+use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\LanguageController;
+use App\Http\Controllers\Api\MessagingController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\PdfController;
+use App\Http\Controllers\Api\PlantRepaymentController;
 use App\Http\Controllers\Api\PreferenceController;
+use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\RepaymentController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\SolarPlantController;
 use App\Http\Controllers\Api\UserProfileController;
+use App\Http\Controllers\Api\WebInfoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,6 +70,12 @@ Route::prefix('v1')->group(function () {
 
     // Public Settings (accessible without authentication)
     Route::get('/settings/public', [SettingsController::class, 'publicSettings']);
+
+    // Languages (public - accessible without authentication)
+    Route::prefix('languages')->group(function () {
+        Route::get('/', [LanguageController::class, 'index']); // Get all active languages
+        Route::get('/default', [LanguageController::class, 'getDefault']); // Get default language
+    });
 });
 
 // Protected routes (require authentication)
@@ -68,8 +86,21 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // User Profile
     Route::prefix('profile')->group(function () {
-        Route::put('/', [UserProfileController::class, 'update']);
-        Route::put('/password', [UserProfileController::class, 'updatePassword']);
+        Route::get('/', [UserProfileController::class, 'show']); // Get full profile
+        Route::put('/', [UserProfileController::class, 'update']); // Update profile
+        Route::put('/password', [UserProfileController::class, 'updatePassword']); // Update password
+    });
+
+    // Customer Documents (Verification Documents)
+    Route::prefix('documents')->group(function () {
+        Route::get('/requirements', [CustomerDocumentController::class, 'requirements']); // Get document requirements with status
+        Route::get('/summary', [CustomerDocumentController::class, 'summary']); // Get verification summary
+        Route::get('/types', [CustomerDocumentController::class, 'documentTypes']); // Get available document types
+        Route::get('/', [CustomerDocumentController::class, 'index']); // List user's uploaded documents
+        Route::post('/upload', [CustomerDocumentController::class, 'upload']); // Upload document
+        Route::get('/{file}', [CustomerDocumentController::class, 'show']); // Get document details
+        Route::get('/{file}/download', [CustomerDocumentController::class, 'download']); // Download document
+        Route::delete('/{file}', [CustomerDocumentController::class, 'destroy']); // Delete unverified document
     });
 
     // Email Verification (authenticated - for re-verification if needed)
@@ -86,11 +117,30 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::delete('/clear-read', [NotificationController::class, 'clearRead']);
     });
 
+    // Messaging/Chat System
+    Route::prefix('messages')->group(function () {
+        Route::get('/conversations', [MessagingController::class, 'conversations']); // List all conversations
+        Route::post('/conversations', [MessagingController::class, 'create']); // Create new conversation
+        Route::get('/conversations/{conversation}', [MessagingController::class, 'show']); // Get conversation with messages
+        Route::post('/conversations/{conversation}/messages', [MessagingController::class, 'sendMessage']); // Send message
+        Route::post('/conversations/{conversation}/read', [MessagingController::class, 'markAsRead']); // Mark as read
+        Route::post('/conversations/{conversation}/archive', [MessagingController::class, 'archive']); // Archive conversation
+        Route::post('/conversations/{conversation}/reactivate', [MessagingController::class, 'reactivate']); // Reactivate conversation
+        Route::get('/unread-count', [MessagingController::class, 'unreadCount']); // Get unread message count
+        Route::get('/search-users', [MessagingController::class, 'searchUsers']); // Search users for new conversation
+    });
+
     // User Preferences
     Route::prefix('preferences')->group(function () {
         Route::get('/', [PreferenceController::class, 'show']);
         Route::put('/', [PreferenceController::class, 'update']);
         Route::post('/reset', [PreferenceController::class, 'reset']);
+    });
+
+    // User Language Preferences (authenticated)
+    Route::prefix('languages')->group(function () {
+        Route::get('/me', [LanguageController::class, 'show']); // Get user's language preferences
+        Route::put('/me', [LanguageController::class, 'update']); // Update user's language preferences
     });
 
     // Solar Plants (All authenticated users can view, admin/manager can create/edit)
@@ -105,6 +155,36 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::put('/{solarPlant}', [SolarPlantController::class, 'update']);
             Route::delete('/{solarPlant}', [SolarPlantController::class, 'destroy']);
             Route::post('/{solarPlant}/status', [SolarPlantController::class, 'updateStatus']);
+        });
+    });
+
+    // Extras/Add-ons (All can view active, admin can manage)
+    Route::prefix('extras')->group(function () {
+        Route::get('/active', [ExtrasController::class, 'activeExtras']); // Public active extras
+        Route::get('/', [ExtrasController::class, 'index']); // List all extras (with filters)
+        Route::get('/{extra}', [ExtrasController::class, 'show']); // View extra details
+        Route::get('/{extra}/usage', [ExtrasController::class, 'usage']); // View extra usage statistics
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/', [ExtrasController::class, 'store']); // Create extra
+            Route::put('/{extra}', [ExtrasController::class, 'update']); // Update extra
+            Route::delete('/{extra}', [ExtrasController::class, 'destroy']); // Delete extra
+            Route::post('/{extra}/toggle-active', [ExtrasController::class, 'toggleActive']); // Toggle active status
+        });
+    });
+
+    // Plant Repayments (All authenticated users can view, admin/manager can manage)
+    Route::prefix('plant-repayments')->group(function () {
+        Route::get('/', [PlantRepaymentController::class, 'index']); // List all plant repayments
+        Route::get('/statistics', [PlantRepaymentController::class, 'statistics']); // Get statistics
+        Route::get('/{repayment}', [PlantRepaymentController::class, 'show']); // View repayment details
+        Route::get('/plant/{solarPlant}', [PlantRepaymentController::class, 'forPlant']); // Get repayments for specific plant
+        Route::post('/generate-report', [PlantRepaymentController::class, 'generateReport']); // Generate report
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/{repayment}/record-payment', [PlantRepaymentController::class, 'recordPayment']); // Record payment
         });
     });
 
@@ -139,6 +219,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
     });
 
+    // PDF Document Generation
+    Route::prefix('pdf')->group(function () {
+        Route::get('/languages', [PdfController::class, 'availableLanguages']); // Get available languages
+        Route::get('/investments/{investment}/contract', [PdfController::class, 'generateInvestmentContract']); // Generate investment contract
+        Route::get('/investments/{investment}/repayment-schedule', [PdfController::class, 'generateRepaymentSchedule']); // Generate repayment schedule
+    });
+
     // File Management
     Route::prefix('files')->group(function () {
         Route::get('/', [FileController::class, 'index']); // List files in container
@@ -161,8 +248,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/monthly/{year}/{month}', [ReportController::class, 'monthlyReport']); // Monthly report
         Route::get('/investments/{investment}/performance', [ReportController::class, 'investmentPerformance']); // Investment performance
 
-        // Admin and Manager only routes
+        // Advanced analytics (Admin and Manager only)
         Route::middleware('role:admin|manager')->group(function () {
+            Route::get('/cohort-analysis', [ReportController::class, 'cohortAnalysis']); // Cohort analysis
+            Route::get('/trend-analysis', [ReportController::class, 'trendAnalysis']); // Time-series trends
+            Route::get('/comparative-analysis', [ReportController::class, 'comparativeAnalysis']); // YoY, MoM, QoQ comparison
+            Route::get('/multi-dimensional', [ReportController::class, 'multiDimensionalAnalysis']); // Multi-dimensional analytics
+            Route::get('/forecast', [ReportController::class, 'forecast']); // Financial forecasting
+            Route::post('/advanced-export', [ReportController::class, 'exportAdvancedReport']); // Export advanced reports
+
+            // Export routes
             Route::post('/investments/export', [ReportController::class, 'exportInvestments'])->name('api.reports.export-investments'); // Export investments
             Route::get('/download/{filename}', [ReportController::class, 'downloadExport'])->name('api.reports.download'); // Download export
         });
@@ -172,9 +267,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('activity-logs')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index']); // List all activity logs (with filters)
         Route::get('/statistics', [ActivityLogController::class, 'statistics']); // Activity statistics
+        Route::get('/timeline', [ActivityLogController::class, 'timeline']); // Timeline view (grouped by date)
+        Route::get('/recent', [ActivityLogController::class, 'recent']); // Recent activities
         Route::get('/{activity}', [ActivityLogController::class, 'show']); // View single activity log
         Route::get('/model/{modelType}/{modelId}', [ActivityLogController::class, 'forModel']); // Activities for specific model
         Route::get('/user/{userId}', [ActivityLogController::class, 'byUser']); // Activities by specific user
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/export', [ActivityLogController::class, 'export']); // Export activity logs
+        });
     });
 
     // System Settings
@@ -192,6 +294,77 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
     });
 
+    // Campaigns
+    Route::prefix('campaigns')->group(function () {
+        Route::get('/', [CampaignController::class, 'index']); // List campaigns (with filters)
+        Route::get('/active', [CampaignController::class, 'active']); // Get active campaigns
+        Route::get('/statistics', [CampaignController::class, 'statistics']); // Campaign statistics
+        Route::get('/{campaign}', [CampaignController::class, 'show']); // Get single campaign
+        Route::post('/validate-code', [CampaignController::class, 'validateCode']); // Validate campaign code
+
+        // Apply campaign (authenticated users)
+        Route::post('/{campaign}/apply', [CampaignController::class, 'apply']); // Apply campaign to investment
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::post('/', [CampaignController::class, 'store']); // Create campaign
+            Route::put('/{campaign}', [CampaignController::class, 'update']); // Update campaign
+            Route::delete('/{campaign}', [CampaignController::class, 'destroy']); // Delete campaign
+        });
+    });
+
+    // Web Info / News Management
+    Route::prefix('web-info')->group(function () {
+        Route::get('/published', [WebInfoController::class, 'published']); // Get published items (public)
+        Route::get('/featured', [WebInfoController::class, 'featured']); // Get featured items (public)
+        Route::get('/categories', [WebInfoController::class, 'categories']); // Get categories list
+        Route::get('/slug/{slug}', [WebInfoController::class, 'bySlug']); // Get by slug (public)
+
+        // Admin only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/', [WebInfoController::class, 'index']); // List all items (admin)
+            Route::get('/statistics', [WebInfoController::class, 'statistics']); // Statistics
+            Route::post('/', [WebInfoController::class, 'store']); // Create item
+            Route::get('/{webInfo}', [WebInfoController::class, 'show']); // Get by ID (admin)
+            Route::put('/{webInfo}', [WebInfoController::class, 'update']); // Update item
+            Route::delete('/{webInfo}', [WebInfoController::class, 'destroy']); // Delete item
+            Route::post('/{webInfo}/toggle-publish', [WebInfoController::class, 'togglePublish']); // Publish/unpublish
+        });
+    });
+
+    // Invoices & Reminders
+    Route::prefix('invoices')->group(function () {
+        Route::get('/', [InvoiceController::class, 'index']); // List invoices (filtered by user)
+        Route::get('/statistics', [InvoiceController::class, 'statistics']); // Invoice statistics
+        Route::get('/overdue', [InvoiceController::class, 'overdue']); // Get overdue invoices
+        Route::get('/{invoice}', [InvoiceController::class, 'show']); // Get single invoice
+
+        // Admin and Manager only routes
+        Route::middleware('role:admin|manager')->group(function () {
+            Route::post('/', [InvoiceController::class, 'store']); // Create invoice
+            Route::post('/repayment/{repayment}/generate', [InvoiceController::class, 'generateFromRepayment']); // Generate invoice from repayment
+            Route::put('/{invoice}', [InvoiceController::class, 'update']); // Update invoice
+            Route::post('/{invoice}/mark-paid', [InvoiceController::class, 'markAsPaid']); // Mark as paid
+            Route::post('/{invoice}/send', [InvoiceController::class, 'send']); // Send invoice
+            Route::post('/{invoice}/cancel', [InvoiceController::class, 'cancel']); // Cancel invoice
+            Route::delete('/{invoice}', [InvoiceController::class, 'destroy']); // Delete invoice
+
+            // Repayment reminders
+            Route::post('/repayment/{repayment}/send-reminder', [InvoiceController::class, 'sendReminder']); // Send reminder
+            Route::get('/repayment/{repayment}/reminders', [InvoiceController::class, 'reminders']); // Get reminders for repayment
+        });
+    });
+
+    // Projects Display (Public showcase)
+    Route::prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index']); // List all projects (public)
+        Route::get('/statistics', [ProjectController::class, 'statistics']); // Project statistics
+        Route::get('/featured', [ProjectController::class, 'featured']); // Get featured projects
+        Route::get('/by-location', [ProjectController::class, 'byLocation']); // Projects grouped by location
+        Route::get('/opportunities', [ProjectController::class, 'opportunities']); // Investment opportunities
+        Route::get('/{project}', [ProjectController::class, 'show']); // Get single project details
+    });
+
     // System Admin Routes
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         // Dashboard
@@ -206,6 +379,27 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/users/{user}/send-welcome-email', [AdminController::class, 'sendWelcomeEmail']);
         Route::post('/users/{user}/avatar', [AdminController::class, 'updateAvatar']);
         Route::delete('/users/{user}/avatar', [AdminController::class, 'deleteAvatar']);
+    });
+
+    // Admin User Detail Routes (admin and manager) - Enhanced tabbed user view
+    Route::prefix('admin/users/{user}')->middleware('role:admin|manager')->group(function () {
+        Route::get('/overview', [AdminUserDetailController::class, 'overview']); // Complete overview (all tabs)
+        Route::get('/account', [AdminUserDetailController::class, 'accountInfo']); // Account info tab
+        Route::get('/documents', [AdminUserDetailController::class, 'documents']); // Documents tab
+        Route::get('/investments', [AdminUserDetailController::class, 'investments']); // Investments tab
+        Route::get('/power-plants', [AdminUserDetailController::class, 'powerPlants']); // Power plants tab
+        Route::get('/billing', [AdminUserDetailController::class, 'billing']); // Billing & SEPA tab
+        Route::get('/activity', [AdminUserDetailController::class, 'activity']); // Activity timeline tab
+    });
+
+    // Admin Document Verification Routes (admin and manager)
+    Route::prefix('admin/documents')->middleware('role:admin|manager')->group(function () {
+        Route::get('/pending', [AdminDocumentController::class, 'pendingDocuments']); // List pending documents
+        Route::get('/rejected', [AdminDocumentController::class, 'rejectedDocuments']); // List rejected documents
+        Route::get('/statistics', [AdminDocumentController::class, 'statistics']); // Verification statistics
+        Route::get('/users/{user}/status', [AdminDocumentController::class, 'userVerificationStatus']); // User verification status
+        Route::post('/files/{file}/verify', [AdminDocumentController::class, 'verify']); // Verify document
+        Route::post('/files/{file}/reject', [AdminDocumentController::class, 'reject']); // Reject document with reason
     });
 });
 

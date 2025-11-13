@@ -27,6 +27,7 @@
       <!-- hide message indicator for now
         <new-message-indicator />
       -->
+      <language-switcher />
       <b-nav-item-dropdown
         right
         toggle-class="d-flex align-items-center dropdown-user-link"
@@ -94,6 +95,7 @@ import {
   BNavbarNav, BNavItemDropdown, BDropdownItem, BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { initialAbility } from '@/libs/acl/config'
 
@@ -109,6 +111,7 @@ export default {
 
     // Navbar Components
     DarkToggler,
+    LanguageSwitcher,
     //  NewMessageIndicator,
   },
   props: {

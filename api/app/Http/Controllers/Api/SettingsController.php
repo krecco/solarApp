@@ -17,7 +17,7 @@ class SettingsController extends Controller
     public function index(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'group' => 'nullable|string|in:general,email,investment,payment,notification,security',
+            'group' => 'nullable|string|in:general,email,investment,payment,notification,security,tariff,campaign,web_info',
         ]);
 
         if ($validator->fails()) {
@@ -198,7 +198,7 @@ class SettingsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'group' => 'required|string|in:general,email,investment,payment,notification,security',
+            'group' => 'required|string|in:general,email,investment,payment,notification,security,tariff,campaign,web_info',
             'key' => 'required|string|max:255',
             'value' => 'required',
             'type' => 'required|in:string,integer,boolean,json,decimal',
@@ -345,6 +345,9 @@ class SettingsController extends Controller
         Cache::forget('settings.payment');
         Cache::forget('settings.notification');
         Cache::forget('settings.security');
+        Cache::forget('settings.tariff');
+        Cache::forget('settings.campaign');
+        Cache::forget('settings.web_info');
         Cache::forget('settings.public');
 
         // Log activity
@@ -372,7 +375,7 @@ class SettingsController extends Controller
     public function reset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'group' => 'nullable|string|in:general,email,investment,payment,notification,security',
+            'group' => 'nullable|string|in:general,email,investment,payment,notification,security,tariff,campaign,web_info',
         ]);
 
         if ($validator->fails()) {
@@ -503,6 +506,27 @@ class SettingsController extends Controller
                 'enable_2fa' => ['value' => false, 'type' => 'boolean'],
                 'session_lifetime' => ['value' => 120, 'type' => 'integer'],
                 'password_min_length' => ['value' => 8, 'type' => 'integer'],
+            ],
+            'tariff' => [
+                'base_tariff_rate' => ['value' => 0.28, 'type' => 'decimal'],
+                'peak_tariff_rate' => ['value' => 0.35, 'type' => 'decimal'],
+                'off_peak_tariff_rate' => ['value' => 0.22, 'type' => 'decimal'],
+                'feed_in_tariff' => ['value' => 0.12, 'type' => 'decimal'],
+                'grid_fee_per_kwh' => ['value' => 0.08, 'type' => 'decimal'],
+                'renewable_energy_levy' => ['value' => 0.065, 'type' => 'decimal'],
+                'tariff_currency' => ['value' => 'EUR', 'type' => 'string'],
+            ],
+            'campaign' => [
+                'enable_referral_program' => ['value' => true, 'type' => 'boolean'],
+                'referral_bonus_amount' => ['value' => 50, 'type' => 'decimal'],
+                'enable_seasonal_campaigns' => ['value' => true, 'type' => 'boolean'],
+                'min_investment_for_bonus' => ['value' => 5000, 'type' => 'decimal'],
+            ],
+            'web_info' => [
+                'show_public_projects' => ['value' => true, 'type' => 'boolean'],
+                'show_statistics' => ['value' => true, 'type' => 'boolean'],
+                'show_news' => ['value' => true, 'type' => 'boolean'],
+                'news_items_per_page' => ['value' => 10, 'type' => 'integer'],
             ],
         ];
     }

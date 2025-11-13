@@ -32,6 +32,7 @@ class Investment extends Model
         'total_interest',
         'paid_amount',
         'notes',
+        'document_language',
         'rs',
     ];
 

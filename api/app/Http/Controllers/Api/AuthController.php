@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeEmail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -82,6 +84,14 @@ class AuthController extends Controller
                 event(new Registered($user));
             } catch (\Exception $e) {
                 \Log::warning('Email verification notification failed: ' . $e->getMessage());
+            }
+
+            // Send welcome email
+            try {
+                $locale = $user->preferences['language'] ?? 'en';
+                Mail::to($user->email)->send(new WelcomeEmail($user, $locale));
+            } catch (\Exception $e) {
+                \Log::warning('Welcome email failed: ' . $e->getMessage());
             }
 
             return $user;

@@ -170,4 +170,179 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->isCustomerType('plant_owner');
     }
+
+    /**
+     * Language preference helper methods
+     */
+
+    /**
+     * Get user's UI language preference.
+     * Defaults to system default if not set.
+     */
+    public function getLanguage(): string
+    {
+        return $this->preferences['ui_language'] ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Get user's document language preference.
+     * Falls back to UI language if not set separately.
+     */
+    public function getDocumentLanguage(): string
+    {
+        return $this->preferences['document_language']
+            ?? $this->preferences['ui_language']
+            ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Get user's email language preference.
+     * Falls back to UI language if not set separately.
+     */
+    public function getEmailLanguage(): string
+    {
+        return $this->preferences['email_language']
+            ?? $this->preferences['ui_language']
+            ?? Language::getDefaultCode();
+    }
+
+    /**
+     * Set user's UI language preference.
+     */
+    public function setLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['ui_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set user's document language preference.
+     */
+    public function setDocumentLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['document_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set user's email language preference.
+     */
+    public function setEmailLanguage(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['email_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Set all language preferences at once.
+     */
+    public function setAllLanguages(string $languageCode): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['ui_language'] = $languageCode;
+        $preferences['document_language'] = $languageCode;
+        $preferences['email_language'] = $languageCode;
+        $this->preferences = $preferences;
+        $this->save();
+    }
+
+    /**
+     * Get or create file container for this user.
+     */
+    public function fileContainer()
+    {
+        return $this->morphOne(\App\Models\FileContainer::class, 'containable');
+    }
+
+    /**
+     * Get or create file container instance
+     */
+    public function getOrCreateFileContainer(): \App\Models\FileContainer
+    {
+        return $this->fileContainer()->firstOrCreate([
+            'containable_type' => self::class,
+            'containable_id' => $this->id,
+        ], [
+            'name' => "Documents for {$this->name}",
+            'description' => 'User verification documents',
+        ]);
+    }
+
+    /**
+     * Document requirement helper methods
+     */
+
+    /**
+     * Check if user has all required documents verified
+     */
+    public function hasAllRequiredDocuments(): bool
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->hasAllRequiredDocuments($this);
+    }
+
+    /**
+     * Get document verification completion percentage
+     */
+    public function getDocumentCompletionPercentage(): float
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getDocumentCompletionPercentage($this);
+    }
+
+    /**
+     * Get document verification summary
+     */
+    public function getDocumentVerificationSummary(): array
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getDocumentVerificationSummary($this);
+    }
+
+    /**
+     * Get missing required documents
+     */
+    public function getMissingRequiredDocuments()
+    {
+        return app(\App\Services\DocumentRequirementService::class)
+            ->getMissingRequiredDocuments($this);
+    }
+
+    /**
+     * Messaging relationships
+     */
+
+    /**
+     * Get conversations where user is a participant
+     */
+    public function conversations()
+    {
+        return $this->belongsToMany(\App\Models\Conversation::class, 'conversation_participants')
+            ->withPivot(['last_read_at', 'unread_count'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get messages sent by user
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(\App\Models\Message::class, 'sender_id');
+    }
+
+    /**
+     * Get total unread message count
+     */
+    public function getTotalUnreadMessagesCount(): int
+    {
+        return \DB::table('conversation_participants')
+            ->where('user_id', $this->id)
+            ->sum('unread_count');
+    }
 }

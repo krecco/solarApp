@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
         // Seed roles and permissions first
         $this->call(RolesAndPermissionsSeeder::class);
 
+        // Seed languages
+        $this->call(LanguageSeeder::class);
+
         // Create system admin
         $this->call(SystemAdminSeeder::class);
 
