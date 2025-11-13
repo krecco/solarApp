@@ -45,12 +45,12 @@ class SolarPlantController extends Controller
         }
         // Admins see all plants
 
-        // Filters
-        if ($request->has('status')) {
+        // Filters (use filled() instead of has() to ignore empty strings)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")

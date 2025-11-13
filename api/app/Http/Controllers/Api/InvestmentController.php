@@ -43,16 +43,16 @@ class InvestmentController extends Controller
         }
         // Admins see all investments
 
-        // Filters
-        if ($request->has('status')) {
+        // Filters (use filled() to ignore empty strings)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('verified')) {
+        if ($request->filled('verified')) {
             $query->where('verified', $request->boolean('verified'));
         }
 
-        if ($request->has('solar_plant_id')) {
+        if ($request->filled('solar_plant_id')) {
             $query->where('solar_plant_id', $request->solar_plant_id);
         }
 
