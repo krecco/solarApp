@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\InvoiceEmail;
+use App\Mail\RepaymentReminderEmail;
 use App\Models\Invoice;
 use App\Models\InvestmentRepayment;
 use App\Models\RepaymentReminder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
@@ -429,7 +432,16 @@ class InvoiceController extends Controller
 
         $invoice->markAsSent();
 
-        // TODO: Send email notification to user
+        // Send invoice email to user
+        $user = $invoice->user;
+        if ($user) {
+            try {
+                $locale = $user->preferences['language'] ?? 'en';
+                Mail::to($user->email)->send(new InvoiceEmail($user, $invoice, $locale));
+            } catch (\Exception $e) {
+                \Log::warning('Invoice email failed: ' . $e->getMessage());
+            }
+        }
 
         // Log activity
         activity()
@@ -541,7 +553,20 @@ class InvoiceController extends Controller
             'message_content' => $this->generateReminderMessage($repayment, $request->type),
         ]);
 
-        // TODO: Send actual email notification
+        // Send repayment reminder email
+        if ($user) {
+            try {
+                $locale = $user->preferences['language'] ?? 'en';
+                Mail::to($user->email)->send(new RepaymentReminderEmail(
+                    $user,
+                    $repayment,
+                    $request->type,
+                    $locale
+                ));
+            } catch (\Exception $e) {
+                \Log::warning('Repayment reminder email failed: ' . $e->getMessage());
+            }
+        }
 
         // Log activity
         activity()

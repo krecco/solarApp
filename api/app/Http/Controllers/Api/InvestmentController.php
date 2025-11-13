@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\InvestmentConfirmationEmail;
 use App\Mail\InvestmentVerifiedMail;
 use App\Models\Investment;
 use App\Models\SolarPlant;
@@ -111,6 +112,20 @@ class InvestmentController extends Controller
             ->performedOn($investment)
             ->causedBy($request->user())
             ->log('created investment');
+
+        // Send investment confirmation email
+        try {
+            $locale = $request->user()->preferences['language'] ?? 'en';
+            $solarPlant = $investment->solarPlant;
+            Mail::to($request->user()->email)->send(new InvestmentConfirmationEmail(
+                $request->user(),
+                $investment,
+                $solarPlant,
+                $locale
+            ));
+        } catch (\Exception $e) {
+            \Log::warning('Investment confirmation email failed: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Investment created successfully',

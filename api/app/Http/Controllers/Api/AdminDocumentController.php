@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DocumentVerificationStatusEmail;
 use App\Models\File;
 use App\Models\User;
 use App\Services\DocumentRequirementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Admin Document Controller
@@ -153,6 +155,26 @@ class AdminDocumentController extends Controller
             }
         }
 
+        // Send verification email
+        $container = $file->fileContainer;
+        if ($container && $container->containable_type === User::class) {
+            $user = $container->containable;
+            if ($user) {
+                try {
+                    $locale = $user->preferences['language'] ?? 'en';
+                    Mail::to($user->email)->send(new DocumentVerificationStatusEmail(
+                        $user,
+                        $file,
+                        'verified',
+                        null,
+                        $locale
+                    ));
+                } catch (\Exception $e) {
+                    \Log::warning('Document verification email failed: ' . $e->getMessage());
+                }
+            }
+        }
+
         return response()->json([
             'data' => $this->formatFileForAdmin($file->fresh(['verifiedBy', 'uploadedBy', 'fileContainer.containable'])),
             'meta' => [
@@ -200,8 +222,25 @@ class AdminDocumentController extends Controller
             ])
             ->log('rejected customer document');
 
-        // TODO: Send notification to user about rejection
-        // This would be implemented with a notification system
+        // Send rejection email
+        $container = $file->fileContainer;
+        if ($container && $container->containable_type === User::class) {
+            $user = $container->containable;
+            if ($user) {
+                try {
+                    $locale = $user->preferences['language'] ?? 'en';
+                    Mail::to($user->email)->send(new DocumentVerificationStatusEmail(
+                        $user,
+                        $file,
+                        'rejected',
+                        $validated['reason'],
+                        $locale
+                    ));
+                } catch (\Exception $e) {
+                    \Log::warning('Document rejection email failed: ' . $e->getMessage());
+                }
+            }
+        }
 
         return response()->json([
             'data' => $this->formatFileForAdmin($file->fresh(['verifiedBy', 'uploadedBy', 'fileContainer.containable'])),
