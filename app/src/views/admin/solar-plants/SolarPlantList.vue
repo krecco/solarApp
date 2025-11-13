@@ -1,15 +1,55 @@
 <template>
-  <div class="solar-plant-list">
-    <PageHeader title="Solar Plants">
-      <template #actions>
+  <div class="page-container">
+    <!-- Modern Page Header with Refresh Inline -->
+    <div class="page-header-modern">
+      <div class="header-content">
+        <div class="header-text">
+          <div class="header-title-row">
+            <h1 class="header-title">
+              <i class="pi pi-sun"></i>
+              Solar Plants
+            </h1>
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              text
+              rounded
+              @click="fetchData"
+              v-tooltip.top="'Refresh'"
+              :loading="store.loading"
+              class="refresh-inline-btn"
+            />
+          </div>
+          <p class="header-subtitle">
+            Manage and monitor all solar plant installations
+          </p>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ store.pagination.total || 0 }}</span>
+            <span class="stat-label">Total Plants</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ activeCount }}</span>
+            <span class="stat-label">Active</span>
+          </div>
+          <div class="stat-card-modern">
+            <span class="stat-value">{{ totalPower }} kWp</span>
+            <span class="stat-label">Total Power</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
         <Button
           label="New Plant"
           icon="pi pi-plus"
+          severity="primary"
           @click="router.push({ name: 'AdminSolarPlantCreate' })"
           v-if="isAdmin || isManager"
+          class="add-user-btn"
         />
-      </template>
-    </PageHeader>
+      </div>
+    </div>
 
     <Card>
       <template #content>
@@ -150,11 +190,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSolarPlantStore } from '@/stores/solarPlant'
 import { useRole } from '@/composables/useRole'
-import PageHeader from '@/components/layout/PageHeader.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -175,6 +214,15 @@ const filters = ref({
   sort_order: 'desc' as 'asc' | 'desc',
   page: 1,
   per_page: 15,
+})
+
+// Computed stats for header
+const activeCount = computed(() => {
+  return (store.plants || []).filter(plant => plant.status === 'active' || plant.status === 'operational').length
+})
+
+const totalPower = computed(() => {
+  return (store.plants || []).reduce((sum, plant) => sum + (plant.nominal_power || 0), 0).toFixed(0)
 })
 
 const deleteDialog = ref(false)
@@ -273,7 +321,9 @@ function formatCurrency(value: number): string {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/styles/views/_admin-users';
+
 .confirmation-content {
   display: flex;
   align-items: center;
