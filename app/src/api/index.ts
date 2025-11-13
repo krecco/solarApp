@@ -204,6 +204,9 @@ export const api = {
 // Export the axios instance for advanced usage
 export { apiClient }
 
+// Export api as default for backward compatibility
+export default api
+
 // Setup function to be called when app initializes
 export function setupInterceptors() {
   // Store references globally for interceptors to use
