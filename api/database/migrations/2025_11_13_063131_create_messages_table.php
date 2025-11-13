@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('conversation_id')->constrained('conversations')->cascadeOnDelete();
-            $table->foreignUuid('sender_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
             $table->text('body')->comment('Message content');
             $table->string('type')->default('text')->comment('text, system, file_attachment');
             $table->json('attachments')->nullable()->comment('File attachments metadata');

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('subject')->nullable()->comment('Conversation subject/title');
             $table->string('status')->default('active')->comment('active, archived, closed');
-            $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('last_message_at')->nullable()->comment('Timestamp of last message');
             $table->timestamps();
             $table->softDeletes();
@@ -29,7 +29,7 @@ return new class extends Migration
         Schema::create('conversation_participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('conversation_id')->constrained('conversations')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('last_read_at')->nullable()->comment('Last time user read messages');
             $table->integer('unread_count')->default(0)->comment('Number of unread messages');
             $table->timestamps();
