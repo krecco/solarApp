@@ -41,10 +41,10 @@
       </div>
       <div class="header-actions">
         <Button
-          label="View Profile"
-          icon="pi pi-user"
+          label="My Investments"
+          icon="pi pi-wallet"
           severity="primary"
-          @click="navigateTo('/profile')"
+          @click="router.push({ name: 'MyInvestments' })"
           class="add-user-btn"
         />
       </div>
@@ -161,11 +161,20 @@
             <div class="grid">
               <div class="col-12 md:col-6 lg:col-3">
                 <Button
-                  label="Edit Profile"
-                  icon="pi pi-user-edit"
+                  label="My Investments"
+                  icon="pi pi-wallet"
                   class="w-full"
                   severity="secondary"
-                  @click="navigateTo('/profile')"
+                  @click="router.push({ name: 'MyInvestments' })"
+                />
+              </div>
+              <div class="col-12 md:col-6 lg:col-3">
+                <Button
+                  label="My Solar Plants"
+                  icon="pi pi-sun"
+                  class="w-full"
+                  severity="secondary"
+                  @click="router.push({ name: 'MyPlants' })"
                 />
               </div>
               <div class="col-12 md:col-6 lg:col-3">
@@ -174,16 +183,7 @@
                   icon="pi pi-bell"
                   class="w-full"
                   severity="secondary"
-                  @click="navigateTo('/notifications')"
-                />
-              </div>
-              <div class="col-12 md:col-6 lg:col-3">
-                <Button
-                  label="Settings"
-                  icon="pi pi-cog"
-                  class="w-full"
-                  severity="secondary"
-                  @click="navigateTo('/settings')"
+                  @click="router.push({ name: 'Notifications' })"
                 />
               </div>
               <div class="col-12 md:col-6 lg:col-3">
@@ -202,7 +202,7 @@
       </div>
     </div>
 
-    <!-- Account Information -->
+    <!-- Account Information and Quick Links -->
     <div class="grid">
       <div class="col-12 lg:col-6">
         <Card>
@@ -238,12 +238,42 @@
       <div class="col-12 lg:col-6">
         <Card>
           <template #title>
-            <span class="text-xl font-semibold">Recent Activity</span>
+            <span class="text-xl font-semibold">Quick Links</span>
           </template>
           <template #content>
-            <div class="text-center text-muted py-5">
-              <i class="pi pi-info-circle text-4xl mb-3"></i>
-              <p>No recent activity to display</p>
+            <div class="flex flex-column gap-2">
+              <Button
+                label="My Investments"
+                icon="pi pi-wallet"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'MyInvestments' })"
+              />
+              <Button
+                label="My Solar Plants"
+                icon="pi pi-sun"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'MyPlants' })"
+              />
+              <Button
+                label="Create Investment"
+                icon="pi pi-plus"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'CreateInvestment' })"
+              />
+              <Button
+                label="Notifications"
+                icon="pi pi-bell"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'Notifications' })"
+              />
             </div>
           </template>
         </Card>
@@ -324,20 +354,6 @@ const refreshDashboard = async () => {
     detail: 'Dashboard data refreshed',
     life: 2000
   })
-}
-
-const navigateTo = (path: string) => {
-  // For profile and settings, show coming soon toast
-  if (path === '/profile' || path === '/settings') {
-    toast.add({
-      severity: 'info',
-      summary: 'Coming Soon',
-      detail: 'This feature is under development',
-      life: 3000
-    })
-  } else {
-    router.push(path)
-  }
 }
 </script>
 
