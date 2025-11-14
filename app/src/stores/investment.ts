@@ -21,6 +21,7 @@ export const useInvestmentStore = defineStore('investment', () => {
   // Computed
   const investmentsByStatus = computed(() => {
     const grouped: Record<string, Investment[]> = {}
+    if (!investments.value) return grouped
     investments.value.forEach((investment) => {
       if (!grouped[investment.status]) {
         grouped[investment.status] = []
@@ -30,21 +31,21 @@ export const useInvestmentStore = defineStore('investment', () => {
     return grouped
   })
 
-  const pendingInvestments = computed(() => investments.value.filter(i => i.status === 'pending'))
-  const verifiedInvestments = computed(() => investments.value.filter(i => i.verified))
-  const activeInvestments = computed(() => investments.value.filter(i => i.status === 'active'))
-  const completedInvestments = computed(() => investments.value.filter(i => i.status === 'completed'))
+  const pendingInvestments = computed(() => (investments.value || []).filter(i => i.status === 'pending'))
+  const verifiedInvestments = computed(() => (investments.value || []).filter(i => i.verified))
+  const activeInvestments = computed(() => (investments.value || []).filter(i => i.status === 'active'))
+  const completedInvestments = computed(() => (investments.value || []).filter(i => i.status === 'completed'))
 
   const totalInvested = computed(() => {
-    return investments.value.reduce((sum, inv) => sum + inv.amount, 0)
+    return (investments.value || []).reduce((sum, inv) => sum + inv.amount, 0)
   })
 
   const totalReturns = computed(() => {
-    return investments.value.reduce((sum, inv) => sum + (inv.paid_amount || 0), 0)
+    return (investments.value || []).reduce((sum, inv) => sum + (inv.paid_amount || 0), 0)
   })
 
   const expectedTotalReturns = computed(() => {
-    return investments.value.reduce((sum, inv) => sum + (inv.total_repayment || 0), 0)
+    return (investments.value || []).reduce((sum, inv) => sum + (inv.total_repayment || 0), 0)
   })
 
   // Actions
