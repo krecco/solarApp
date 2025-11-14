@@ -5,6 +5,28 @@ return [
     'vehicles' => 'Vehicles',
     'rentals' => 'Rentals',
     'bookings' => 'Bookings',
+    'seats' => 'seats',
+    'no_vehicles_found' => 'No vehicles found',
+
+    // Common translations
+    'common' => [
+        'search' => 'Search',
+        'status' => 'Status',
+        'location' => 'Location',
+        'actions' => 'Actions',
+        'save' => 'Save',
+        'cancel' => 'Cancel',
+        'edit' => 'Edit',
+        'delete' => 'Delete',
+        'back' => 'Back',
+        'loading' => 'Loading...',
+        'yes' => 'Yes',
+        'no' => 'No',
+        'confirm' => 'Confirm',
+        'close' => 'Close',
+        'submit' => 'Submit',
+        'required' => 'Required',
+    ],
 
     'vehicle' => [
         'title' => 'Vehicle',
@@ -14,6 +36,16 @@ return [
         'details' => 'Vehicle Details',
         'available' => 'Available Vehicles',
         'unavailable' => 'Unavailable Vehicles',
+        'confirm_delete' => 'Are you sure you want to delete this vehicle?',
+        'make' => 'Make',
+        'model' => 'Model',
+        'year' => 'Year',
+        'color' => 'Color',
+        'license_plate' => 'License Plate',
+        'vin' => 'VIN',
+        'mileage' => 'Mileage',
+        'features' => 'Features',
+        'specifications' => 'Specifications',
     ],
 
     'rental' => [
@@ -26,6 +58,19 @@ return [
         'total_days' => 'Total Days',
         'daily_rate' => 'Daily Rate',
         'total_amount' => 'Total Amount',
+        'per_day' => 'per day',
+        'available_from' => 'Available From',
+        'available_to' => 'Available To',
+        'security_deposit' => 'Security Deposit',
+        'insurance_fee' => 'Insurance Fee',
+        'tax' => 'Tax',
+        'subtotal' => 'Subtotal',
+        'select_vehicle' => 'Select Vehicle',
+        'select_dates' => 'Select Dates',
+        'add_extras' => 'Add Extras',
+        'review_booking' => 'Review Booking',
+        'confirm_booking' => 'Confirm Booking',
+        'booking_success' => 'Booking created successfully!',
     ],
 
     'status' => [
@@ -45,6 +90,7 @@ return [
     ],
 
     'category' => [
+        'title' => 'Category',
         'economy' => 'Economy',
         'compact' => 'Compact',
         'midsize' => 'Midsize',

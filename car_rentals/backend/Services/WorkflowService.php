@@ -3,6 +3,7 @@
 namespace App\Modules\CarRentals\Services;
 
 use App\Modules\CarRentals\Enums\RentalStatus;
+use App\Modules\CarRentals\Enums\VehicleStatus;
 use App\Modules\CarRentals\Models\Rental;
 use App\Modules\CarRentals\Notifications\RentalStatusChanged;
 use Illuminate\Support\Facades\Log;
@@ -48,14 +49,14 @@ class WorkflowService
             case RentalStatus::ACTIVE:
                 $rental->actual_pickup_date = now();
                 // Update vehicle status to rented
-                $rental->vehicle->status = \App\Modules\CarRentals\Enums\VehicleStatus::RENTED;
+                $rental->vehicle->status = VehicleStatus::RENTED;
                 $rental->vehicle->save();
                 break;
 
             case RentalStatus::COMPLETED:
                 $rental->actual_return_date = now();
                 // Update vehicle status back to available
-                $rental->vehicle->status = \App\Modules\CarRentals\Enums\VehicleStatus::AVAILABLE;
+                $rental->vehicle->status = VehicleStatus::AVAILABLE;
                 $rental->vehicle->save();
                 break;
         }
