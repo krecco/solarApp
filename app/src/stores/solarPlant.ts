@@ -21,6 +21,7 @@ export const useSolarPlantStore = defineStore('solarPlant', () => {
   // Computed
   const plantsByStatus = computed(() => {
     const grouped: Record<string, SolarPlant[]> = {}
+    if (!plants.value) return grouped
     plants.value.forEach((plant) => {
       if (!grouped[plant.status]) {
         grouped[plant.status] = []
@@ -30,9 +31,9 @@ export const useSolarPlantStore = defineStore('solarPlant', () => {
     return grouped
   })
 
-  const draftPlants = computed(() => plants.value.filter(p => p.status === 'draft'))
-  const activePlants = computed(() => plants.value.filter(p => p.status === 'active'))
-  const operationalPlants = computed(() => plants.value.filter(p => p.status === 'operational'))
+  const draftPlants = computed(() => (plants.value || []).filter(p => p.status === 'draft'))
+  const activePlants = computed(() => (plants.value || []).filter(p => p.status === 'active'))
+  const operationalPlants = computed(() => (plants.value || []).filter(p => p.status === 'operational'))
 
   // Actions
   async function fetchPlants(filters?: SolarPlantFilters) {
