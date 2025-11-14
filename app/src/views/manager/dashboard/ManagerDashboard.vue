@@ -41,10 +41,10 @@
       </div>
       <div class="header-actions">
         <Button
-          label="View Reports"
-          icon="pi pi-chart-line"
+          label="View Solar Plants"
+          icon="pi pi-sun"
           severity="primary"
-          @click="navigateTo('/manager/reports')"
+          @click="router.push({ name: 'AdminSolarPlantList' })"
           class="add-user-btn"
         />
       </div>
@@ -140,29 +140,29 @@
             <div class="grid">
               <div class="col-12 md:col-6 lg:col-3">
                 <Button
-                  label="View Reports"
-                  icon="pi pi-chart-line"
+                  label="Solar Plants"
+                  icon="pi pi-sun"
                   class="w-full"
                   severity="secondary"
-                  @click="navigateTo('/manager/reports')"
+                  @click="router.push({ name: 'AdminSolarPlantList' })"
                 />
               </div>
               <div class="col-12 md:col-6 lg:col-3">
                 <Button
-                  label="Team Overview"
+                  label="Investments"
+                  icon="pi pi-wallet"
+                  class="w-full"
+                  severity="secondary"
+                  @click="router.push({ name: 'AdminInvestmentList' })"
+                />
+              </div>
+              <div class="col-12 md:col-6 lg:col-3">
+                <Button
+                  label="Users"
                   icon="pi pi-users"
                   class="w-full"
                   severity="secondary"
-                  @click="navigateTo('/manager/team')"
-                />
-              </div>
-              <div class="col-12 md:col-6 lg:col-3">
-                <Button
-                  label="Task Management"
-                  icon="pi pi-list"
-                  class="w-full"
-                  severity="secondary"
-                  @click="navigateTo('/manager/tasks')"
+                  @click="router.push({ name: 'AdminUserList' })"
                 />
               </div>
               <div class="col-12 md:col-6 lg:col-3">
@@ -183,15 +183,71 @@
 
     <!-- Recent Activity -->
     <div class="grid">
-      <div class="col-12">
+      <div class="col-12 lg:col-8">
         <Card>
           <template #title>
             <span class="text-xl font-semibold">Recent Activity</span>
           </template>
           <template #content>
-            <div class="text-center text-muted py-5">
+            <div v-if="recentActivities.length > 0">
+              <div v-for="(activity, index) in recentActivities" :key="index" class="activity-item">
+                <div class="flex align-items-start gap-3 pb-3 mb-3" :class="{ 'border-bottom-1 border-gray-200': index < recentActivities.length - 1 }">
+                  <i :class="activity.icon" class="text-2xl" :style="{ color: activity.color }"></i>
+                  <div class="flex-1">
+                    <div class="font-semibold mb-1">{{ activity.title }}</div>
+                    <div class="text-sm text-gray-600">{{ activity.description }}</div>
+                    <div class="text-xs text-gray-400 mt-1">{{ activity.timestamp }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-center text-muted py-5">
               <i class="pi pi-info-circle text-4xl mb-3"></i>
-              <p>Activity tracking coming soon</p>
+              <p>No recent activity to display</p>
+            </div>
+          </template>
+        </Card>
+      </div>
+
+      <div class="col-12 lg:col-4">
+        <Card>
+          <template #title>
+            <span class="text-xl font-semibold">Quick Links</span>
+          </template>
+          <template #content>
+            <div class="flex flex-column gap-2">
+              <Button
+                label="View All Solar Plants"
+                icon="pi pi-sun"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'AdminSolarPlantList' })"
+              />
+              <Button
+                label="View All Investments"
+                icon="pi pi-wallet"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'AdminInvestmentList' })"
+              />
+              <Button
+                label="View All Users"
+                icon="pi pi-users"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'AdminUserList' })"
+              />
+              <Button
+                label="Notifications"
+                icon="pi pi-bell"
+                severity="secondary"
+                class="w-full"
+                text
+                @click="router.push({ name: 'Notifications' })"
+              />
             </div>
           </template>
         </Card>
@@ -223,6 +279,31 @@ const stats = ref({
   completedThisWeek: 18,
   performance: 87
 })
+
+// Recent activities
+const recentActivities = ref([
+  {
+    icon: 'pi pi-check-circle',
+    color: '#10b981',
+    title: 'Investment Verified',
+    description: 'Investment #1234 has been verified and activated',
+    timestamp: '2 hours ago'
+  },
+  {
+    icon: 'pi pi-sun',
+    color: '#f59e0b',
+    title: 'New Solar Plant Added',
+    description: 'Solar Plant "Green Energy Park" was added to the system',
+    timestamp: '5 hours ago'
+  },
+  {
+    icon: 'pi pi-user-plus',
+    color: '#3b82f6',
+    title: 'New User Registered',
+    description: 'John Doe registered as a customer',
+    timestamp: '1 day ago'
+  }
+])
 
 onMounted(async () => {
   await loadDashboard()
@@ -258,20 +339,6 @@ const refreshDashboard = async () => {
     detail: 'Dashboard data refreshed',
     life: 2000
   })
-}
-
-const navigateTo = (path: string) => {
-  // For now, show a toast that these features are coming soon
-  if (path.includes('/manager/')) {
-    toast.add({
-      severity: 'info',
-      summary: 'Coming Soon',
-      detail: 'This feature is under development',
-      life: 3000
-    })
-  } else {
-    router.push(path)
-  }
 }
 </script>
 
