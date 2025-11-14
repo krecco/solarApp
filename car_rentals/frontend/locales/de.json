@@ -1,0 +1,75 @@
+{
+  "car_rentals": {
+    "module_name": "Autovermietungsverwaltung",
+    "vehicles": "Fahrzeuge",
+    "rentals": "Vermietungen",
+    "bookings": "Buchungen",
+    "seats": "Sitze",
+    "no_vehicles_found": "Keine Fahrzeuge gefunden",
+
+    "common": {
+      "search": "Suchen",
+      "status": "Status",
+      "location": "Standort",
+      "actions": "Aktionen",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "back": "Zurück",
+      "loading": "Lädt...",
+      "yes": "Ja",
+      "no": "Nein",
+      "confirm": "Bestätigen",
+      "close": "Schließen",
+      "submit": "Absenden",
+      "required": "Erforderlich"
+    },
+
+    "vehicle": {
+      "title": "Fahrzeug",
+      "add_new": "Neues Fahrzeug hinzufügen",
+      "edit": "Fahrzeug bearbeiten",
+      "delete": "Fahrzeug löschen",
+      "details": "Fahrzeugdetails",
+      "available": "Verfügbare Fahrzeuge",
+      "unavailable": "Nicht verfügbare Fahrzeuge",
+      "confirm_delete": "Möchten Sie dieses Fahrzeug wirklich löschen?"
+    },
+
+    "rental": {
+      "title": "Vermietung",
+      "book_now": "Jetzt buchen",
+      "my_rentals": "Meine Vermietungen",
+      "rental_number": "Vermietungsnummer",
+      "pickup_date": "Abholdatum",
+      "return_date": "Rückgabedatum",
+      "total_days": "Gesamttage",
+      "daily_rate": "Tagesrate",
+      "total_amount": "Gesamtbetrag",
+      "per_day": "pro Tag",
+      "available_from": "Verfügbar ab",
+      "available_to": "Verfügbar bis",
+      "security_deposit": "Kaution",
+      "booking_success": "Buchung erfolgreich erstellt!"
+    },
+
+    "status": {
+      "available": "Verfügbar",
+      "rented": "Vermietet",
+      "maintenance": "In Wartung",
+      "pending": "Warten auf Überprüfung",
+      "confirmed": "Bestätigt",
+      "active": "Aktive Vermietung",
+      "completed": "Abgeschlossen"
+    },
+
+    "category": {
+      "title": "Kategorie",
+      "economy": "Economy",
+      "compact": "Kompakt",
+      "luxury": "Luxus",
+      "suv": "SUV"
+    }
+  }
+}

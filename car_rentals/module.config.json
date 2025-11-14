@@ -1,0 +1,60 @@
+{
+  "module": {
+    "name": "car_rentals",
+    "display_name": "Car Rental Management",
+    "description": "A modular car rental management system with multilanguage support and workflow automation",
+    "version": "1.0.0",
+    "author": "Solar App Team",
+    "swappable": true,
+    "abstract_entities": {
+      "Asset": "Vehicle",
+      "Transaction": "Rental",
+      "Payment": "RentalPayment",
+      "AssetExtra": "RentalExtra"
+    },
+    "core_dependencies": [
+      "authentication",
+      "user_management",
+      "document_management",
+      "notification_system",
+      "messaging",
+      "activity_logging",
+      "settings_management",
+      "multi_language",
+      "content_management",
+      "reporting"
+    ],
+    "domain_specific": {
+      "models": [
+        "Vehicle",
+        "Rental",
+        "RentalExtra",
+        "RentalPayment",
+        "VehicleReview",
+        "VehicleMaintenance"
+      ],
+      "workflows": [
+        "rental_booking",
+        "rental_verification",
+        "vehicle_checkin",
+        "vehicle_checkout",
+        "payment_processing"
+      ],
+      "languages_supported": ["en", "de", "fr", "es", "it"],
+      "document_templates": [
+        "rental_agreement",
+        "vehicle_inspection_checklist",
+        "payment_receipt",
+        "booking_confirmation"
+      ]
+    },
+    "api_routes": {
+      "prefix": "v1/car-rentals",
+      "middleware": ["auth:sanctum", "role:customer|manager|admin"]
+    },
+    "frontend_routes": {
+      "admin_prefix": "/admin/car-rentals",
+      "customer_prefix": "/car-rentals"
+    }
+  }
+}
