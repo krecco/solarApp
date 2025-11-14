@@ -1,0 +1,200 @@
+{
+  "workflows": {
+    "rental_booking": {
+      "name": "Rental Booking Workflow",
+      "description": "Customer booking process with verification and approval",
+      "states": {
+        "draft": {
+          "label": "Draft",
+          "description": "Customer is creating the booking",
+          "transitions_to": ["pending"]
+        },
+        "pending": {
+          "label": "Pending Verification",
+          "description": "Booking submitted, waiting for document verification",
+          "transitions_to": ["verified", "rejected"],
+          "notifications": {
+            "on_enter": {
+              "customer": "booking_submitted",
+              "manager": "new_booking_received"
+            }
+          }
+        },
+        "verified": {
+          "label": "Verified",
+          "description": "Documents verified, waiting for payment",
+          "transitions_to": ["confirmed", "cancelled"],
+          "notifications": {
+            "on_enter": {
+              "customer": "booking_verified"
+            }
+          }
+        },
+        "confirmed": {
+          "label": "Confirmed",
+          "description": "Payment received, booking confirmed",
+          "transitions_to": ["active", "cancelled"],
+          "notifications": {
+            "on_enter": {
+              "customer": "booking_confirmed",
+              "manager": "booking_ready_for_pickup"
+            }
+          },
+          "scheduled_notifications": [
+            {
+              "template": "rental_reminder_7_days",
+              "offset_days": -7
+            },
+            {
+              "template": "rental_reminder_1_day",
+              "offset_days": -1
+            }
+          ]
+        },
+        "active": {
+          "label": "Active Rental",
+          "description": "Vehicle picked up, rental in progress",
+          "transitions_to": ["completed", "overdue"],
+          "scheduled_notifications": [
+            {
+              "template": "return_reminder_1_day",
+              "offset_days": -1
+            }
+          ]
+        },
+        "completed": {
+          "label": "Completed",
+          "description": "Vehicle returned, rental completed",
+          "transitions_to": [],
+          "notifications": {
+            "on_enter": {
+              "customer": "rental_completed"
+            }
+          },
+          "scheduled_notifications": [
+            {
+              "template": "review_request",
+              "offset_hours": 24
+            }
+          ]
+        },
+        "overdue": {
+          "label": "Overdue",
+          "description": "Vehicle not returned on time",
+          "transitions_to": ["completed", "cancelled"],
+          "notifications": {
+            "on_enter": {
+              "customer": "rental_overdue",
+              "manager": "rental_overdue_alert"
+            }
+          }
+        },
+        "cancelled": {
+          "label": "Cancelled",
+          "description": "Booking cancelled",
+          "transitions_to": [],
+          "notifications": {
+            "on_enter": {
+              "customer": "booking_cancelled"
+            }
+          }
+        },
+        "rejected": {
+          "label": "Rejected",
+          "description": "Booking rejected by manager",
+          "transitions_to": [],
+          "notifications": {
+            "on_enter": {
+              "customer": "booking_rejected"
+            }
+          }
+        }
+      },
+      "permissions": {
+        "draft": ["customer"],
+        "pending": ["customer"],
+        "verified": ["manager", "admin"],
+        "confirmed": ["manager", "admin"],
+        "active": ["manager", "admin"],
+        "completed": ["manager", "admin"],
+        "overdue": ["manager", "admin"],
+        "cancelled": ["customer", "manager", "admin"],
+        "rejected": ["manager", "admin"]
+      }
+    },
+    "vehicle_checkin": {
+      "name": "Vehicle Check-in Workflow",
+      "description": "Process for picking up a rental vehicle",
+      "steps": [
+        {
+          "step": "verify_documents",
+          "label": "Verify Driver's License",
+          "required_documents": ["drivers_license"],
+          "actor": "manager"
+        },
+        {
+          "step": "vehicle_inspection",
+          "label": "Vehicle Condition Inspection",
+          "required_fields": ["pickup_mileage", "pickup_condition", "fuel_level"],
+          "actor": "manager"
+        },
+        {
+          "step": "record_photos",
+          "label": "Record Vehicle Photos",
+          "required_photos": ["front", "back", "left", "right", "interior", "dashboard"],
+          "actor": "manager"
+        },
+        {
+          "step": "collect_signature",
+          "label": "Customer Signature",
+          "actor": "customer"
+        },
+        {
+          "step": "hand_over_keys",
+          "label": "Hand Over Keys",
+          "actor": "manager"
+        }
+      ]
+    },
+    "vehicle_checkout": {
+      "name": "Vehicle Check-out Workflow",
+      "description": "Process for returning a rental vehicle",
+      "steps": [
+        {
+          "step": "vehicle_inspection",
+          "label": "Return Condition Inspection",
+          "required_fields": ["return_mileage", "return_condition", "fuel_level"],
+          "actor": "manager"
+        },
+        {
+          "step": "record_photos",
+          "label": "Record Return Photos",
+          "required_photos": ["front", "back", "left", "right", "interior", "dashboard"],
+          "actor": "manager"
+        },
+        {
+          "step": "check_damage",
+          "label": "Check for Damages",
+          "conditional": true,
+          "actor": "manager"
+        },
+        {
+          "step": "calculate_charges",
+          "label": "Calculate Additional Charges",
+          "calculations": ["excess_mileage", "damage_fees", "late_return_fees", "fuel_charges"],
+          "actor": "manager"
+        },
+        {
+          "step": "process_refund",
+          "label": "Process Security Deposit Refund",
+          "actor": "manager"
+        },
+        {
+          "step": "customer_signature",
+          "label": "Customer Confirmation",
+          "actor": "customer"
+        }
+      ]
+    }
+  }
+}
