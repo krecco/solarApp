@@ -37,15 +37,15 @@ export const useInvestmentStore = defineStore('investment', () => {
   const completedInvestments = computed(() => (investments.value || []).filter(i => i.status === 'completed'))
 
   const totalInvested = computed(() => {
-    return (investments.value || []).reduce((sum, inv) => sum + inv.amount, 0)
+    return (investments.value || []).reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0)
   })
 
   const totalReturns = computed(() => {
-    return (investments.value || []).reduce((sum, inv) => sum + (inv.paid_amount || 0), 0)
+    return (investments.value || []).reduce((sum, inv) => sum + (parseFloat(inv.paid_amount) || 0), 0)
   })
 
   const expectedTotalReturns = computed(() => {
-    return (investments.value || []).reduce((sum, inv) => sum + (inv.total_repayment || 0), 0)
+    return (investments.value || []).reduce((sum, inv) => sum + (parseFloat(inv.total_repayment) || 0), 0)
   })
 
   // Actions

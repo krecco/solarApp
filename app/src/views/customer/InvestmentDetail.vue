@@ -361,7 +361,8 @@ async function fetchInvestment() {
   loading.value = true
   try {
     const investmentId = route.params.id as string
-    investment.value = await investmentStore.getInvestment(investmentId)
+    await investmentStore.fetchInvestment(investmentId)
+    investment.value = investmentStore.currentInvestment
   } catch (error) {
     console.error('Error fetching investment:', error)
   } finally {
@@ -390,11 +391,12 @@ function getRepaymentStatusSeverity(status: string): string {
   return severityMap[status] || 'info'
 }
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | string): string {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-  }).format(value)
+  }).format(numValue)
 }
 
 function formatDate(date: string): string {

@@ -463,7 +463,7 @@ const sortOptions = [
 ]
 
 const totalInvested = computed(() => {
-  return (store.investments || []).reduce((sum, inv) => sum + inv.amount, 0)
+  return (store.investments || []).reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0)
 })
 
 const pendingCount = computed(() => {
@@ -593,11 +593,12 @@ function getStatusSeverity(status: string): string {
   return severityMap[status] || 'info'
 }
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | string): string {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-  }).format(value)
+  }).format(numValue)
 }
 
 function formatDate(date: string): string {

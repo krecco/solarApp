@@ -56,7 +56,7 @@ export const settingsService = {
    */
   async getPublicSettings(): Promise<SettingsResponse> {
     const response = await api.get('/api/v1/settings/public')
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -66,7 +66,7 @@ export const settingsService = {
     const response = await api.get('/api/v1/settings', {
       params: group ? { group } : undefined,
     })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -74,7 +74,7 @@ export const settingsService = {
    */
   async getSetting(group: string, key: string): Promise<SettingValue> {
     const response = await api.get(`/api/v1/settings/${group}/${key}`)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -82,7 +82,7 @@ export const settingsService = {
    */
   async create(data: CreateSettingData): Promise<Setting> {
     const response = await api.post('/api/v1/settings', data)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -90,7 +90,7 @@ export const settingsService = {
    */
   async update(group: string, key: string, data: UpdateSettingData): Promise<Setting> {
     const response = await api.put(`/api/v1/settings/${group}/${key}`, data)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -106,7 +106,7 @@ export const settingsService = {
    */
   async bulkUpdate(settings: BulkUpdateItem[]) {
     const response = await api.post('/api/v1/settings/bulk-update', { settings })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -114,7 +114,7 @@ export const settingsService = {
    */
   async reset(group?: SettingGroup) {
     const response = await api.post('/api/v1/settings/reset', group ? { group } : undefined)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**

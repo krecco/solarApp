@@ -404,11 +404,12 @@ function handleCancel() {
   router.back()
 }
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | string): string {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-  }).format(value)
+  }).format(numValue)
 }
 </script>
 

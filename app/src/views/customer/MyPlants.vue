@@ -206,7 +206,7 @@ const statusOptions = [
 ]
 
 const totalPower = computed(() => {
-  return plantStore.plants.reduce((sum, plant) => sum + (plant.nominal_power || 0), 0)
+  return plantStore.plants.reduce((sum, plant) => sum + (parseFloat(plant.nominal_power) || 0), 0)
 })
 
 const operationalCount = computed(() => {
@@ -214,7 +214,7 @@ const operationalCount = computed(() => {
 })
 
 const totalValue = computed(() => {
-  return plantStore.plants.reduce((sum, plant) => sum + (plant.total_cost || 0), 0)
+  return plantStore.plants.reduce((sum, plant) => sum + (parseFloat(plant.total_cost) || 0), 0)
 })
 
 let searchTimeout: any = null
@@ -258,11 +258,12 @@ function getStatusSeverity(status: string): string {
   return severityMap[status] || 'info'
 }
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | string): string {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
-  }).format(value)
+  }).format(numValue)
 }
 
 function formatDate(date: string): string {

@@ -78,7 +78,7 @@ export const reportsService = {
    */
   async getDashboard(): Promise<DashboardStats> {
     const response = await api.get('/api/v1/reports/dashboard')
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -89,7 +89,7 @@ export const reportsService = {
     end_date?: string
   }): Promise<InvestmentAnalytics> {
     const response = await api.get('/api/v1/reports/investments/analytics', { params: filters })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -100,7 +100,7 @@ export const reportsService = {
     end_date?: string
   }): Promise<RepaymentAnalytics> {
     const response = await api.get('/api/v1/reports/repayments/analytics', { params: filters })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -108,7 +108,7 @@ export const reportsService = {
    */
   async getPlantAnalytics(): Promise<PlantAnalytics> {
     const response = await api.get('/api/v1/reports/plants/analytics')
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -116,7 +116,7 @@ export const reportsService = {
    */
   async getMonthlyReport(year: number, month: number): Promise<MonthlyReport> {
     const response = await api.get(`/api/v1/reports/monthly/${year}/${month}`)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -124,7 +124,7 @@ export const reportsService = {
    */
   async getInvestmentPerformance(investmentId: string): Promise<InvestmentPerformance> {
     const response = await api.get(`/api/v1/reports/investments/${investmentId}/performance`)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -136,7 +136,7 @@ export const reportsService = {
     status?: string
   }) {
     const response = await api.post('/api/v1/reports/investments/export', filters)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**

@@ -79,7 +79,7 @@ export const solarPlantService = {
    */
   async getPlants(filters?: SolarPlantFilters) {
     const response = await api.get('/api/v1/solar-plants', { params: filters })
-    return response.data
+    return response  // api.get() already extracts res.data, so this is the pagination object
   },
 
   /**
@@ -87,7 +87,7 @@ export const solarPlantService = {
    */
   async getPlant(id: string) {
     const response = await api.get(`/api/v1/solar-plants/${id}`)
-    return response.data.data
+    return response.data  // api.get() already extracts res.data
   },
 
   /**
@@ -95,7 +95,7 @@ export const solarPlantService = {
    */
   async create(data: CreateSolarPlantDto) {
     const response = await api.post('/api/v1/solar-plants', data)
-    return response.data.data
+    return response.data  // api.post() already extracts res.data
   },
 
   /**
@@ -103,7 +103,7 @@ export const solarPlantService = {
    */
   async update(id: string, data: Partial<CreateSolarPlantDto>) {
     const response = await api.put(`/api/v1/solar-plants/${id}`, data)
-    return response.data.data
+    return response.data  // api.put() already extracts res.data
   },
 
   /**
@@ -119,7 +119,7 @@ export const solarPlantService = {
    */
   async updateStatus(id: string, status: string) {
     const response = await api.post(`/api/v1/solar-plants/${id}/status`, { status })
-    return response.data.data
+    return response.data  // api.post() already extracts res.data
   },
 
   /**

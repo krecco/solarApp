@@ -55,7 +55,7 @@ export const filesService = {
         'Content-Type': 'multipart/form-data',
       },
     })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -63,7 +63,7 @@ export const filesService = {
    */
   async getFiles(filters: FileFilters): Promise<FileItem[]> {
     const response = await api.get('/api/v1/files', { params: filters })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -89,7 +89,7 @@ export const filesService = {
    */
   async verify(fileId: string) {
     const response = await api.post(`/api/v1/files/${fileId}/verify`)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**

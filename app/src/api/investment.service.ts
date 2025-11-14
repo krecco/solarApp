@@ -54,7 +54,7 @@ export const investmentService = {
    */
   async getInvestments(filters?: InvestmentFilters) {
     const response = await api.get('/api/v1/investments', { params: filters })
-    return response.data
+    return response  // api.get() already extracts res.data, so this is the pagination object
   },
 
   /**
@@ -62,7 +62,7 @@ export const investmentService = {
    */
   async getInvestment(id: string) {
     const response = await api.get(`/api/v1/investments/${id}`)
-    return response.data.data
+    return response.data  // api.get() already extracts res.data
   },
 
   /**
@@ -70,7 +70,7 @@ export const investmentService = {
    */
   async create(data: CreateInvestmentDto) {
     const response = await api.post('/api/v1/investments', data)
-    return response.data.data
+    return response.data  // api.post() already extracts res.data
   },
 
   /**
@@ -78,7 +78,7 @@ export const investmentService = {
    */
   async update(id: string, data: Partial<CreateInvestmentDto>) {
     const response = await api.put(`/api/v1/investments/${id}`, data)
-    return response.data.data
+    return response.data  // api.put() already extracts res.data
   },
 
   /**
@@ -94,7 +94,7 @@ export const investmentService = {
    */
   async verify(id: string) {
     const response = await api.post(`/api/v1/investments/${id}/verify`)
-    return response.data.data
+    return response.data  // api.post() already extracts res.data
   },
 
   /**

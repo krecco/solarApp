@@ -55,7 +55,7 @@ export const activityLogService = {
    */
   async getLog(activityId: number): Promise<ActivityLog> {
     const response = await api.get(`/api/v1/activity-logs/${activityId}`)
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**
@@ -66,7 +66,7 @@ export const activityLogService = {
     end_date?: string
   }): Promise<ActivityStatistics> {
     const response = await api.get('/api/v1/activity-logs/statistics', { params: filters })
-    return response.data.data
+    return response.data  // api helper already extracts res.data
   },
 
   /**

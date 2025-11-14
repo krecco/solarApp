@@ -40,7 +40,7 @@ export const useSolarPlantStore = defineStore('solarPlant', () => {
     loading.value = true
     try {
       const response = await solarPlantService.getPlants(filters)
-      plants.value = response.data
+      plants.value = response.data  // Extract plants array from pagination object
       pagination.value = {
         current_page: response.current_page,
         per_page: response.per_page,
