@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\ActivityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\DB;
  */
 class MessagingController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get all conversations for authenticated user
      *
@@ -115,13 +122,9 @@ class MessagingController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($conversation)
-            ->causedBy($user)
-            ->withProperties([
-                'participant_ids' => $participantIds,
-            ])
-            ->log('created conversation');
+        $this->activityService->log('created conversation', $conversation, $user, [
+            'participant_ids' => $participantIds,
+        ]);
 
         return response()->json([
             'data' => $this->formatConversation($conversation->load(['participants', 'latestMessage.sender']), $user->id),
@@ -208,10 +211,7 @@ class MessagingController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($message)
-            ->causedBy($user)
-            ->log('sent message');
+        $this->activityService->log('sent message', $message, $user);
 
         // TODO: Send notification to other participants
 
@@ -274,10 +274,7 @@ class MessagingController extends Controller
 
         $conversation->archive();
 
-        activity()
-            ->performedOn($conversation)
-            ->causedBy($user)
-            ->log('archived conversation');
+        $this->activityService->log('archived conversation', $conversation, $user);
 
         return response()->json([
             'meta' => [
@@ -308,10 +305,7 @@ class MessagingController extends Controller
 
         $conversation->reactivate();
 
-        activity()
-            ->performedOn($conversation)
-            ->causedBy($user)
-            ->log('reactivated conversation');
+        $this->activityService->log('reactivated conversation', $conversation, $user);
 
         return response()->json([
             'meta' => [

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\WebInfo;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,12 @@ use Illuminate\Support\Str;
 
 class WebInfoController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get all web info items (admin)
      */
@@ -294,10 +301,7 @@ class WebInfoController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($webInfo)
-            ->causedBy($request->user())
-            ->log('created web info');
+        $this->activityService->log('created web info', $webInfo, $request->user());
 
         return response()->json([
             'message' => 'Content created successfully',
@@ -373,14 +377,10 @@ class WebInfoController extends Controller
         ]));
 
         // Log activity
-        activity()
-            ->performedOn($webInfo)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldData,
-                'new' => $webInfo->toArray(),
-            ])
-            ->log('updated web info');
+        $this->activityService->log('updated web info', $webInfo, $request->user(), [
+            'old' => $oldData,
+            'new' => $webInfo->toArray(),
+        ]);
 
         return response()->json([
             'message' => 'Content updated successfully',
@@ -404,10 +404,7 @@ class WebInfoController extends Controller
         $webInfo->delete();
 
         // Log activity
-        activity()
-            ->performedOn($webInfo)
-            ->causedBy($request->user())
-            ->log('deleted web info');
+        $this->activityService->log('deleted web info', $webInfo, $request->user());
 
         return response()->json([
             'message' => 'Content deleted successfully',
@@ -433,13 +430,12 @@ class WebInfoController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($webInfo)
-            ->causedBy($request->user())
-            ->withProperties([
-                'action' => $newStatus ? 'published' : 'unpublished',
-            ])
-            ->log($newStatus ? 'published web info' : 'unpublished web info');
+        $this->activityService->log(
+            $newStatus ? 'published web info' : 'unpublished web info',
+            $webInfo,
+            $request->user(),
+            ['action' => $newStatus ? 'published' : 'unpublished']
+        );
 
         return response()->json([
             'message' => $newStatus ? 'Content published successfully' : 'Content unpublished successfully',

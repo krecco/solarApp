@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AdminDocumentController;
 use App\Http\Controllers\Api\AdminUserDetailController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\CustomerDocumentController;
 use App\Http\Controllers\Api\EmailVerificationController;
 use App\Http\Controllers\Api\ExtrasController;
@@ -76,6 +77,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/', [LanguageController::class, 'index']); // Get all active languages
         Route::get('/default', [LanguageController::class, 'getDefault']); // Get default language
     });
+
+    // Countries (public - accessible without authentication)
+    Route::get('/countries', [CountryController::class, 'index']); // Get all countries
 });
 
 // Protected routes (require authentication)
@@ -115,6 +119,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
         Route::delete('/{id}', [NotificationController::class, 'destroy']);
         Route::delete('/clear-read', [NotificationController::class, 'clearRead']);
+
+        // Send notification (admin/manager only)
+        Route::post('/send', [NotificationController::class, 'send']);
     });
 
     // Messaging/Chat System
@@ -232,6 +239,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/upload', [FileController::class, 'upload']); // Upload file
         Route::get('/{file}/download', [FileController::class, 'download']); // Download file
         Route::delete('/{file}', [FileController::class, 'destroy']); // Delete file
+        Route::post('/bulk-download', [FileController::class, 'bulkDownload']); // Bulk download as ZIP
 
         // Admin and Manager only routes
         Route::middleware('role:admin|manager')->group(function () {

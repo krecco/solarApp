@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,12 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get activity logs
      */
@@ -472,14 +479,11 @@ class ActivityLogController extends Controller
         });
 
         // Log the export
-        activity()
-            ->causedBy($request->user())
-            ->withProperties([
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'count' => $activities->count(),
-            ])
-            ->log('exported activity logs');
+        $this->activityService->log('exported activity logs', null, $request->user(), [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'count' => $activities->count(),
+        ]);
 
         return response()->json([
             'data' => [

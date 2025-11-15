@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SolarPlant;
 use App\Models\SolarPlantRepaymentData;
 use App\Models\SolarPlantRepaymentLog;
+use App\Services\ActivityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,12 @@ use Illuminate\Support\Facades\DB;
  */
 class PlantRepaymentController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get list of plant repayments with filtering
      *
@@ -284,10 +291,7 @@ class PlantRepaymentController extends Controller
         ];
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties($validated)
-            ->log('generated plant repayment report');
+        $this->activityService->log('generated plant repayment report', null, $request->user(), $validated);
 
         return response()->json([
             'data' => $report,
@@ -338,11 +342,7 @@ class PlantRepaymentController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($log)
-            ->causedBy($request->user())
-            ->withProperties($validated)
-            ->log('recorded plant repayment payment');
+        $this->activityService->log('recorded plant repayment payment', $log, $request->user(), $validated);
 
         return response()->json([
             'data' => $this->formatPaymentLog($log),

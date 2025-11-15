@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\InvestmentRepayment;
 use App\Models\Investment;
+use App\Services\ActivityService;
 use App\Services\RepaymentCalculatorService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -13,10 +14,12 @@ use Illuminate\Support\Facades\Validator;
 class RepaymentController extends Controller
 {
     protected RepaymentCalculatorService $repaymentCalculator;
+    protected ActivityService $activityService;
 
-    public function __construct(RepaymentCalculatorService $repaymentCalculator)
+    public function __construct(RepaymentCalculatorService $repaymentCalculator, ActivityService $activityService)
     {
         $this->repaymentCalculator = $repaymentCalculator;
+        $this->activityService = $activityService;
     }
 
     /**
@@ -85,15 +88,11 @@ class RepaymentController extends Controller
             );
 
             // Log activity
-            activity()
-                ->performedOn($repayment)
-                ->causedBy($user)
-                ->withProperties([
-                    'investment_id' => $repayment->investment_id,
-                    'amount' => $data['amount'],
-                    'payment_method' => $data['payment_method'] ?? null,
-                ])
-                ->log('marked repayment as paid');
+            $this->activityService->log('marked repayment as paid', $repayment, $user, [
+                'investment_id' => $repayment->investment_id,
+                'amount' => $data['amount'],
+                'payment_method' => $data['payment_method'] ?? null,
+            ]);
 
             return response()->json([
                 'message' => 'Repayment marked as paid successfully',
@@ -194,11 +193,7 @@ class RepaymentController extends Controller
             $repaymentsCreated = $this->repaymentCalculator->recalculateRepaymentSchedule($investment);
 
             // Log activity
-            activity()
-                ->performedOn($investment)
-                ->causedBy($request->user())
-                ->withProperties(['repayments_created' => $repaymentsCreated])
-                ->log('regenerated repayment schedule');
+            $this->activityService->log('regenerated repayment schedule', $investment, $request->user(), ['repayments_created' => $repaymentsCreated]);
 
             return response()->json([
                 'message' => 'Repayment schedule regenerated successfully',

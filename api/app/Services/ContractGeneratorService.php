@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Storage;
  */
 class ContractGeneratorService
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Generate investment contract PDF
      *
@@ -42,27 +48,30 @@ class ContractGeneratorService
         // Set paper size and orientation
         $pdf->setPaper('a4', 'portrait');
 
-        // Generate filename
-        $filename = $this->generateFilename($investment);
+        // If save option is true, save to storage
+        if (isset($options['save']) && $options['save']) {
+            // Generate filename
+            $filename = $this->generateFilename($investment);
 
-        // Save PDF to storage
-        $path = "contracts/{$investment->id}/{$filename}";
-        Storage::disk('private')->put($path, $pdf->output());
+            // Save PDF to storage
+            $path = "contracts/{$investment->id}/{$filename}";
+            Storage::disk('private')->put($path, $pdf->output());
 
-        // Update investment with contract path
-        $investment->update([
-            'contract_path' => $path,
-            'contract_status' => 'generated',
-            'contract_generated_at' => now(),
-        ]);
+            // Update investment with contract path
+            $investment->update([
+                'contract_path' => $path,
+                'contract_status' => 'generated',
+                'contract_generated_at' => now(),
+            ]);
 
-        // Log activity
-        activity()
-            ->performedOn($investment)
-            ->withProperties(['contract_path' => $path])
-            ->log('generated investment contract');
+            // Log activity
+            $this->activityService->log('generated investment contract', $investment, null, ['contract_path' => $path]);
 
-        return $path;
+            return $path;
+        }
+
+        // Return the PDF object for streaming/download
+        return $pdf;
     }
 
     /**
@@ -206,10 +215,7 @@ class ContractGeneratorService
             $archivePath = str_replace('/contracts/', '/contracts/archive/', $investment->contract_path);
             Storage::disk('private')->move($investment->contract_path, $archivePath);
 
-            activity()
-                ->performedOn($investment)
-                ->withProperties(['archived_contract' => $archivePath])
-                ->log('archived old contract');
+            $this->activityService->log('archived old contract', $investment, null, ['archived_contract' => $archivePath]);
         }
 
         // Generate new contract
@@ -220,9 +226,9 @@ class ContractGeneratorService
      * Generate repayment schedule PDF
      *
      * @param Investment $investment
-     * @return string Path to generated PDF
+     * @return mixed PDF object or path to generated PDF
      */
-    public function generateRepaymentSchedule(Investment $investment, array $options = []): string
+    public function generateRepaymentSchedule(Investment $investment, array $options = [])
     {
         $investment->load(['user', 'solarPlant', 'repayments']);
 
@@ -243,16 +249,22 @@ class ContractGeneratorService
         $pdf = Pdf::loadView($templatePath, $data);
         $pdf->setPaper('a4', 'portrait');
 
-        $filename = sprintf(
-            'repayment_schedule_%s_%s.pdf',
-            strtoupper(substr($investment->id, 0, 8)),
-            Carbon::now()->format('YmdHis')
-        );
+        // If save option is true, save to storage
+        if (isset($options['save']) && $options['save']) {
+            $filename = sprintf(
+                'repayment_schedule_%s_%s.pdf',
+                strtoupper(substr($investment->id, 0, 8)),
+                Carbon::now()->format('YmdHis')
+            );
 
-        $path = "schedules/{$investment->id}/{$filename}";
-        Storage::disk('private')->put($path, $pdf->output());
+            $path = "schedules/{$investment->id}/{$filename}";
+            Storage::disk('private')->put($path, $pdf->output());
 
-        return $path;
+            return $path;
+        }
+
+        // Return the PDF object for streaming/download
+        return $pdf;
     }
 
     /**
@@ -332,5 +344,56 @@ class ContractGeneratorService
     {
         $viewPath = "pdfs.{$language}.{$documentType}";
         return view()->exists($viewPath);
+    }
+
+    /**
+     * Stream PDF to browser
+     *
+     * @param mixed $pdf PDF object or path to PDF file
+     * @return \Illuminate\Http\Response
+     */
+    public function streamPdf($pdf)
+    {
+        // If it's a PDF object (Barryvdh\DomPDF\PDF), stream it directly
+        if (is_object($pdf) && method_exists($pdf, 'stream')) {
+            return $pdf->stream();
+        }
+
+        // Otherwise, treat it as a file path
+        if (!Storage::disk('private')->exists($pdf)) {
+            abort(404, 'PDF file not found');
+        }
+
+        return response()->file(
+            Storage::disk('private')->path($pdf),
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline',
+            ]
+        );
+    }
+
+    /**
+     * Download PDF file
+     *
+     * @param mixed $pdf PDF object or path to PDF file
+     * @param string $filename Filename for download
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadPdf($pdf, string $filename)
+    {
+        // If it's a PDF object (Barryvdh\DomPDF\PDF), download it directly
+        if (is_object($pdf) && method_exists($pdf, 'download')) {
+            return $pdf->download($filename);
+        }
+
+        // Otherwise, treat it as a file path
+        if (!Storage::disk('private')->exists($pdf)) {
+            abort(404, 'PDF file not found');
+        }
+
+        return Storage::disk('private')->download($pdf, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }

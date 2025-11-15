@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class OtpService
 {
+    protected LoggingService $loggingService;
+
+    public function __construct(LoggingService $loggingService)
+    {
+        $this->loggingService = $loggingService;
+    }
+
     /**
      * Rate limiting key prefix.
      */
@@ -70,10 +77,7 @@ class OtpService
                 'expires_in' => OtpCode::VALIDITY_MINUTES * 60, // in seconds
             ];
         } catch (\Exception $e) {
-            \Log::error('Failed to send OTP email', [
-                'email' => $email,
-                'error' => $e->getMessage(),
-            ]);
+            $this->loggingService->emailError($email, 'OTP Code', $e);
 
             throw new \Exception('Failed to send OTP code. Please try again later.');
         }

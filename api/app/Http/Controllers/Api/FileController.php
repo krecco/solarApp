@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\FileContainer;
 use App\Models\Investment;
 use App\Models\SolarPlant;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,12 @@ use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Upload file to a file container
      */
@@ -65,28 +72,25 @@ class FileController extends Controller
             // Create file record
             $file = File::create([
                 'file_container_id' => $fileContainer->id,
-                'filename' => $uploadedFile->getClientOriginalName(),
-                'stored_filename' => $filename,
+                'name' => $filename,
+                'original_name' => $uploadedFile->getClientOriginalName(),
                 'path' => $path,
                 'mime_type' => $uploadedFile->getMimeType(),
                 'size' => $uploadedFile->getSize(),
-                'file_type' => $fileType,
-                'description' => $request->description,
-                'uploaded_by' => $request->user()->id,
-                'verified' => false,
+                'extension' => $extension,
+                'uploaded_by_type' => User::class,
+                'uploaded_by_id' => $request->user()->id,
+                'document_type' => $fileType,
+                'is_verified' => false,
             ]);
 
             // Log activity
-            activity()
-                ->performedOn($file)
-                ->causedBy($request->user())
-                ->withProperties([
-                    'container_type' => $containerType,
-                    'container_id' => $containerId,
-                    'file_type' => $fileType,
-                    'filename' => $file->filename,
-                ])
-                ->log('uploaded file');
+            $this->activityService->log('uploaded file', $file, $request->user(), [
+                'container_type' => $containerType,
+                'container_id' => $containerId,
+                'file_type' => $fileType,
+                'filename' => $file->original_name,
+            ]);
 
             return response()->json([
                 'message' => 'File uploaded successfully',
@@ -119,14 +123,11 @@ class FileController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($request->user())
-            ->log('downloaded file');
+        $this->activityService->log('downloaded file', $file, $request->user());
 
         return Storage::disk('private')->download(
             $file->path,
-            $file->filename,
+            $file->original_name,
             [
                 'Content-Type' => $file->mime_type,
             ]
@@ -160,10 +161,33 @@ class FileController extends Controller
             ], 403);
         }
 
+        // Get the file container ID from the parent model
+        $fileContainerId = null;
+
+        switch ($containerType) {
+            case 'investment':
+                $entity = Investment::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+                break;
+            case 'solar_plant':
+                $entity = SolarPlant::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+                break;
+            case 'user':
+                return response()->json([
+                    'message' => 'User file listing not yet implemented',
+                ], 501);
+        }
+
+        if (!$fileContainerId) {
+            return response()->json([
+                'data' => [],
+                'message' => 'No file container found',
+            ]);
+        }
+
         // Get file container
-        $fileContainer = FileContainer::where('containerable_type', $this->getContainerableType($containerType))
-            ->where('containerable_id', $containerId)
-            ->first();
+        $fileContainer = FileContainer::find($fileContainerId);
 
         if (!$fileContainer) {
             return response()->json([
@@ -174,7 +198,6 @@ class FileController extends Controller
 
         $files = $fileContainer->files()
             ->with('uploadedBy')
-            ->where('rs', 0)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -202,15 +225,10 @@ class FileController extends Controller
             }
 
             // Soft delete record
-            $file->rs = 99;
-            $file->save();
             $file->delete();
 
             // Log activity
-            activity()
-                ->performedOn($file)
-                ->causedBy($request->user())
-                ->log('deleted file');
+            $this->activityService->log('deleted file', $file, $request->user());
 
             return response()->json([
                 'message' => 'File deleted successfully',
@@ -235,16 +253,13 @@ class FileController extends Controller
         }
 
         $file->update([
-            'verified' => true,
-            'verified_by' => $request->user()->id,
+            'is_verified' => true,
+            'verified_by_id' => $request->user()->id,
             'verified_at' => now(),
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($request->user())
-            ->log('verified file');
+        $this->activityService->log('verified file', $file, $request->user());
 
         return response()->json([
             'message' => 'File verified successfully',
@@ -257,12 +272,56 @@ class FileController extends Controller
      */
     protected function getOrCreateFileContainer(string $containerType, string $containerId): FileContainer
     {
-        $containerableType = $this->getContainerableType($containerType);
+        // Get the file container ID from the parent model
+        $fileContainerId = null;
 
-        return FileContainer::firstOrCreate([
-            'containerable_type' => $containerableType,
-            'containerable_id' => $containerId,
-        ]);
+        switch ($containerType) {
+            case 'investment':
+                $entity = Investment::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+
+                // If entity exists but has no file container, create one
+                if ($entity && !$fileContainerId) {
+                    $fileContainer = FileContainer::create([
+                        'name' => "Investment {$containerId} Documents",
+                        'type' => 'investment_docs',
+                        'description' => "Document container for investment {$containerId}",
+                    ]);
+                    $entity->file_container_id = $fileContainer->id;
+                    $entity->save();
+                    return $fileContainer;
+                }
+                break;
+
+            case 'solar_plant':
+                $entity = SolarPlant::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+
+                // If entity exists but has no file container, create one
+                if ($entity && !$fileContainerId) {
+                    $fileContainer = FileContainer::create([
+                        'name' => "Solar Plant {$containerId} Documents",
+                        'type' => 'plant_docs',
+                        'description' => "Document container for solar plant {$containerId}",
+                    ]);
+                    $entity->file_container_id = $fileContainer->id;
+                    $entity->save();
+                    return $fileContainer;
+                }
+                break;
+
+            case 'user':
+                throw new \Exception('User file containers not yet implemented');
+        }
+
+        if ($fileContainerId) {
+            $fileContainer = FileContainer::find($fileContainerId);
+            if ($fileContainer) {
+                return $fileContainer;
+            }
+        }
+
+        throw new \Exception('Unable to get or create file container');
     }
 
     /**
@@ -342,5 +401,114 @@ class FileController extends Controller
         $containerId = $container->containerable_id;
 
         return $this->verifyContainerAccess($user, strtolower($containerableType), $containerId);
+    }
+
+    /**
+     * Download all files from a container as a ZIP
+     */
+    public function bulkDownload(Request $request): JsonResponse|\Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'container_type' => 'required|string|in:investment,solar_plant,user',
+            'container_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $containerType = $request->container_type;
+        $containerId = $request->container_id;
+
+        // Verify access
+        if (!$this->verifyContainerAccess($request->user(), $containerType, $containerId)) {
+            return response()->json([
+                'message' => 'Unauthorized to download files from this container',
+            ], 403);
+        }
+
+        // Get the file container ID from the parent model
+        $fileContainerId = null;
+
+        switch ($containerType) {
+            case 'investment':
+                $entity = Investment::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+                break;
+            case 'solar_plant':
+                $entity = SolarPlant::find($containerId);
+                $fileContainerId = $entity?->file_container_id;
+                break;
+            case 'user':
+                // Users don't have file_container_id, need different approach
+                // For now, return error
+                return response()->json([
+                    'message' => 'User file downloads not yet implemented',
+                ], 501);
+        }
+
+        if (!$fileContainerId) {
+            return response()->json([
+                'message' => 'No file container found for this entity',
+            ], 404);
+        }
+
+        // Get file container
+        $fileContainer = FileContainer::find($fileContainerId);
+
+        if (!$fileContainer) {
+            return response()->json([
+                'message' => 'File container not found',
+            ], 404);
+        }
+
+        $files = $fileContainer->files()->get();
+
+        if ($files->isEmpty()) {
+            return response()->json([
+                'message' => 'No files found in this container',
+            ], 404);
+        }
+
+        // Create a temporary ZIP file
+        $zipFileName = "documents_{$containerType}_{$containerId}_" . date('Y-m-d_His') . '.zip';
+        $zipPath = storage_path('app/temp/' . $zipFileName);
+
+        // Ensure temp directory exists
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            return response()->json([
+                'message' => 'Could not create ZIP file',
+            ], 500);
+        }
+
+        // Add files to ZIP
+        foreach ($files as $file) {
+            $filePath = storage_path('app/private/' . $file->path);
+            if (file_exists($filePath)) {
+                $zip->addFile($filePath, $file->original_name);
+            }
+        }
+
+        $zip->close();
+
+        // Log activity
+        $this->activityService->log('bulk downloaded files', $fileContainer, $request->user(), [
+            'container_type' => $containerType,
+            'container_id' => $containerId,
+            'files_count' => $files->count(),
+        ]);
+
+        // Return the ZIP file and delete it after sending
+        return response()->download($zipPath, $zipFileName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend(true);
     }
 }

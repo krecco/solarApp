@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
 class CampaignController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get all campaigns (with filtering)
      */
@@ -262,10 +269,7 @@ class CampaignController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($campaign)
-            ->causedBy($request->user())
-            ->log('created campaign');
+        $this->activityService->log('created campaign', $campaign, $request->user());
 
         return response()->json([
             'message' => 'Campaign created successfully',
@@ -323,14 +327,10 @@ class CampaignController extends Controller
         ]));
 
         // Log activity
-        activity()
-            ->performedOn($campaign)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldData,
-                'new' => $campaign->toArray(),
-            ])
-            ->log('updated campaign');
+        $this->activityService->log('updated campaign', $campaign, $request->user(), [
+            'old' => $oldData,
+            'new' => $campaign->toArray(),
+        ]);
 
         return response()->json([
             'message' => 'Campaign updated successfully',
@@ -354,10 +354,7 @@ class CampaignController extends Controller
         $campaign->delete();
 
         // Log activity
-        activity()
-            ->performedOn($campaign)
-            ->causedBy($request->user())
-            ->log('deleted campaign');
+        $this->activityService->log('deleted campaign', $campaign, $request->user());
 
         return response()->json([
             'message' => 'Campaign deleted successfully',
@@ -401,13 +398,9 @@ class CampaignController extends Controller
         $campaign->incrementUses();
 
         // Log activity
-        activity()
-            ->performedOn($campaign)
-            ->causedBy($request->user())
-            ->withProperties([
-                'investment_amount' => $request->investment_amount,
-            ])
-            ->log('applied campaign to investment');
+        $this->activityService->log('applied campaign to investment', $campaign, $request->user(), [
+            'investment_amount' => $request->investment_amount,
+        ]);
 
         return response()->json([
             'message' => 'Campaign applied successfully',

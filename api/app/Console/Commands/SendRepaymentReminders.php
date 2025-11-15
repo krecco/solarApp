@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Mail\RepaymentReminderMail;
 use App\Models\InvestmentRepayment;
+use App\Services\ActivityService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -29,6 +30,7 @@ class SendRepaymentReminders extends Command
      */
     public function handle()
     {
+        $activityService = app(ActivityService::class);
         $daysAhead = $this->option('days');
         $targetDate = Carbon::today()->addDays($daysAhead);
 
@@ -59,25 +61,29 @@ class SendRepaymentReminders extends Command
                 $sent++;
 
                 // Log activity
-                activity()
-                    ->performedOn($repayment)
-                    ->withProperties([
+                $activityService->log(
+                    'sent repayment reminder email',
+                    $repayment,
+                    null,
+                    [
                         'days_until_due' => $daysAhead,
                         'amount' => $repayment->amount,
-                    ])
-                    ->log('sent repayment reminder email');
+                    ]
+                );
             } catch (\Exception $e) {
                 $this->error("✗ Failed to send reminder to {$repayment->investment->user->email}: {$e->getMessage()}");
                 $failed++;
 
                 // Log error
-                activity()
-                    ->performedOn($repayment)
-                    ->withProperties([
+                $activityService->log(
+                    'failed to send repayment reminder email',
+                    $repayment,
+                    null,
+                    [
                         'error' => $e->getMessage(),
                         'days_until_due' => $daysAhead,
-                    ])
-                    ->log('failed to send repayment reminder email');
+                    ]
+                );
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Extra;
+use App\Services\ActivityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,12 @@ use Illuminate\Http\Request;
  */
 class ExtrasController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * List all extras with optional filtering
      *
@@ -102,11 +109,7 @@ class ExtrasController extends Controller
         $extra = Extra::create($validated);
 
         // Log activity
-        activity()
-            ->performedOn($extra)
-            ->causedBy($request->user())
-            ->withProperties($validated)
-            ->log('created extra');
+        $this->activityService->log('created extra', $extra, $request->user(), $validated);
 
         return response()->json([
             'data' => $this->formatExtra($extra),
@@ -146,14 +149,10 @@ class ExtrasController extends Controller
         $extra->update($validated);
 
         // Log activity
-        activity()
-            ->performedOn($extra)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldValues,
-                'new' => $extra->fresh()->toArray(),
-            ])
-            ->log('updated extra');
+        $this->activityService->log('updated extra', $extra, $request->user(), [
+            'old' => $oldValues,
+            'new' => $extra->fresh()->toArray(),
+        ]);
 
         return response()->json([
             'data' => $this->formatExtra($extra),
@@ -191,11 +190,7 @@ class ExtrasController extends Controller
         }
 
         // Log activity before deletion
-        activity()
-            ->performedOn($extra)
-            ->causedBy($request->user())
-            ->withProperties($extra->toArray())
-            ->log('deleted extra');
+        $this->activityService->log('deleted extra', $extra, $request->user(), $extra->toArray());
 
         $extra->delete();
 
@@ -231,11 +226,7 @@ class ExtrasController extends Controller
         $status = $extra->is_active ? 'activated' : 'deactivated';
 
         // Log activity
-        activity()
-            ->performedOn($extra)
-            ->causedBy($request->user())
-            ->withProperties(['is_active' => $extra->is_active])
-            ->log("{$status} extra");
+        $this->activityService->log("{$status} extra", $extra, $request->user(), ['is_active' => $extra->is_active]);
 
         return response()->json([
             'data' => $this->formatExtra($extra),

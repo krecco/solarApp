@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\InvestmentRepayment;
+use App\Services\ActivityService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -27,6 +28,7 @@ class ProcessOverdueRepayments extends Command
      */
     public function handle()
     {
+        $activityService = app(ActivityService::class);
         $today = Carbon::today();
 
         $this->info("Processing overdue repayments as of {$today->format('Y-m-d')}");
@@ -56,14 +58,16 @@ class ProcessOverdueRepayments extends Command
                 $repayment->update(['status' => 'overdue']);
 
                 // Log activity
-                activity()
-                    ->performedOn($repayment)
-                    ->withProperties([
+                $activityService->log(
+                    'marked repayment as overdue',
+                    $repayment,
+                    null,
+                    [
                         'days_overdue' => $daysOverdue,
                         'amount' => $repayment->amount,
                         'due_date' => $repayment->due_date,
-                    ])
-                    ->log('marked repayment as overdue');
+                    ]
+                );
 
                 $processed++;
             }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Mail\WelcomeEmail;
 use App\Models\User;
+use App\Services\LoggingService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,13 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    protected LoggingService $loggingService;
+
+    public function __construct(LoggingService $loggingService)
+    {
+        $this->loggingService = $loggingService;
+    }
+
     /**
      * Get the full URL for an avatar
      */
@@ -83,7 +91,10 @@ class AuthController extends Controller
             try {
                 event(new Registered($user));
             } catch (\Exception $e) {
-                \Log::warning('Email verification notification failed: ' . $e->getMessage());
+                $this->loggingService->warning('Email verification notification failed', $e, [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                ]);
             }
 
             // Send welcome email
@@ -91,7 +102,7 @@ class AuthController extends Controller
                 $locale = $user->preferences['language'] ?? 'en';
                 Mail::to($user->email)->send(new WelcomeEmail($user, $locale));
             } catch (\Exception $e) {
-                \Log::warning('Welcome email failed: ' . $e->getMessage());
+                $this->loggingService->emailError($user->email, 'Welcome Email', $e);
             }
 
             return $user;

@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\SolarPlant;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
 class SolarPlantController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
+
     /**
      * Display a listing of solar plants.
      */
@@ -96,10 +104,7 @@ class SolarPlantController extends Controller
         $plant = SolarPlant::create($validator->validated());
 
         // Log activity
-        activity()
-            ->performedOn($plant)
-            ->causedBy($request->user())
-            ->log('created solar plant');
+        $this->activityService->log('created solar plant', $plant, $request->user());
 
         return response()->json([
             'message' => 'Solar plant created successfully',
@@ -174,14 +179,10 @@ class SolarPlantController extends Controller
         $solarPlant->update($validator->validated());
 
         // Log activity
-        activity()
-            ->performedOn($solarPlant)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldValues,
-                'new' => $solarPlant->toArray(),
-            ])
-            ->log('updated solar plant');
+        $this->activityService->log('updated solar plant', $solarPlant, $request->user(), [
+            'old' => $oldValues,
+            'new' => $solarPlant->toArray(),
+        ]);
 
         return response()->json([
             'message' => 'Solar plant updated successfully',
@@ -207,10 +208,7 @@ class SolarPlantController extends Controller
         $solarPlant->delete();
 
         // Log activity
-        activity()
-            ->performedOn($solarPlant)
-            ->causedBy($request->user())
-            ->log('deleted solar plant');
+        $this->activityService->log('deleted solar plant', $solarPlant, $request->user());
 
         return response()->json([
             'message' => 'Solar plant deleted successfully',
@@ -237,14 +235,10 @@ class SolarPlantController extends Controller
         $solarPlant->update(['status' => $request->status]);
 
         // Log activity
-        activity()
-            ->performedOn($solarPlant)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old_status' => $oldStatus,
-                'new_status' => $request->status,
-            ])
-            ->log('changed solar plant status');
+        $this->activityService->log('changed solar plant status', $solarPlant, $request->user(), [
+            'old_status' => $oldStatus,
+            'new_status' => $request->status,
+        ]);
 
         return response()->json([
             'message' => 'Status updated successfully',

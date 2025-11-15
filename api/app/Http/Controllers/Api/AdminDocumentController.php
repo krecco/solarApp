@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\DocumentVerificationStatusEmail;
 use App\Models\File;
 use App\Models\User;
+use App\Services\ActivityService;
 use App\Services\DocumentRequirementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,10 +20,12 @@ use Illuminate\Support\Facades\Mail;
 class AdminDocumentController extends Controller
 {
     protected DocumentRequirementService $documentService;
+    protected ActivityService $activityService;
 
-    public function __construct(DocumentRequirementService $documentService)
+    public function __construct(DocumentRequirementService $documentService, ActivityService $activityService)
     {
         $this->documentService = $documentService;
+        $this->activityService = $activityService;
         $this->middleware('role:admin|manager');
     }
 
@@ -126,14 +129,10 @@ class AdminDocumentController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($request->user())
-            ->withProperties([
-                'document_type' => $file->document_type,
-                'file_name' => $file->original_name,
-            ])
-            ->log('verified customer document');
+        $this->activityService->log('verified customer document', $file, $request->user(), [
+            'document_type' => $file->document_type,
+            'file_name' => $file->original_name,
+        ]);
 
         // Check if user now has all required documents
         $container = $file->fileContainer;
@@ -147,10 +146,7 @@ class AdminDocumentController extends Controller
                         'user_verified_at' => now(),
                     ]);
 
-                    activity()
-                        ->performedOn($user)
-                        ->causedBy($request->user())
-                        ->log('completed document verification');
+                    $this->activityService->log('completed document verification', $user, $request->user());
                 }
             }
         }
@@ -212,15 +208,11 @@ class AdminDocumentController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($request->user())
-            ->withProperties([
-                'document_type' => $file->document_type,
-                'file_name' => $file->original_name,
-                'rejection_reason' => $validated['reason'],
-            ])
-            ->log('rejected customer document');
+        $this->activityService->log('rejected customer document', $file, $request->user(), [
+            'document_type' => $file->document_type,
+            'file_name' => $file->original_name,
+            'rejection_reason' => $validated['reason'],
+        ]);
 
         // Send rejection email
         $container = $file->fileContainer;

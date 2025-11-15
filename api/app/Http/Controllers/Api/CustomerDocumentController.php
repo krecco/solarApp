@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\DocumentType;
 use App\Http\Controllers\Controller;
 use App\Models\File;
+use App\Services\ActivityService;
 use App\Services\DocumentRequirementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,10 +21,12 @@ use Illuminate\Validation\Rules\Enum;
 class CustomerDocumentController extends Controller
 {
     protected DocumentRequirementService $documentService;
+    protected ActivityService $activityService;
 
-    public function __construct(DocumentRequirementService $documentService)
+    public function __construct(DocumentRequirementService $documentService, ActivityService $activityService)
     {
         $this->documentService = $documentService;
+        $this->activityService = $activityService;
     }
 
     /**
@@ -164,14 +167,10 @@ class CustomerDocumentController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($user)
-            ->withProperties([
-                'document_type' => $documentType->value,
-                'file_name' => $originalName,
-            ])
-            ->log('uploaded customer document');
+        $this->activityService->log('uploaded customer document', $file, $user, [
+            'document_type' => $documentType->value,
+            'file_name' => $originalName,
+        ]);
 
         return response()->json([
             'data' => $this->formatFileResponse($file),
@@ -234,10 +233,7 @@ class CustomerDocumentController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($file)
-            ->causedBy($user)
-            ->log('downloaded customer document');
+        $this->activityService->log('downloaded customer document', $file, $user);
 
         return Storage::disk('private')->download(
             $file->path,
@@ -283,14 +279,10 @@ class CustomerDocumentController extends Controller
         }
 
         // Log activity before deletion
-        activity()
-            ->performedOn($file)
-            ->causedBy($user)
-            ->withProperties([
-                'document_type' => $file->document_type,
-                'file_name' => $file->original_name,
-            ])
-            ->log('deleted customer document');
+        $this->activityService->log('deleted customer document', $file, $user, [
+            'document_type' => $file->document_type,
+            'file_name' => $file->original_name,
+        ]);
 
         // Delete database record
         $file->delete();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Investment;
+use App\Services\ActivityService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Validator;
 class ReportController extends Controller
 {
     protected ReportService $reportService;
+    protected ActivityService $activityService;
 
-    public function __construct(ReportService $reportService)
+    public function __construct(ReportService $reportService, ActivityService $activityService)
     {
         $this->reportService = $reportService;
+        $this->activityService = $activityService;
     }
 
     /**
@@ -239,14 +242,11 @@ class ReportController extends Controller
         \Storage::disk('private')->put($path, $csvContent);
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties([
-                'export_type' => 'investments',
-                'record_count' => $investments->count(),
-                'filters' => $request->only(['start_date', 'end_date', 'status']),
-            ])
-            ->log('exported investments to CSV');
+        $this->activityService->log('exported investments to CSV', null, $request->user(), [
+            'export_type' => 'investments',
+            'record_count' => $investments->count(),
+            'filters' => $request->only(['start_date', 'end_date', 'status']),
+        ]);
 
         return response()->json([
             'message' => 'Export generated successfully',
@@ -273,10 +273,7 @@ class ReportController extends Controller
         }
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties(['filename' => $filename])
-            ->log('downloaded export file');
+        $this->activityService->log('downloaded export file', null, $request->user(), ['filename' => $filename]);
 
         return \Storage::disk('private')->download($path, $filename);
     }
@@ -758,13 +755,10 @@ class ReportController extends Controller
         }
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties([
-                'report_type' => $reportType,
-                'date_range' => [$startDate, $endDate],
-            ])
-            ->log('exported advanced report');
+        $this->activityService->log('exported advanced report', null, $request->user(), [
+            'report_type' => $reportType,
+            'date_range' => [$startDate, $endDate],
+        ]);
 
         return response()->json([
             'message' => 'Advanced report generated successfully',

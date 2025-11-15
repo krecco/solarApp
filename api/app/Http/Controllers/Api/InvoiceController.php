@@ -8,6 +8,7 @@ use App\Mail\RepaymentReminderEmail;
 use App\Models\Invoice;
 use App\Models\InvestmentRepayment;
 use App\Models\RepaymentReminder;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
@@ -16,6 +17,12 @@ use Carbon\Carbon;
 
 class InvoiceController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get all invoices (with filtering)
      */
@@ -219,10 +226,7 @@ class InvoiceController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->log('created invoice');
+        $this->activityService->log('created invoice', $invoice, $request->user());
 
         return response()->json([
             'message' => 'Invoice created successfully',
@@ -274,13 +278,9 @@ class InvoiceController extends Controller
         ]);
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->withProperties([
-                'repayment_id' => $repayment->id,
-            ])
-            ->log('generated invoice from repayment');
+        $this->activityService->log('generated invoice from repayment', $invoice, $request->user(), [
+            'repayment_id' => $repayment->id,
+        ]);
 
         return response()->json([
             'message' => 'Invoice generated successfully',
@@ -337,14 +337,10 @@ class InvoiceController extends Controller
         ]));
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldData,
-                'new' => $invoice->toArray(),
-            ])
-            ->log('updated invoice');
+        $this->activityService->log('updated invoice', $invoice, $request->user(), [
+            'old' => $oldData,
+            'new' => $invoice->toArray(),
+        ]);
 
         return response()->json([
             'message' => 'Invoice updated successfully',
@@ -398,14 +394,10 @@ class InvoiceController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->withProperties([
-                'payment_method' => $request->payment_method,
-                'payment_reference' => $request->payment_reference,
-            ])
-            ->log('marked invoice as paid');
+        $this->activityService->log('marked invoice as paid', $invoice, $request->user(), [
+            'payment_method' => $request->payment_method,
+            'payment_reference' => $request->payment_reference,
+        ]);
 
         return response()->json([
             'message' => 'Invoice marked as paid successfully',
@@ -444,10 +436,7 @@ class InvoiceController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->log('sent invoice');
+        $this->activityService->log('sent invoice', $invoice, $request->user());
 
         return response()->json([
             'message' => 'Invoice sent successfully',
@@ -475,10 +464,7 @@ class InvoiceController extends Controller
         $invoice->update(['status' => 'cancelled']);
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->log('cancelled invoice');
+        $this->activityService->log('cancelled invoice', $invoice, $request->user());
 
         return response()->json([
             'message' => 'Invoice cancelled successfully',
@@ -508,10 +494,7 @@ class InvoiceController extends Controller
         $invoice->delete();
 
         // Log activity
-        activity()
-            ->performedOn($invoice)
-            ->causedBy($request->user())
-            ->log('deleted invoice');
+        $this->activityService->log('deleted invoice', $invoice, $request->user());
 
         return response()->json([
             'message' => 'Invoice deleted successfully',
@@ -569,14 +552,10 @@ class InvoiceController extends Controller
         }
 
         // Log activity
-        activity()
-            ->performedOn($reminder)
-            ->causedBy($request->user())
-            ->withProperties([
-                'repayment_id' => $repayment->id,
-                'type' => $request->type,
-            ])
-            ->log('sent repayment reminder');
+        $this->activityService->log('sent repayment reminder', $reminder, $request->user(), [
+            'repayment_id' => $repayment->id,
+            'type' => $request->type,
+        ]);
 
         return response()->json([
             'message' => 'Reminder sent successfully',

@@ -7,6 +7,8 @@ use App\Mail\InvestmentConfirmationEmail;
 use App\Mail\InvestmentVerifiedMail;
 use App\Models\Investment;
 use App\Models\SolarPlant;
+use App\Services\ActivityService;
+use App\Services\LoggingService;
 use App\Services\RepaymentCalculatorService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -16,10 +18,17 @@ use Illuminate\Support\Facades\Validator;
 class InvestmentController extends Controller
 {
     protected RepaymentCalculatorService $repaymentCalculator;
+    protected ActivityService $activityService;
+    protected LoggingService $loggingService;
 
-    public function __construct(RepaymentCalculatorService $repaymentCalculator)
-    {
+    public function __construct(
+        RepaymentCalculatorService $repaymentCalculator,
+        ActivityService $activityService,
+        LoggingService $loggingService
+    ) {
         $this->repaymentCalculator = $repaymentCalculator;
+        $this->activityService = $activityService;
+        $this->loggingService = $loggingService;
     }
 
     /**
@@ -108,10 +117,7 @@ class InvestmentController extends Controller
         $investment = Investment::create($data);
 
         // Log activity
-        activity()
-            ->performedOn($investment)
-            ->causedBy($request->user())
-            ->log('created investment');
+        $this->activityService->logInvestmentCreated($investment, $request->user());
 
         // Send investment confirmation email
         try {
@@ -124,7 +130,11 @@ class InvestmentController extends Controller
                 $locale
             ));
         } catch (\Exception $e) {
-            \Log::warning('Investment confirmation email failed: ' . $e->getMessage());
+            $this->loggingService->emailError(
+                $request->user()->email,
+                'Investment Confirmation',
+                $e
+            );
         }
 
         return response()->json([
@@ -198,14 +208,7 @@ class InvestmentController extends Controller
         $investment->update($data);
 
         // Log activity
-        activity()
-            ->performedOn($investment)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old' => $oldValues,
-                'new' => $investment->toArray(),
-            ])
-            ->log('updated investment');
+        $this->activityService->logInvestmentUpdated($investment, $oldValues, $request->user());
 
         return response()->json([
             'message' => 'Investment updated successfully',
@@ -231,10 +234,7 @@ class InvestmentController extends Controller
         $investment->delete();
 
         // Log activity
-        activity()
-            ->performedOn($investment)
-            ->causedBy($request->user())
-            ->log('deleted investment');
+        $this->activityService->logInvestmentDeleted($investment, $request->user());
 
         return response()->json([
             'message' => 'Investment deleted successfully',
@@ -273,33 +273,32 @@ class InvestmentController extends Controller
         try {
             $repaymentsCreated = $this->repaymentCalculator->createRepaymentSchedule($investment);
 
-            // Log activity
-            activity()
-                ->performedOn($investment)
-                ->causedBy($request->user())
-                ->withProperties([
-                    'repayments_created' => $repaymentsCreated,
-                ])
-                ->log('verified investment and generated repayment schedule');
+            // Log repayment schedule generation
+            $this->activityService->logRepaymentScheduleGenerated($investment, $repaymentsCreated, $request->user());
         } catch (\Exception $e) {
             // Log error but don't fail verification
-            activity()
-                ->performedOn($investment)
-                ->causedBy($request->user())
-                ->withProperties(['error' => $e->getMessage()])
-                ->log('verified investment but failed to generate repayment schedule');
+            $this->activityService->logError(
+                'Failed to Generate Repayment Schedule',
+                $e->getMessage(),
+                $investment->user_id,
+                $investment->id
+            );
         }
+
+        // Log investment verification
+        $this->activityService->logInvestmentVerified($investment, $request->user());
 
         // Send notification to investor
         try {
             Mail::to($investment->user->email)->send(new InvestmentVerifiedMail($investment));
         } catch (\Exception $e) {
             // Log error but don't fail verification
-            activity()
-                ->performedOn($investment)
-                ->causedBy($request->user())
-                ->withProperties(['error' => $e->getMessage()])
-                ->log('verified investment but failed to send email notification');
+            $this->activityService->logError(
+                'Failed to Send Verification Email',
+                $e->getMessage(),
+                $investment->user_id,
+                $investment->id
+            );
         }
 
         return response()->json([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,12 @@ use Illuminate\Support\Facades\Validator;
 
 class SettingsController extends Controller
 {
+    protected ActivityService $activityService;
+
+    public function __construct(ActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     /**
      * Get all settings (or specific group)
      */
@@ -177,14 +184,10 @@ class SettingsController extends Controller
         Cache::forget('settings.public');
 
         // Log activity
-        activity()
-            ->performedOn($setting)
-            ->causedBy($request->user())
-            ->withProperties([
-                'old_value' => $setting->getOriginal('value'),
-                'new_value' => $value,
-            ])
-            ->log('updated setting');
+        $this->activityService->log('updated setting', $setting, $request->user(), [
+            'old_value' => $setting->getOriginal('value'),
+            'new_value' => $value,
+        ]);
 
         return response()->json([
             'message' => 'Setting updated successfully',
@@ -246,10 +249,7 @@ class SettingsController extends Controller
         Cache::forget('settings.public');
 
         // Log activity
-        activity()
-            ->performedOn($setting)
-            ->causedBy($request->user())
-            ->log('created setting');
+        $this->activityService->log('created setting', $setting, $request->user());
 
         return response()->json([
             'message' => 'Setting created successfully',
@@ -284,10 +284,7 @@ class SettingsController extends Controller
         Cache::forget('settings.public');
 
         // Log activity
-        activity()
-            ->performedOn($setting)
-            ->causedBy($request->user())
-            ->log('deleted setting');
+        $this->activityService->log('deleted setting', $setting, $request->user());
 
         return response()->json([
             'message' => 'Setting deleted successfully',
@@ -351,13 +348,10 @@ class SettingsController extends Controller
         Cache::forget('settings.public');
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties([
-                'updated_count' => count($updated),
-                'error_count' => count($errors),
-            ])
-            ->log('bulk updated settings');
+        $this->activityService->log('bulk updated settings', null, $request->user(), [
+            'updated_count' => count($updated),
+            'error_count' => count($errors),
+        ]);
 
         return response()->json([
             'message' => 'Settings updated',
@@ -427,13 +421,10 @@ class SettingsController extends Controller
         Cache::forget('settings.public');
 
         // Log activity
-        activity()
-            ->causedBy($request->user())
-            ->withProperties([
-                'group' => $request->group ?? 'all',
-                'reset_count' => $resetCount,
-            ])
-            ->log('reset settings to default');
+        $this->activityService->log('reset settings to default', null, $request->user(), [
+            'group' => $request->group ?? 'all',
+            'reset_count' => $resetCount,
+        ]);
 
         return response()->json([
             'message' => 'Settings reset to default',

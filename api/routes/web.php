@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,4 +56,10 @@ Route::prefix('email')->group(function () {
             'message' => 'Verification link sent!'
         ]);
     })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+});
+
+// Log Viewer - Only for admin users
+LogViewer::auth(function ($request) {
+    // Check if user is authenticated and is admin
+    return $request->user() && $request->user()->hasRole('admin');
 });
