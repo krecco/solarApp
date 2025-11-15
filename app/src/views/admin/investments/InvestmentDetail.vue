@@ -192,6 +192,7 @@
                     icon="pi pi-envelope"
                     severity="secondary"
                     size="small"
+                    @click="handleSendEmail(investment.user.email)"
                   />
                 </div>
               </div>
@@ -360,9 +361,21 @@
 
         <!-- Repayment Schedule -->
         <Card v-if="investment.repayments && investment.repayments.length > 0">
-          <template #title>Repayment Schedule</template>
+          <template #title>
+            <div class="flex justify-content-between align-items-center">
+              <span>Repayment Schedule ({{ investment.repayments.length }} payments)</span>
+              <Button
+                :icon="showRepayments ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+                text
+                rounded
+                @click="showRepayments = !showRepayments"
+                v-tooltip.top="showRepayments ? 'Collapse' : 'Expand'"
+              />
+            </div>
+          </template>
           <template #content>
-            <DataTable :value="investment.repayments" stripedRows>
+            <div v-show="showRepayments" class="repayment-schedule-container">
+            <DataTable :value="investment.repayments" stripedRows scrollable scrollHeight="400px">
               <Column field="due_date" header="Due Date" sortable>
                 <template #body="{ data }">
                   {{ formatDate(data.due_date) }}
@@ -389,7 +402,7 @@
                   <span v-else class="text-gray-400">-</span>
                 </template>
               </Column>
-              <Column header="Actions">
+              <Column header="Actions" frozen alignFrozen="right">
                 <template #body="{ data }">
                   <Button
                     icon="pi pi-check"
@@ -398,10 +411,12 @@
                     rounded
                     v-tooltip.top="'Mark as Paid'"
                     :disabled="data.status === 'paid'"
+                    @click="handleMarkRepaymentAsPaid(data)"
                   />
                 </template>
               </Column>
             </DataTable>
+            </div>
           </template>
         </Card>
       </div>
@@ -428,18 +443,22 @@
                 severity="info"
                 class="w-full"
                 :disabled="!investment.verified"
+                @click="handleGenerateContract"
+                :loading="generatingPdf"
               />
               <Button
                 label="Send Notification"
                 icon="pi pi-send"
                 severity="secondary"
                 class="w-full"
+                @click="notificationDialog = true"
               />
               <Button
                 label="Download Documents"
                 icon="pi pi-download"
                 severity="secondary"
                 class="w-full"
+                @click="handleDownloadDocuments"
               />
               <Divider />
               <Button
@@ -448,6 +467,7 @@
                 severity="danger"
                 class="w-full"
                 outlined
+                @click="cancelDialog = true"
               />
             </div>
           </template>
@@ -576,15 +596,207 @@
         />
       </template>
     </Dialog>
+
+    <!-- Edit Investment Dialog -->
+    <Dialog
+      v-model:visible="editMode"
+      :style="{ width: '700px' }"
+      header="Edit Investment"
+      :modal="true"
+    >
+      <div v-if="investment" class="grid">
+        <div class="col-12 md:col-6">
+          <label for="edit_amount" class="block mb-2">Investment Amount (€)</label>
+          <InputNumber
+            id="edit_amount"
+            v-model="editForm.amount"
+            class="w-full"
+            mode="currency"
+            currency="EUR"
+            locale="de-DE"
+          />
+        </div>
+        <div class="col-12 md:col-6">
+          <label for="edit_duration" class="block mb-2">Duration (months)</label>
+          <InputNumber
+            id="edit_duration"
+            v-model="editForm.duration_months"
+            class="w-full"
+            :min="1"
+          />
+        </div>
+        <div class="col-12 md:col-6">
+          <label for="edit_interest" class="block mb-2">Interest Rate (%)</label>
+          <InputNumber
+            id="edit_interest"
+            v-model="editForm.interest_rate"
+            class="w-full"
+            :min="0"
+            :max="100"
+            :maxFractionDigits="2"
+          />
+        </div>
+        <div class="col-12 md:col-6">
+          <label for="edit_interval" class="block mb-2">Repayment Interval</label>
+          <Dropdown
+            id="edit_interval"
+            v-model="editForm.repayment_interval"
+            :options="repaymentIntervals"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          />
+        </div>
+        <div class="col-12">
+          <label for="edit_notes" class="block mb-2">Notes</label>
+          <Textarea id="edit_notes" v-model="editForm.notes" rows="3" class="w-full" />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" text @click="editMode = false" />
+        <Button
+          label="Save Changes"
+          icon="pi pi-check"
+          severity="primary"
+          @click="saveInvestmentChanges"
+          :loading="saving"
+        />
+      </template>
+    </Dialog>
+
+    <!-- Mark Repayment as Paid Dialog -->
+    <Dialog
+      v-model:visible="markPaidDialog"
+      :style="{ width: '500px' }"
+      header="Mark Repayment as Paid"
+      :modal="true"
+    >
+      <div v-if="selectedRepayment" class="grid">
+        <div class="col-12">
+          <div class="mb-3">
+            <div class="text-sm text-gray-500">Payment Amount</div>
+            <div class="text-2xl font-bold text-primary">{{ formatCurrency(selectedRepayment.amount) }}</div>
+          </div>
+          <div class="mb-3">
+            <div class="text-sm text-gray-500">Due Date</div>
+            <div class="font-semibold">{{ formatDate(selectedRepayment.due_date) }}</div>
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="payment_method" class="block mb-2">Payment Method</label>
+          <Dropdown
+            id="payment_method"
+            v-model="markPaidForm.payment_method"
+            :options="paymentMethods"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select payment method"
+            class="w-full"
+          />
+        </div>
+        <div class="col-12">
+          <label for="payment_reference" class="block mb-2">Payment Reference</label>
+          <InputText
+            id="payment_reference"
+            v-model="markPaidForm.payment_reference"
+            class="w-full"
+            placeholder="Transaction ID, check number, etc."
+          />
+        </div>
+        <div class="col-12">
+          <label for="payment_notes" class="block mb-2">Notes (optional)</label>
+          <Textarea id="payment_notes" v-model="markPaidForm.notes" rows="2" class="w-full" />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" text @click="markPaidDialog = false" />
+        <Button
+          label="Mark as Paid"
+          icon="pi pi-check"
+          severity="success"
+          @click="confirmMarkAsPaid"
+          :loading="markingPaid"
+        />
+      </template>
+    </Dialog>
+
+    <!-- Cancel Investment Dialog -->
+    <Dialog
+      v-model:visible="cancelDialog"
+      :style="{ width: '450px' }"
+      header="Cancel Investment"
+      :modal="true"
+    >
+      <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: var(--orange-500)" />
+        <span v-if="investment">
+          Are you sure you want to cancel this investment of
+          <b>{{ formatCurrency(investment.amount) }}</b>?
+          This action cannot be undone.
+        </span>
+      </div>
+      <template #footer>
+        <Button label="Keep Investment" icon="pi pi-times" text @click="cancelDialog = false" />
+        <Button
+          label="Cancel Investment"
+          icon="pi pi-trash"
+          severity="danger"
+          @click="confirmCancelInvestment"
+          :loading="cancelling"
+        />
+      </template>
+    </Dialog>
+
+    <!-- Send Notification Dialog -->
+    <Dialog
+      v-model:visible="notificationDialog"
+      :style="{ width: '600px' }"
+      header="Send Notification"
+      :modal="true"
+    >
+      <div class="grid">
+        <div class="col-12">
+          <label for="notif_subject" class="block mb-2">Subject</label>
+          <InputText
+            id="notif_subject"
+            v-model="notificationForm.subject"
+            class="w-full"
+            placeholder="Notification subject"
+          />
+        </div>
+        <div class="col-12">
+          <label for="notif_message" class="block mb-2">Message</label>
+          <Textarea
+            id="notif_message"
+            v-model="notificationForm.message"
+            rows="5"
+            class="w-full"
+            placeholder="Enter notification message"
+          />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" text @click="notificationDialog = false" />
+        <Button
+          label="Send Notification"
+          icon="pi pi-send"
+          severity="primary"
+          @click="sendNotification"
+          :loading="sendingNotification"
+        />
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useInvestmentStore } from '@/stores/investment'
 import { useRole } from '@/composables/useRole'
+import { useToast } from 'primevue/usetoast'
 import type { Investment } from '@/api/investment.service'
+import repaymentService from '@/api/repayment.service'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Tag from 'primevue/tag'
@@ -596,17 +808,65 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import Timeline from 'primevue/timeline'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Textarea from 'primevue/textarea'
+import Dropdown from 'primevue/dropdown'
 
 const router = useRouter()
 const route = useRoute()
 const investmentStore = useInvestmentStore()
 const { isAdmin, isManager } = useRole()
+const toast = useToast()
 
 const investment = ref<Investment | null>(null)
 const loading = ref(false)
 const editMode = ref(false)
 const verifyDialog = ref(false)
 const verifying = ref(false)
+const showRepayments = ref(true)
+const markPaidDialog = ref(false)
+const selectedRepayment = ref<any>(null)
+const markingPaid = ref(false)
+const cancelDialog = ref(false)
+const cancelling = ref(false)
+const notificationDialog = ref(false)
+const sendingNotification = ref(false)
+const saving = ref(false)
+const generatingPdf = ref(false)
+
+const editForm = ref({
+  amount: 0,
+  duration_months: 0,
+  interest_rate: 0,
+  repayment_interval: 'monthly',
+  notes: '',
+})
+
+const markPaidForm = ref({
+  payment_method: '',
+  payment_reference: '',
+  notes: '',
+})
+
+const notificationForm = ref({
+  subject: '',
+  message: '',
+})
+
+const repaymentIntervals = [
+  { label: 'Monthly', value: 'monthly' },
+  { label: 'Quarterly', value: 'quarterly' },
+  { label: 'Annually', value: 'annually' },
+]
+
+const paymentMethods = [
+  { label: 'Bank Transfer', value: 'bank_transfer' },
+  { label: 'Cash', value: 'cash' },
+  { label: 'Check', value: 'check' },
+  { label: 'Direct Debit', value: 'direct_debit' },
+  { label: 'Other', value: 'other' },
+]
 
 const completionPercentage = computed(() => {
   if (!investment.value || !investment.value.total_repayment) return 0
@@ -626,6 +886,7 @@ const activityLog = computed(() => {
       title: 'Investment Created',
       description: 'Investment was created and submitted',
       timestamp: formatDate(investment.value.created_at),
+      date: new Date(investment.value.created_at),
     })
 
     if (investment.value.verified) {
@@ -633,6 +894,7 @@ const activityLog = computed(() => {
         title: 'Investment Verified',
         description: `Verified by ${investment.value.verified_by_user?.name || 'Admin'}`,
         timestamp: formatDate(investment.value.verified_at || ''),
+        date: new Date(investment.value.verified_at || ''),
       })
     }
 
@@ -641,11 +903,13 @@ const activityLog = computed(() => {
         title: 'Investment Started',
         description: 'Investment period began',
         timestamp: formatDate(investment.value.start_date),
+        date: new Date(investment.value.start_date),
       })
     }
   }
 
-  return log
+  // Sort by date ascending (oldest first)
+  return log.sort((a, b) => a.date.getTime() - b.date.getTime())
 })
 
 onMounted(async () => {
@@ -741,6 +1005,266 @@ function getInitials(name: string): string {
     .toUpperCase()
     .substring(0, 2)
 }
+
+// Watch for editMode changes to populate form
+watch(editMode, (newVal) => {
+  if (newVal && investment.value) {
+    editForm.value = {
+      amount: investment.value.amount,
+      duration_months: investment.value.duration_months,
+      interest_rate: investment.value.interest_rate,
+      repayment_interval: investment.value.repayment_interval,
+      notes: investment.value.notes || '',
+    }
+  }
+})
+
+async function saveInvestmentChanges() {
+  if (!investment.value) return
+
+  saving.value = true
+  try {
+    await investmentStore.updateInvestment(investment.value.id, editForm.value)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Investment updated successfully',
+      life: 3000,
+    })
+    editMode.value = false
+    await fetchInvestment()
+  } catch (error) {
+    console.error('Error updating investment:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update investment',
+      life: 3000,
+    })
+  } finally {
+    saving.value = false
+  }
+}
+
+function handleMarkRepaymentAsPaid(repayment: any) {
+  selectedRepayment.value = repayment
+  markPaidForm.value = {
+    payment_method: '',
+    payment_reference: '',
+    notes: '',
+  }
+  markPaidDialog.value = true
+}
+
+async function confirmMarkAsPaid() {
+  if (!selectedRepayment.value) return
+
+  markingPaid.value = true
+  try {
+    await repaymentService.markAsPaid(selectedRepayment.value.id, {
+      ...markPaidForm.value,
+      amount: selectedRepayment.value.amount, // Backend requires amount field
+    })
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Repayment marked as paid',
+      life: 3000,
+    })
+    markPaidDialog.value = false
+    await fetchInvestment()
+  } catch (error) {
+    console.error('Error marking repayment as paid:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to mark repayment as paid',
+      life: 3000,
+    })
+  } finally {
+    markingPaid.value = false
+  }
+}
+
+async function handleGenerateContract() {
+  if (!investment.value) return
+
+  generatingPdf.value = true
+  try {
+    const { apiClient } = await import('@/api')
+
+    // Fetch PDF as blob from backend
+    const response = await apiClient.get(
+      `/api/v1/pdf/investments/${investment.value.id}/contract`,
+      {
+        responseType: 'blob',
+      }
+    )
+
+    // Create blob URL from response data (axios already returns blob with responseType: 'blob')
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+
+    // Open in new tab
+    const newWindow = window.open(url, '_blank')
+
+    // Clean up the URL after window loads
+    if (newWindow) {
+      newWindow.onload = () => {
+        setTimeout(() => window.URL.revokeObjectURL(url), 100)
+      }
+    }
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Contract PDF generated successfully',
+      life: 3000,
+    })
+  } catch (error) {
+    console.error('Error generating contract:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to generate contract',
+      life: 3000,
+    })
+  } finally {
+    generatingPdf.value = false
+  }
+}
+
+function handleSendEmail(email: string) {
+  // Open default email client
+  window.location.href = `mailto:${email}?subject=Regarding Your Investment #${investment.value?.id.substring(0, 8)}`
+}
+
+async function sendNotification() {
+  if (!investment.value || !notificationForm.value.subject || !notificationForm.value.message) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Please fill in subject and message',
+      life: 3000,
+    })
+    return
+  }
+
+  sendingNotification.value = true
+  try {
+    const { apiClient } = await import('@/api')
+    await apiClient.post('/api/v1/notifications/send', {
+      user_id: investment.value.user_id,
+      title: notificationForm.value.subject,
+      message: notificationForm.value.message,
+      type: 'info',
+      category: 'system',
+    })
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Notification sent successfully',
+      life: 3000,
+    })
+    notificationDialog.value = false
+    notificationForm.value = { subject: '', message: '' }
+  } catch (error) {
+    console.error('Error sending notification:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to send notification',
+      life: 3000,
+    })
+  } finally {
+    sendingNotification.value = false
+  }
+}
+
+async function handleDownloadDocuments() {
+  if (!investment.value) {
+    return
+  }
+
+  try {
+    const { apiClient } = await import('@/api')
+
+    // Make request to bulk download endpoint
+    const response = await apiClient.post(
+      '/api/v1/files/bulk-download',
+      {
+        container_type: 'investment',
+        container_id: investment.value.id,
+      },
+      {
+        responseType: 'blob', // Important for file downloads
+      }
+    )
+
+    // Create a download link
+    const url = window.URL.createObjectURL(new Blob([response]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `investment_${investment.value.id.substring(0, 8)}_documents.zip`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Documents downloaded successfully',
+      life: 3000,
+    })
+  } catch (error: any) {
+    console.error('Error downloading documents:', error)
+
+    // Check if it's a 404 error
+    if (error.response?.status === 404) {
+      toast.add({
+        severity: 'info',
+        summary: 'No Documents',
+        detail: 'No documents found for this investment',
+        life: 3000,
+      })
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to download documents',
+        life: 3000,
+      })
+    }
+  }
+}
+
+async function confirmCancelInvestment() {
+  if (!investment.value) return
+
+  cancelling.value = true
+  try {
+    await investmentStore.deleteInvestment(investment.value.id)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Investment cancelled successfully',
+      life: 3000,
+    })
+    router.push({ name: 'AdminInvestmentList' })
+  } catch (error) {
+    console.error('Error cancelling investment:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to cancel investment',
+      life: 3000,
+    })
+  } finally {
+    cancelling.value = false
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -755,5 +1279,42 @@ function getInitials(name: string): string {
   display: flex;
   align-items: center;
   padding: 1rem;
+}
+
+.repayment-schedule-container {
+  :deep(.p-datatable-wrapper) {
+    border-radius: 6px;
+
+    /* Custom scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--surface-100);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--primary-300);
+      border-radius: 4px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: var(--primary-400);
+      }
+    }
+
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-300) var(--surface-100);
+  }
+
+  :deep(.p-datatable-thead) {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
 </style>

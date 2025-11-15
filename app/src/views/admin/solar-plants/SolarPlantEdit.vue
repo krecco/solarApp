@@ -83,7 +83,29 @@
             </div>
             <div class="col-12 md:col-4">
               <label for="country" class="block mb-2">Country</label>
-              <InputText id="country" v-model="form.country" class="w-full" />
+              <Dropdown
+                id="country"
+                v-model="form.country"
+                :options="countries"
+                optionLabel="name"
+                optionValue="code"
+                placeholder="Select country"
+                class="w-full"
+                :filter="true"
+                :loading="loadingCountries"
+              >
+                <template #value="slotProps">
+                  <div v-if="slotProps.value" class="flex align-items-center">
+                    <span>{{ getCountryName(slotProps.value) }}</span>
+                  </div>
+                  <span v-else>{{ slotProps.placeholder }}</span>
+                </template>
+                <template #option="slotProps">
+                  <div class="flex align-items-center">
+                    <div>{{ slotProps.option.name }} ({{ slotProps.option.code }})</div>
+                  </div>
+                </template>
+              </Dropdown>
             </div>
           </div>
 
@@ -287,6 +309,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSolarPlantStore } from '@/stores/solarPlant'
 import { useAdminStore } from '@/stores/admin'
+import countriesService, { type Country } from '@/api/countries.service'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -330,8 +353,10 @@ const form = ref({
 const submitted = ref(false)
 const customers = ref<any[]>([])
 const managers = ref<any[]>([])
+const countries = ref<Country[]>([])
 const loadingCustomers = ref(false)
 const loadingManagers = ref(false)
+const loadingCountries = ref(false)
 
 const statusOptions = [
   { label: 'Draft', value: 'draft' },
@@ -343,7 +368,8 @@ const statusOptions = [
 onMounted(async () => {
   await Promise.all([
     store.fetchPlant(plantId.value),
-    loadUsers()
+    loadUsers(),
+    loadCountries()
   ])
 
   // Populate form with existing data
@@ -374,6 +400,22 @@ onMounted(async () => {
     }
   }
 })
+
+async function loadCountries() {
+  loadingCountries.value = true
+  try {
+    countries.value = await countriesService.getCountries()
+  } catch (error) {
+    console.error('Failed to load countries:', error)
+  } finally {
+    loadingCountries.value = false
+  }
+}
+
+function getCountryName(code: string): string {
+  const country = countries.value.find(c => c.code === code)
+  return country ? `${country.name} (${country.code})` : code
+}
 
 async function loadUsers() {
   loadingCustomers.value = true
